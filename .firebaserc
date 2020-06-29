@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "negociacioncolectiva-80355": {
+      "hosting": {
+        "negociacion": [
+          "negociacioncolectiva-80355"
+        ]
+      }
+    }
+  }
+}
