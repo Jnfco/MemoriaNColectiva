@@ -18,10 +18,11 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  async onLogin(){
+   onLogin(){
+     console.log("AAHH");
     const {email,password}=this.loginForm.value;
     try{
-     const user = await this.authSvc.login(email,password);
+     const user =  this.authSvc.login(email,password);
      if(user){
       //redireccionar a inicio
       this.router.navigate(["/home"]);

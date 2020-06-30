@@ -12,9 +12,10 @@ export class AuthService {
 
   constructor(public afAuth: AngularFireAuth) { }
 
-  async login(email:string,password:string){
+  login(email:string,password:string){
     try{
-      const result = await this.afAuth.signInWithEmailAndPassword(
+      console.log("Valores de inicio de sesion: ",email,password);
+      const result = this.afAuth.signInWithEmailAndPassword(
         email,
         password
         );
@@ -27,9 +28,9 @@ export class AuthService {
 
   }
 
-  async register(email: string,password: string){
+ register(email: string,password: string){
     try{
-      const result = await this.afAuth.createUserWithEmailAndPassword(
+      const result = this.afAuth.createUserWithEmailAndPassword(
         email,
         password
       );
@@ -42,9 +43,9 @@ export class AuthService {
 
   }
 
-  async logout(){
+  logout(){
     try{
-      await this.afAuth.signOut();
+       this.afAuth.signOut();
     }
     catch(error){
       console.log(error);

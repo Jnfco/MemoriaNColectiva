@@ -7,8 +7,8 @@ import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 
 
 //Firebase
-import {AngularFireDatabaseModule} from 'angularfire2/database'
-import {AngularFireModule} from 'angularfire2';
+import {AngularFireDatabaseModule} from '@angular/fire/database'
+import {AngularFireModule} from '@angular/fire';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
 
