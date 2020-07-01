@@ -16,13 +16,10 @@ export class NavbarComponent  {
 
 
 
-  async onLogout(){
-    try{
-     await this.authSvc.logout();
-     this.router.navigate(["/login"]);
-    }
-    catch(error){console.log(error);
-    }
+   onLogout(){
+
+      this.authSvc.logout();
+
 
   }
 }

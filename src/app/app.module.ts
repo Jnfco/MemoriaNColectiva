@@ -21,14 +21,26 @@ import { RegisterComponent } from './auth/register/register.component';
 //Servicios
 import {DocumentService} from './services/document.service';
 import {AuthService} from './services/auth.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+//Angular material
+
+import { MatToolbarModule} from '@angular/material/toolbar';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatButtonModule} from '@angular/material/button';
+ import {MatTableModule} from '@angular/material/table';
+ import {MatDividerModule} from '@angular/material/divider';
+import {MatInputModule} from '@angular/material/input';
+import {MatCardModule} from '@angular/material/card';
+import { RecuperarPassComponent } from './auth/recuperar-pass/recuperar-pass.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     NavbarComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    RecuperarPassComponent
 
 
   ],
@@ -39,7 +51,15 @@ import {AuthService} from './services/auth.service';
     AngularFireDatabaseModule,
     AngularFirestoreModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDividerModule,
+    MatInputModule,
+    MatTableModule
   ],
   providers: [DocumentService,
     AuthService],

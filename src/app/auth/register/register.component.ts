@@ -19,11 +19,11 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  async onRegister(){
+  onRegister(){
     const{email,password } = this.registerForm.value;
     try{
 
-      const user = await this.authSvc.register(email,password);
+      const user =  this.authSvc.register(email,password);
       if(user){
         this.router.navigate(["/home"]);
       }

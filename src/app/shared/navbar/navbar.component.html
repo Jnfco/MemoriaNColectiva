@@ -4,17 +4,18 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="navbar-collapse collapse" id="navbarColor01" style="">
+  <div class="navbar-collapse collapse" id="navbarColor01" >
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-       <!-- <a class="nav-link" routerLink="/">Home</a>-->
+      <!--<a class="nav-link" routerLink="/">Home</a>  -->
       </li>
+
 
     </ul>
     <ul class="navbar-nav mx-auto" *ngIf="user$ | async as user;else login">
 
       <li class="nav-item " *ngIf="user">
-        <a class="nav-link" (click)="onLogout()" routerLink="/login">Logout</a>
+        <a class="nav-link" (click)="onLogout()" routerLink="/home">Logout</a>
       </li>
 
       <li class="nav-item">
@@ -22,7 +23,16 @@
       </li>
 
     </ul>
-
+    <ng-template #login>
+      <ul class="navbar-nav mx-auto">
+      <li class="nav-item" >
+        <a class="nav-link" routerLink="/login">Login</a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link"routerLink="/register">Register</a>
+      </li>
+    </ul>
+    </ng-template>
   </div>
 </nav>
 
