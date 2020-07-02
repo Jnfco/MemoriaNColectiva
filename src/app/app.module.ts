@@ -33,6 +33,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
 import { RecuperarPassComponent } from './auth/recuperar-pass/recuperar-pass.component';
+import {MatIconModule} from '@angular/material/icon';
+import {MatDialogModule} from '@angular/material/dialog';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,7 +62,9 @@ import { RecuperarPassComponent } from './auth/recuperar-pass/recuperar-pass.com
     MatCardModule,
     MatDividerModule,
     MatInputModule,
-    MatTableModule
+    MatTableModule,
+    MatIconModule,
+    MatDialogModule
   ],
   providers: [DocumentService,
     AuthService],

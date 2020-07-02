@@ -1,0 +1,26 @@
+.botonReset{
+  background-color:#36A0F5;
+  color: white;
+
+}
+.form-group,.title{
+
+  text-align: center;
+}
+
+.form-group{
+  display: flex;
+    flex-direction: column;
+    margin:1rem auto;
+    width: 50%;
+}
+
+.card{
+  width: 50%;
+  margin-left: 25%;
+}
+.body
+{
+  padding-top: 10%;
+  height: auto;
+}

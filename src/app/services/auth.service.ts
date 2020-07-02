@@ -4,9 +4,11 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import {User} from 'firebase';
 import {first} from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore ,AngularFirestoreDocument} from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-
+import {IUser} from './User';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Component,Inject} from '@angular/core';
 
 @Injectable()
 export class AuthService {
@@ -14,11 +16,24 @@ export class AuthService {
   public user:User;
   private eventAuthError = new BehaviorSubject<String>("");
   eventAuthError$ = this.eventAuthError.asObservable();
-
+  userData :any
   constructor(
     public afAuth: AngularFireAuth,
     public db: AngularFirestore,
-    public router: Router) { }
+    public router: Router,
+    public dialog : MatDialog) {
+
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.userData = user;
+        localStorage.setItem('user', JSON.stringify(this.userData));
+        JSON.parse(localStorage.getItem('user'));
+      } else {
+        localStorage.setItem('user', null);
+        JSON.parse(localStorage.getItem('user'));
+      }
+    })
+     }
 
 
     getUserState(){
@@ -58,18 +73,18 @@ export class AuthService {
   }
 
  register(email: string,password: string){
-    try{
-      const result = this.afAuth.createUserWithEmailAndPassword(
-        email,
-        password
-      );
-      return result;
-    }
-    catch(error){
-    console.log(error);
+  return this.afAuth.createUserWithEmailAndPassword(email, password)
+  .then((result) => {
+    /* Call the SendVerificaitonMail() function when new user sign
+    up and returns promise */
 
-    }
+    this.SetUserData(result.user);
+    this.dialog.open(DialogDataExampleDialog, {});
+    this.router.navigate(['/login']);
+  }).catch((error) => {
+    window.alert(error.message)
 
+  })
   }
 
   logout(){
@@ -85,8 +100,31 @@ export class AuthService {
    * @param email email of the user
    */
   resetPasswordInit(email: string) {
-    return this.afAuth.sendPasswordResetEmail(
-      email,
-      { url: 'http://localhost:4200/auth' });
+
+    return this.afAuth.sendPasswordResetEmail( email);
+
     }
+
+
+    SetUserData(user) {
+      const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
+      const userData: IUser = {
+        uid: user.uid,
+        email: user.email
+      }
+      return userRef.set(userData, {
+        merge: true
+      })
+    }
+
+}
+@Component({
+  selector: 'dialog-data-example-dialog',
+  templateUrl: './Dialog.component.html',
+})
+export class DialogDataExampleDialog {
+  constructor() {}
+}
+export interface DialogData {
+  animal: "Se ha creado la cuenta correctamente";
 }

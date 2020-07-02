@@ -12,10 +12,14 @@ import {ErrorStateMatcher} from '@angular/material/core';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  loginForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl(''),
-  });
+  emailFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+  passwordFormControl = new FormControl('', [
+    Validators.required,
+    Validators.min(7),
+  ]);
   matcher = new ErrorStateMatcher();
 
   authError: any;
@@ -36,20 +40,11 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/home']);
     }*/
 
-    const {email,password} = this.loginForm.value;
+    const email = this.emailFormControl.value;
+    const password = this.passwordFormControl.value;
     this.authSvc.login(email,password);
 
   }
 
-  resetPassword() {
-    const {email,password} = this.loginForm.value;
-    if (!email) {
-      alert('Escribe el correo primero');
-    }
-    this.authSvc.resetPasswordInit(email)
-    .then(
-      () => alert("Un enlace para reestablecer tu contraseña se ha enviado a tu email"),
-      (rejectionReason) => alert(rejectionReason))
-    .catch(e => alert('Ha ocurrido un error al intentar reestablecer tu contraseña'));
-  }
+
 }
