@@ -4,22 +4,17 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.css']
 })
-export class NavbarComponent  {
+export class SidebarComponent  {
 
-
-  public user$: Observable <any>= this.authSvc.afAuth.user;
+  public user: Observable <any>= this.authSvc.afAuth.user;
   constructor(private authSvc:AuthService,private router:Router) { }
 
 
-
-   onLogout(){
-
-      this.authSvc.logout();
-
-
+  ngOnInit(): void {
   }
+
 }

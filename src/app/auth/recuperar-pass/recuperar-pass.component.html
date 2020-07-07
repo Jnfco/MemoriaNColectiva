@@ -1,0 +1,24 @@
+<body class="body">
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <mat-card-title class="title">Por favor ingrese su email</mat-card-title>
+    <div class="form-group">
+      <mat-form-field>
+        <input matInput [formControl]="emailFormControl"
+        [errorStateMatcher] ="matcher" >
+        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+          Ingresa un email válido
+        </mat-error>
+        <mat-error *ngIf="emailFormControl.hasError('required')">
+         El email es obligatorio
+        </mat-error>
+      </mat-form-field>
+
+        <button mat-raised-button  class="botonReset" (click) ="onReset()">
+          Reestablecer
+        </button>
+
+    </div>
+  </mat-card-content>
+</mat-card>
+</body>

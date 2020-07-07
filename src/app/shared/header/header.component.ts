@@ -1,25 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
 })
-export class NavbarComponent  {
+export class HeaderComponent implements OnInit {
 
 
   public user$: Observable <any>= this.authSvc.afAuth.user;
   constructor(private authSvc:AuthService,private router:Router) { }
 
 
-
-   onLogout(){
-
-      this.authSvc.logout();
-
-
+  ngOnInit(): void {
   }
+
+
+  onLogout(){
+
+    this.authSvc.logout();
+
+
+}
 }

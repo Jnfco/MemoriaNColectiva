@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import{FormGroup,FormControl} from '@angular/forms';
+import{FormGroup,FormControl,Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth.service';
 import { Router } from '@angular/router';
 import {ReactiveFormsModule} from '@angular/forms';
+import {ErrorStateMatcher} from '@angular/material/core';
 
 @Component({
   selector: 'app-register',
@@ -10,22 +11,48 @@ import {ReactiveFormsModule} from '@angular/forms';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  registerForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl('')
-  })
+  matcher = new ErrorStateMatcher();
+  emailFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+  passwordFormControl = new FormControl('', [
+    Validators.required,
+    Validators.min(7),
+  ]);
+
+  nameFormControl = new FormControl('', [
+    Validators.required,
+    Validators.max(100),
+  ]);
+  hide =true;
+  authError: any;
+  organizations = [
+    {org: "Sindicato"},
+    {org: "Fundación"}
+  ];
+  selectedOrganization = this.organizations[0];
   constructor(private authSvc:AuthService,private router:Router) { }
 
   ngOnInit(): void {
+    this.authSvc.eventAuthError$.subscribe(data =>{
+      this.authError = data;
+    });
   }
 
-  async onRegister(){
-    const{email,password } = this.registerForm.value;
+  onRegister(){
+    const email = this.emailFormControl.value;
+    const password = this.passwordFormControl.value;
+    const name = this.nameFormControl.value;
+    const organization = this.selectedOrganization.org;
+
     try{
 
-      const user = await this.authSvc.register(email,password);
+      const user =  this.authSvc.register(email,password,name,organization);
+
       if(user){
-        this.router.navigate(["/home"]);
+        console.log("email control form:  ",this.authSvc.eventAuthError$);
+        //this.router.navigate(["/home"]);
       }
     }
     catch(error){
@@ -34,4 +61,12 @@ export class RegisterComponent implements OnInit {
 
 
   }
+
+  get passwordInput(){
+
+    return this.passwordFormControl.get('password');
+
+  }
+
+
 }
