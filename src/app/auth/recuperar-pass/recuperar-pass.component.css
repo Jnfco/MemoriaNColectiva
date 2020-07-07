@@ -18,9 +18,19 @@
 .card{
   width: 50%;
   margin-left: 25%;
+  border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
 }
 .body
 {
   padding-top: 10%;
-  height: auto;
+  height: 100%;
+  background-color: #007bff;
+  background: linear-gradient(to right, #0062E6, #33AEFF);
+}
+.title{
+  text-shadow: red;
+  color:#265180;
+  font-size: 1.2rem;
 }

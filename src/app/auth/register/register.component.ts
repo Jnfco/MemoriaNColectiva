@@ -20,8 +20,18 @@ export class RegisterComponent implements OnInit {
     Validators.required,
     Validators.min(7),
   ]);
+
+  nameFormControl = new FormControl('', [
+    Validators.required,
+    Validators.max(100),
+  ]);
   hide =true;
   authError: any;
+  organizations = [
+    {org: "Sindicato"},
+    {org: "Fundación"}
+  ];
+  selectedOrganization = this.organizations[0];
   constructor(private authSvc:AuthService,private router:Router) { }
 
   ngOnInit(): void {
@@ -33,10 +43,12 @@ export class RegisterComponent implements OnInit {
   onRegister(){
     const email = this.emailFormControl.value;
     const password = this.passwordFormControl.value;
+    const name = this.nameFormControl.value;
+    const organization = this.selectedOrganization.org;
 
     try{
 
-      const user =  this.authSvc.register(email,password);
+      const user =  this.authSvc.register(email,password,name,organization);
 
       if(user){
         console.log("email control form:  ",this.authSvc.eventAuthError$);
@@ -55,4 +67,6 @@ export class RegisterComponent implements OnInit {
     return this.passwordFormControl.get('password');
 
   }
+
+
 }
