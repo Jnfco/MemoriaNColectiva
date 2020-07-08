@@ -2,6 +2,32 @@ ul li{
   list-style:none ;
 }
 
-mat-toolbar{
- overflow-x:hidden;
+.mat-toolbar{
+ overflow:hidden;
 }
+.logo{
+  width: 12%;
+  height: 12%;
+}
+
+.logo-text{
+  margin-left: 2%;
+  margin-top: 5%;
+}
+
+.header{
+  display: flex;
+  flex-direction: row;
+}
+.user-icon{
+  font-size: 36px;
+}
+
+
+::ng-deep .user-card{
+
+  border: 55px !important;
+  border-radius: 30px !important;
+  border: #000 !important;
+ }
+

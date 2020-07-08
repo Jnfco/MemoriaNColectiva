@@ -43,6 +43,11 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { InicioComponent } from './inicio/inicio.component';
+import { EstadoFinancieroComponent } from './estado-financiero/estado-financiero.component';
+import { HistorialComponent } from './historial/historial.component';
+import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
+import { ComparativaComponent } from './comparativa/comparativa.component';
+import { SpinnerComponent } from './shared/spinner/spinner.component';
 
 
 @NgModule({
@@ -57,7 +62,12 @@ import { InicioComponent } from './inicio/inicio.component';
     HeaderComponent,
     FooterComponent,
     SidebarComponent,
-    InicioComponent
+    InicioComponent,
+    EstadoFinancieroComponent,
+    HistorialComponent,
+    ContratoColectivoComponent,
+    ComparativaComponent,
+    SpinnerComponent
 
 
   ],

@@ -12,6 +12,9 @@ import {ErrorStateMatcher} from '@angular/material/core';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
+
+  isLoading = false;
+
   emailFormControl = new FormControl('', [
     Validators.required,
     Validators.email,
@@ -42,7 +45,9 @@ export class LoginComponent implements OnInit {
 
     const email = this.emailFormControl.value;
     const password = this.passwordFormControl.value;
+    this.isLoading = true;
     this.authSvc.login(email,password);
+    this.isLoading = false;
 
   }
 
