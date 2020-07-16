@@ -92,7 +92,8 @@ import { SpinnerComponent } from './shared/spinner/spinner.component';
     MatSelectModule,
     MatSidenavModule,
     FlexLayoutModule,
-    MatListModule
+    MatListModule,
+    MatTableModule
   ],
   providers: [DocumentService,
     AuthService],

@@ -1,1 +1,96 @@
-<p>estado-financiero works!</p>
+<input type="file" (change)="uploadedFile($event)" multiple="false" />
+
+
+<!--Tabla Activos Corrientes-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+  <mat-card-title>Hola</mat-card-title>
+<table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" title="Hola">
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Efectivo y equivalentes al efectivo">
+  <th mat-header-cell *matHeaderCellDef>Efectivo y equivalentes al efectivo</th>
+  <td  mat-cell *matCellDef="let element">{{element.efectivo}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Activos financieros">
+  <th mat-header-cell *matHeaderCellDef>Activos financieros</th>
+  <td  mat-cell *matCellDef="let element">{{element.activosF}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Otros activos no financieros">
+  <th mat-header-cell *matHeaderCellDef>Otros activos no financieros</th>
+  <td  mat-cell *matCellDef="let element">{{element.otrosAc}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Deudores educacionales y otras cuentas por cobrar, netos">
+  <th mat-header-cell *matHeaderCellDef>Deudores educacionales y otras cuentas por cobrar,netos</th>
+  <td  mat-cell *matCellDef="let element">{{element.deudores}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Cuentas por cobrar a partes relacionadas">
+  <th mat-header-cell *matHeaderCellDef>Cuentas por cobrar a partes relacionadas</th>
+  <td  mat-cell *matCellDef="let element">{{element.cuentas}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Activo por impuestos corrientes">
+  <th mat-header-cell *matHeaderCellDef>Activo por impuestos corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.activoImpC}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="Total activos corrientes">
+  <th mat-header-cell *matHeaderCellDef>Total activos corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.total}}</td>
+
+</ng-container>
+<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+</mat-card>
+
+<!-- Tabla Activos no corrientes-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData">
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="otros activos">
+  <th mat-header-cell *matHeaderCellDef>Otros activos financieros no corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.otrosA}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="activos intangibles">
+  <th mat-header-cell *matHeaderCellDef>Activos intantangibles, neto</th>
+  <td  mat-cell *matCellDef="let element">{{element.activosI}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="propiedades">
+  <th mat-header-cell *matHeaderCellDef>Propiedades planta y equipos, neto</th>
+  <td  mat-cell *matCellDef="let element">{{element.prop}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="activos por derecho">
+  <th mat-header-cell *matHeaderCellDef>Activos por derecho de uso</th>
+  <td  mat-cell *matCellDef="let element">{{element.activosD}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="total no corrientes">
+  <th mat-header-cell *matHeaderCellDef>Total activos no corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.totalNC}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="total">
+  <th mat-header-cell *matHeaderCellDef>Total activos</th>
+  <td  mat-cell *matCellDef="let element">{{element.totalA}}</td>
+
+</ng-container>
+<tr mat-header-row *matHeaderRowDef="tablaActivosNC"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaActivosNC;"></tr>
+</table>
+</mat-card>
