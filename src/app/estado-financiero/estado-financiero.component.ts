@@ -19,10 +19,15 @@ export class EstadoFinancieroComponent implements OnInit {
   @ViewChild('tabla',{static: false}) tabla: ElementRef;
 
 
+  //Nombres para las columnas de las tablas en angular material
   displayedColumns: string[] = ['Año','Efectivo y equivalentes al efectivo','Activos financieros','Otros activos no financieros','Deudores educacionales y otras cuentas por cobrar, netos','Cuentas por cobrar a partes relacionadas','Activo por impuestos corrientes','Total activos corrientes'];
   tablaActivosNC: string[] = ['Año','otros activos','activos intangibles','propiedades','activos por derecho','total no corrientes','total']
+
+  // Listas de interfaces para cada tabla
   activosC: ActivosC[];
   activosNC: ActivosNC[];
+
+
   importFile: File;
   storeData: any;
   csvData: any;
