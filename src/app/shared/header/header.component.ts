@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { EventEmitter } from '@angular/core';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class HeaderComponent implements OnInit {
 
-
+  @Output() toggleSideBarForMe: EventEmitter<any> = new EventEmitter()
   public user$: Observable <any>= this.authSvc.afAuth.user;
   constructor(private authSvc:AuthService,private router:Router) { }
 
@@ -18,6 +19,9 @@ export class HeaderComponent implements OnInit {
   }
 
 
+onToggle(){
+  this.toggleSideBarForMe.emit();
+}
   onLogout(){
 
     this.authSvc.logout();

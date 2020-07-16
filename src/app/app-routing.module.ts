@@ -7,6 +7,10 @@ import { RecuperarPassComponent } from './auth/recuperar-pass/recuperar-pass.com
 import { AuthService } from './services/auth.service';
 import { InicioComponent } from './inicio/inicio.component';
 import { DashboardComponent } from './shared/dashboard/dashboard.component';
+import { EstadoFinancieroComponent } from './estado-financiero/estado-financiero.component';
+import { HistorialComponent } from './historial/historial.component';
+import { ComparativaComponent } from './comparativa/comparativa.component';
+import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -16,11 +20,26 @@ const routes: Routes = [
    component: HomeComponent,
    children:[{
      path: '',
-     component: DashboardComponent
-   },{
-     path: 'inicio',
      component: InicioComponent
-   }]
+   },
+  {
+    path: 'estadoFinanciero',
+    component: EstadoFinancieroComponent
+  },
+  {
+    path:'historial',
+    component: HistorialComponent
+  },
+  {
+    path:'comparativa',
+    component: ComparativaComponent
+  },
+  {
+    path:'contrato',
+    component: ContratoColectivoComponent
+  }
+
+]
   },
   {path: 'login', component: LoginComponent},
   {path: 'reset',component: RecuperarPassComponent}

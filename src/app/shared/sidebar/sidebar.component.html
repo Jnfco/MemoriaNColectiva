@@ -1,16 +1,29 @@
+<body>
 <mat-nav-list >
 
   <div class="profile-card">
-    <div class="header" *ngIf="user">
-      <img class="logo" src="../../../assets/logo.png" alt ="logo">
-      <h1 class="logo-text">NColectiva</h1>
+    <div class="header">
+      <mat-card class="user-card">
+        <mat-icon class="iconoUser">person outline</mat-icon>
+        <h2 class="usuariotext">Usuario</h2>
+      </mat-card>
 
-    </div>
 
-    <div>
-      Usuario
     </div>
 
   </div>
 
+
+<div class="menu-elements">
+<h2 class="menu-text" matSubheader>Menu Principal</h2>
+
+<mat-divider ></mat-divider>
+<a class="inicio-text" mat-list-item routerLinkActive="list-item-active" routerLink="inicio"><mat-icon style="width: 10%;">home</mat-icon>Inicio</a>
+<a  class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="estadoFinanciero"><mat-icon style="width: 10%;">attach_money</mat-icon>Estado Financiero</a>
+<a  class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="historial"><mat-icon style="width: 10%;">history</mat-icon>Historial</a>
+<a  class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato"><mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo</a>
+<a  class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="comparativa"><mat-icon style="width: 10%;">compare</mat-icon>Comparativa</a>
+<mat-divider></mat-divider>
+</div>
 </mat-nav-list>
+</body>

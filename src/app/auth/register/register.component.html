@@ -1,12 +1,11 @@
 
 
-<body>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <mat-card class="my-5">
-          <mat-card-content class="cardContent">
-            <div class="row justify-content-center px-3 mb-3">
+<body class ="body">
+  <app-spinner *ngIf="isLoading"></app-spinner>
+        <mat-card class="my-5" *ngIf="!isLoading">
+
+          <mat-card-content  class="cardContent" >
+            <div class="logo-container">
               <img id="logo" src="../../../assets/logo.png">
             </div>
             <form class="register" >
@@ -37,9 +36,4 @@
             </mat-card-actions>
           </mat-card-content>
         </mat-card>
-      </div>
-
-    </div>
-
-  </div>
 </body>

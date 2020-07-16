@@ -1,88 +1,50 @@
-<!--
-<body>
-  <div class ="container">
-<div class="row" style="height:max-content;" >
-  <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-    <div class="card card-signin my-5">
-      <div class="card-body">
-        <div class="row justify-content-center px-3 mb-3">
-          <img id="logo" src="../../../assets/logo.png">
-        </div>
-        <form class="login" [formGroup]="loginForm" (ngSubmit)="onLogin()">
-          <div class ="row" *ngIf="authError">
-            <div class="col -12 alert alert-danger">
-              La combinación de email y contraseña es incorrecta
-            </div>
 
-          </div>
-          <div class="form-signin" >
-            <label for="email">Email</label>
-            <input type="email" class="form-control" formControlName="email" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input type="password" class="form-control" formControlName="password" required>
-          </div>
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Iniciar sesión</button>
-          <div class="form-group mt-3">
-            <p> <a [routerLink]="['/reset']">¿Olvidó su contraseña?</a></p>
-          </div>
-        </form>
 
-        <div class="form-group mt-3">
-          <p> ¿No tiene una cuenta? <a [routerLink]="['/register']">Registrarse</a></p>
-        </div>
+
+
+<body class="body">
+
+  <mat-card class="my-5">
+    <app-spinner *ngIf="isLoading"></app-spinner>
+    <mat-card-content class="cardContent" *ngIf ="!isLoading">
+      <div class="logo-container">
+        <img id="logo" src="../../../assets/logo.png">
       </div>
-    </div>
-  </div>
-</div>
-</div>
-</body>-->
+      <form class="login">
+        <div class="row" *ngIf="authError">
+          <mat-error>
+            La combinación de email y contraseña es incorrecta
+          </mat-error>
+
+        </div>
+        <mat-form-field class="form-login">
+          <mat-label>Email</mat-label>
+          <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" required
+            [errorStateMatcher]="matcher">
+
+
+        </mat-form-field>
+        <mat-form-field class="form-login">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [formControl]="passwordFormControl" placeholder="Contraseña" name="contraseña" type="password"
+            required minlength="7">
+        </mat-form-field>
+        <div class="resetForm">
+          <p> <a [routerLink]="['/reset']">¿Olvidó su contraseña?</a></p>
+          <div class="registerForm">
+            <p> ¿No tiene una cuenta? <a [routerLink]="['/register']">Registrarse</a></p>
+          </div>
+        </div>
+      </form>
+
+      <mat-card-actions class="botonSection">
+        <button mat-raised-button class="boton" color="primary" type="submit" (click)="onLogin()">Iniciar
+          Sesión</button>
+      </mat-card-actions>
+    </mat-card-content>
+  </mat-card>
 
 
 
-<body>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <mat-card class="my-5">
-          <mat-card-content class="cardContent">
-            <div class="row justify-content-center px-3 mb-3">
-              <img id="logo" src="../../../assets/logo.png">
-            </div>
-            <form class="login" >
-              <div class ="row" *ngIf="authError">
-                <div class="col -12 alert alert-danger">
-                  La combinación de email y contraseña es incorrecta
-                </div>
 
-              </div>
-              <mat-form-field class="form-login">
-                <mat-label>Email</mat-label>
-                <input matInput  [formControl]="emailFormControl" placeholder="Email" name="email" required [errorStateMatcher] ="matcher" >
-
-
-              </mat-form-field>
-              <mat-form-field class="form-login">
-                <mat-label>Contraseña</mat-label>
-                <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña" name="contraseña" type="password" required minlength="7">
-              </mat-form-field>
-              <div class="form-group mt-3">
-                <p> <a [routerLink]="['/reset']">¿Olvidó su contraseña?</a></p>
-                <div class="form-group mt-3">
-                  <p> ¿No tiene una cuenta? <a [routerLink]="['/register']">Registrarse</a></p>
-                </div>
-              </div>
-            </form>
-
-            <mat-card-actions class="botonSection">
-              <button  mat-raised-button class="boton"  color="primary" type="submit" (click) ="onLogin()">Iniciar Sesión</button>
-            </mat-card-actions>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-    </div>
-
-  </div>
 </body>

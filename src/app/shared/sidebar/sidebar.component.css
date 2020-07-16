@@ -1,13 +1,45 @@
-.logo{
-  width: 15%;
-  height: 15%;
+.profile-card {
+  margin-top: 20%;
+ text-align: center;
+
 }
-.header{
+body {
+  background-color: #007bff;
+  color: white;
+  height: 100%;
+}
+
+mat-card{
+  width: 80%;
+  margin-left: 5%;
+  margin-bottom: 10%;
+  background-color: #36A0F5;
+  color: white;
   display: flex;
   flex-direction: row;
 }
-
-.logo-text{
-  margin-left: 5%;
-  margin-top: 5%;
+.usuariotext{
+  margin-left: 10%;
 }
+.iconoUser{
+  font-size: 36px;
+  color: black;
+}
+
+.menu-elements{
+  text-align: center;
+}
+
+.inicio-text,.dashboard-text{
+  color: white;
+}
+
+.menu-text{
+  color:rgb(206, 206, 206);
+}
+
+.user-card{
+  box-shadow: none !important;
+}
+
+

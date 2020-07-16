@@ -11,6 +11,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  isLoading = false;
   matcher = new ErrorStateMatcher();
   emailFormControl = new FormControl('', [
     Validators.required,
@@ -45,7 +46,7 @@ export class RegisterComponent implements OnInit {
     const password = this.passwordFormControl.value;
     const name = this.nameFormControl.value;
     const organization = this.selectedOrganization.org;
-
+    this.isLoading = true;
     try{
 
       const user =  this.authSvc.register(email,password,name,organization);
@@ -53,10 +54,12 @@ export class RegisterComponent implements OnInit {
       if(user){
         console.log("email control form:  ",this.authSvc.eventAuthError$);
         //this.router.navigate(["/home"]);
+        this.isLoading = false;
       }
     }
     catch(error){
       console.log(error);
+      this.isLoading= false;
     }
 
 
