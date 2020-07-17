@@ -94,3 +94,273 @@
         <tr mat-row *matRowDef="let row; columns: tablaActivosNC;"></tr>
 </table>
 </mat-card>
+
+<!--Tabla activos pasivos corrientes-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData">
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="pasivos arrendamientos">
+  <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
+  <td  mat-cell *matCellDef="let element">{{element.pasivosAr}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="otros pasivos">
+  <th mat-header-cell *matHeaderCellDef>Otros pasivos no financieros</th>
+  <td  mat-cell *matCellDef="let element">{{element.otrosP}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="cuentas comerciales">
+  <th mat-header-cell *matHeaderCellDef>Cuentas por pagar comerciales y otras cuentas por pagar</th>
+  <td  mat-cell *matCellDef="let element">{{element.cuentasC}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="cuentas relacionadas">
+  <th mat-header-cell *matHeaderCellDef>Cuentas por pagar a partes relacionadas</th>
+  <td  mat-cell *matCellDef="let element">{{element.cuentasR}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="otras provisiones">
+  <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
+  <td  mat-cell *matCellDef="let element">{{element.otras}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="pasivos impuestos corrientes">
+  <th mat-header-cell *matHeaderCellDef>Pasivos por impuestos corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.pasivosI}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="provisiones">
+  <th mat-header-cell *matHeaderCellDef>Pasivos por beneficios a los empleados</th>
+  <td  mat-cell *matCellDef="let element">{{element.provisiones}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="total pasivos corrientes">
+  <th mat-header-cell *matHeaderCellDef>Total pasivos corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.totalPC}}</td>
+
+</ng-container>
+<tr mat-header-row *matHeaderRowDef="tablaPasivosC"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaPasivosC;"></tr>
+</table>
+</mat-card>
+
+<!--Tabla pasivos no corrientes-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="pasivos arrendamientos">
+  <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
+  <td  mat-cell *matCellDef="let element">{{element.pasivosAr}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="otras provisiones">
+  <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
+  <td  mat-cell *matCellDef="let element">{{element.otrosP}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="provisiones beneficios">
+  <th mat-header-cell *matHeaderCellDef>Provisiones por beneficios a los empleados</th>
+  <td  mat-cell *matCellDef="let element">{{element.provisionesB}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="total pasivos no corrientes">
+  <th mat-header-cell *matHeaderCellDef>Total pasivos no corrientes</th>
+  <td  mat-cell *matCellDef="let element">{{element.total}}</td>
+
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="tablaPasivosNC"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaPasivosNC;"></tr>
+</table>
+</mat-card>
+
+
+<!--Tabla patrimonio-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="aportes">
+  <th mat-header-cell *matHeaderCellDef>Aportes y donaciones</th>
+  <td  mat-cell *matCellDef="let element">{{element.aportes}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="resultados retenidos">
+  <th mat-header-cell *matHeaderCellDef>Resultados retenidos</th>
+  <td  mat-cell *matCellDef="let element">{{element.resultadosR}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="patrimonio contador">
+  <th mat-header-cell *matHeaderCellDef>Patrimonio atribuible al contador</th>
+  <td  mat-cell *matCellDef="let element">{{element.patrimonioContador}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="participaciones">
+  <th mat-header-cell *matHeaderCellDef>Participaciones no controladoras</th>
+  <td  mat-cell *matCellDef="let element">{{element.participaciones}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="total patrimonio neto">
+  <th mat-header-cell *matHeaderCellDef>Total patrimonio neto</th>
+  <td  mat-cell *matCellDef="let element">{{element.totalPNeto}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="total pasivos y patrimonio">
+  <th mat-header-cell *matHeaderCellDef>Total pasivos y patrimonio</th>
+  <td  mat-cell *matCellDef="let element">{{element.totalPP}}</td>
+
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="tablaPatrimonio"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaPatrimonio;"></tr>
+</table>
+</mat-card>
+
+
+<!--Tabla estado resultado-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="ingresos">
+  <th mat-header-cell *matHeaderCellDef>Ingresos de actividades ordinarios</th>
+  <td  mat-cell *matCellDef="let element">{{element.ingresos}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="costo ventas">
+  <th mat-header-cell *matHeaderCellDef>Costo de ventas</th>
+  <td  mat-cell *matCellDef="let element">{{element.costoVentas}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="margen">
+  <th mat-header-cell *matHeaderCellDef>Margen bruto</th>
+  <td  mat-cell *matCellDef="let element">{{element.margen}}</td>
+
+</ng-container>
+<ng-container matColumnDef ="otros ingresos">
+  <th mat-header-cell *matHeaderCellDef>Otros ingresos por función</th>
+  <td  mat-cell *matCellDef="let element">{{element.otrosI}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="gastos admin">
+  <th mat-header-cell *matHeaderCellDef>Gastos de administración</th>
+  <td  mat-cell *matCellDef="let element">{{element.gastosAdm}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="otras ganancias">
+  <th mat-header-cell *matHeaderCellDef>Otras ganancias(pérdidas)</th>
+  <td  mat-cell *matCellDef="let element">{{element.otrasGanancias}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="ingresos financieros">
+  <th mat-header-cell *matHeaderCellDef>Ingresos financieros</th>
+  <td  mat-cell *matCellDef="let element">{{element.ingresosF}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="costos financieros">
+  <th mat-header-cell *matHeaderCellDef>Costos financieros</th>
+  <td  mat-cell *matCellDef="let element">{{element.costosF}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="resultado reajuste">
+  <th mat-header-cell *matHeaderCellDef>Resultado por unidad de reajuste</th>
+  <td  mat-cell *matCellDef="let element">{{element.resultadoR}}</td>
+
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="tablaEstadoResultados"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaEstadoResultados;"></tr>
+</table>
+</mat-card>
+
+
+<!--Tabla ganancia antes del impuesto-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="gastoImp">
+  <th mat-header-cell *matHeaderCellDef>Gasto por impuesto a las ganancias</th>
+  <td  mat-cell *matCellDef="let element">{{element.gastoImp}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="gananciaDespImp">
+  <th mat-header-cell *matHeaderCellDef>Ganancia después de impuesto</th>
+  <td  mat-cell *matCellDef="let element">{{element.gastoDespImp}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="totalRes">
+  <th mat-header-cell *matHeaderCellDef>Total resultados</th>
+  <td  mat-cell *matCellDef="let element">{{element.totalRes}}</td>
+
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="tablaGananciaAntesImpuestos"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaGananciaAntesImpuestos;"></tr>
+</table>
+</mat-card>
+
+<!--Tabla ganancia atribuible a-->
+<mat-card>
+  <mat-card-content></mat-card-content>
+<table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="ganancia">
+  <th mat-header-cell *matHeaderCellDef>Ganancia</th>
+  <td  mat-cell *matCellDef="let element">{{element.ganancia}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="gananciaActuariales">
+  <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
+  <td  mat-cell *matCellDef="let element">{{element.gananciaAct}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="totalResIntegrales">
+  <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
+  <td  mat-cell *matCellDef="let element">{{element.total}}</td>
+
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="tablaEstadoResultadosIntegrales"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaEstadoResultadosIntegrales;"></tr>
+</table>
+</mat-card>
