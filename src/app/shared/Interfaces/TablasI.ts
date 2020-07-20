@@ -69,9 +69,9 @@ totalRes:string;
 
 export interface GananciaAtribuible{
   anio: string;
-  gastoImp:string;
-  gastoDespImp:string;
-  totalRes:string;
+  gananciaControlador:string;
+  gananciaNoControladora:string;
+  ganancia:string;
 }
 
 export interface EstadoResIntegrales{

@@ -18,6 +18,7 @@ import { map } from 'rxjs/operators';
 export class AuthService implements CanActivate {
   public user: User;
   private eventAuthError = new BehaviorSubject<String>('');
+  private userID:any;
   eventAuthError$ = this.eventAuthError.asObservable();
   userData: any;
   constructor(
@@ -118,6 +119,7 @@ export class AuthService implements CanActivate {
   }
 
   SetUserData(user, name:string,organization:string) {
+
     const userRef: AngularFirestoreDocument<any> = this.db.doc(
       `users/${user.uid}`
     );
@@ -127,10 +129,15 @@ export class AuthService implements CanActivate {
       name: name,
       organization: organization
     };
+    this.userID=user.uid;
     return userRef.set(userData, {
       merge: true,
     });
   }
+
+
+
+
 }
 @Component({
   selector: 'dialog-data-example-dialog',
@@ -142,3 +149,4 @@ export class DialogDataExampleDialog {
 export interface DialogData {
   animal: 'Se ha creado la cuenta correctamente';
 }
+

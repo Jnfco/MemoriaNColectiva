@@ -1,10 +1,10 @@
-<input type="file" (change)="uploadedFile($event)" multiple="false" />
+<input type="file"  onclick="this.value = null"  (change)="uploadedFile($event)" accept=".xlsx" />
 
-
+{{this.activosC}}
 <!--Tabla Activos Corrientes-->
-<mat-card>
-  <mat-card-content></mat-card-content>
-  <mat-card-title>Hola</mat-card-title>
+<mat-card  >
+  <mat-card-content>
+<h1 style="text-align: center;">  Activos Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" title="Hola">
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -49,11 +49,9 @@
 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-</mat-card>
 
 <!-- Tabla Activos no corrientes-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Activos No Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData">
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -93,11 +91,9 @@
 <tr mat-header-row *matHeaderRowDef="tablaActivosNC"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaActivosNC;"></tr>
 </table>
-</mat-card>
 
 <!--Tabla activos pasivos corrientes-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Activos Pasivos Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData">
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -147,11 +143,9 @@
 <tr mat-header-row *matHeaderRowDef="tablaPasivosC"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaPasivosC;"></tr>
 </table>
-</mat-card>
 
 <!--Tabla pasivos no corrientes-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Activos Pasivos No Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -182,12 +176,10 @@
 <tr mat-header-row *matHeaderRowDef="tablaPasivosNC"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaPasivosNC;"></tr>
 </table>
-</mat-card>
 
 
 <!--Tabla patrimonio-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Patrimonio</h1>
 <table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -230,12 +222,10 @@
 <tr mat-header-row *matHeaderRowDef="tablaPatrimonio"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaPatrimonio;"></tr>
 </table>
-</mat-card>
 
 
 <!--Tabla estado resultado-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Estado Resultado</h1>
 <table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -296,12 +286,10 @@
 <tr mat-header-row *matHeaderRowDef="tablaEstadoResultados"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaEstadoResultados;"></tr>
 </table>
-</mat-card>
 
 
 <!--Tabla ganancia antes del impuesto-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Ganancia antes del impuesto</h1>
 <table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -330,11 +318,40 @@
 <tr mat-header-row *matHeaderRowDef="tablaGananciaAntesImpuestos"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaGananciaAntesImpuestos;"></tr>
 </table>
-</mat-card>
 
 <!--Tabla ganancia atribuible a-->
-<mat-card>
-  <mat-card-content></mat-card-content>
+  <h1 style="text-align: center;">  Ganancia atribuible a</h1>
+<table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
+<ng-container matColumnDef ="Año">
+  <th mat-header-cell *matHeaderCellDef>Año</th>
+  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="gananciaControlador">
+  <th mat-header-cell *matHeaderCellDef>Ganancia atribuible al controlador</th>
+  <td  mat-cell *matCellDef="let element">{{element.gananciaControlador}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="gananciaNoControl">
+  <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
+  <td  mat-cell *matCellDef="let element">{{element.gananciaNoControladora}}</td>
+
+</ng-container>
+
+<ng-container matColumnDef ="ganancia">
+  <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
+  <td  mat-cell *matCellDef="let element">{{element.ganancia}}</td>
+
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="tablaGananciaAtribuibleA"></tr>
+        <tr mat-row *matRowDef="let row; columns: tablaGananciaAtribuibleA;"></tr>
+</table>
+
+<!--Tabla Total resultados integrales-->
+  <h1 style="text-align: center;">  Estado resultados integrales</h1>
 <table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z8" style="width: 100%;" *ngIf="!noData" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
@@ -363,4 +380,8 @@
 <tr mat-header-row *matHeaderRowDef="tablaEstadoResultadosIntegrales"></tr>
         <tr mat-row *matRowDef="let row; columns: tablaEstadoResultadosIntegrales;"></tr>
 </table>
+</mat-card-content>
+<mat-card-actions>
+  <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Estado Financiero</button>
+</mat-card-actions>
 </mat-card>
