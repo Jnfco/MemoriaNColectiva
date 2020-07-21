@@ -48,6 +48,7 @@ import { HistorialComponent } from './historial/historial.component';
 import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
 import { ComparativaComponent } from './comparativa/comparativa.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
+import { SatPopoverModule } from '@ncstate/sat-popover';
 
 
 @NgModule({
@@ -93,7 +94,8 @@ import { SpinnerComponent } from './shared/spinner/spinner.component';
     MatSidenavModule,
     FlexLayoutModule,
     MatListModule,
-    MatTableModule
+    MatTableModule,
+    SatPopoverModule
   ],
   providers: [DocumentService,
     AuthService],

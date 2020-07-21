@@ -58,6 +58,7 @@ export class DocumentService {
     const estadoFinancieroRef: AngularFirestoreDocument<any> = this.db.doc(
       `EstadoFinanciero/${userId}`
     );
+    console.log('Estado financiero ref: ',estadoFinanciero)
     return estadoFinancieroRef.set(estadoFinanciero, { merge: true });
   }
 

@@ -12,4 +12,8 @@ export class ContratoColectivoComponent implements OnInit {
   ngOnInit(): void {
   }
 
+
 }
+
+
+
