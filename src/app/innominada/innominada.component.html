@@ -1,0 +1,63 @@
+
+<div id="div_file" style="display: flex;flex-direction: row;" >
+
+
+   <label for="file-upload" class="custom-file-upload">
+   Cargar Datos
+</label>
+  <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
+  <label for="file-upload" class="custom-file-upload">
+    Guardar Datos
+ </label>
+
+</div>
+
+<mat-card class="card asd cardPardding" *ngIf=!noData>
+<mat-card-header>
+  <h2>Gráfico de cajas</h2>
+</mat-card-header>
+<mat-card-content style="width: 60%; display: flex;flex-direction: column;">
+  <bd2-ngx-hbox-plot style="width: 90%;"
+  [data]="data"
+  [labels]="this.nombreCargos"
+  sorted="median"
+  [domain] =[100000,this.maxVal]
+  labelsOn= "trigger">
+</bd2-ngx-hbox-plot>
+</mat-card-content>
+</mat-card>
+
+<mat-card class="card asd cardPardding" *ngIf =!noData>
+  <mat-card-header>
+    <h2>Sueldos agrupados por cargo</h2>
+  </mat-card-header>
+<mat-card-content>
+  <div>
+    <div>
+      <div >
+        <canvas baseChart
+        [datasets]="lineChartData"
+        [labels]="this.nombreCargos"
+        [options]="lineChartOptions"
+        [colors]="lineChartColors"
+        [legend]="lineChartLegend"
+        [chartType]="lineChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</mat-card-content>
+</mat-card>
+
+
+<mat-card class="card asd cardPardding">
+  <mat-card-header>
+    <h2>Gráfico de barras</h2>
+  </mat-card-header>
+</mat-card>
+
+<mat-card class="card asd cardPardding">
+  <mat-card-header>
+    <h2>Gráfico de campana de sueldos</h2>
+  </mat-card-header>
+</mat-card>

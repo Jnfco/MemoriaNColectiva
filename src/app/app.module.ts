@@ -49,6 +49,10 @@ import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colect
 import { ComparativaComponent } from './comparativa/comparativa.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 import { SatPopoverModule } from '@ncstate/sat-popover';
+import { InnominadaComponent } from './innominada/innominada.component';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {BD2NgxHBoxplotModule} from 'bd2-ngx-hboxplot';
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -68,7 +72,8 @@ import { SatPopoverModule } from '@ncstate/sat-popover';
     HistorialComponent,
     ContratoColectivoComponent,
     ComparativaComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    InnominadaComponent
 
 
   ],
@@ -95,7 +100,10 @@ import { SatPopoverModule } from '@ncstate/sat-popover';
     FlexLayoutModule,
     MatListModule,
     MatTableModule,
-    SatPopoverModule
+    SatPopoverModule,
+    MatProgressBarModule,
+    BD2NgxHBoxplotModule,
+    ChartsModule
   ],
   providers: [DocumentService,
     AuthService],

@@ -11,6 +11,7 @@ import { EstadoFinancieroComponent } from './estado-financiero/estado-financiero
 import { HistorialComponent } from './historial/historial.component';
 import { ComparativaComponent } from './comparativa/comparativa.component';
 import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
+import { InnominadaComponent } from './innominada/innominada.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -25,6 +26,10 @@ const routes: Routes = [
   {
     path: 'estadoFinanciero',
     component: EstadoFinancieroComponent
+  },
+  {
+    path: 'innominada',
+    component: InnominadaComponent
   },
   {
     path:'historial',

@@ -1,15 +1,16 @@
 
-<div id="div_file" class="mat-elevation-z2">
+<div id="div_file" style="display: flex;flex-direction: row;">
 
-  <p id="texto"> <h3 >Cargar archivo de tablas</h3>
-  <input type="file" id="btn_enviar"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
-</div>
-<div style="margin-top: 1%;">
-  <mat-divider></mat-divider>
+  <label for="file-upload" class="custom-file-upload">
+    Cargar Datos
+ </label>
+   <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
+   <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Estado Financiero</button>
 </div>
 
 <!--Tabla Activos Corrientes-->
-<mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" >
+<mat-progress-bar mode="indeterminate" *ngIf="noData"></mat-progress-bar>
+<mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="!noData">
   <mat-card-content>
 <h1 class ="table-title" style="text-align: center;">  Activos Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%" >
@@ -110,7 +111,8 @@
 </ng-container>
 <ng-container matColumnDef ="activos intangibles">
   <th mat-header-cell *matHeaderCellDef>Activos intantangibles, neto</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
     <input matInput  [value]="element.activosI" [(ngModel)]="element.activosI">
   </mat-form-field>
 </td>
@@ -191,14 +193,16 @@
 </ng-container>
 <ng-container matColumnDef ="otras provisiones">
   <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never" style ="width: 100px;">
     <input matInput  [value]="element.otras" [(ngModel)]="element.otras">
   </mat-form-field></td>
 
 </ng-container>
 <ng-container matColumnDef ="pasivos impuestos corrientes">
-  <th mat-header-cell *matHeaderCellDef>Pasivos por impuestos corrientes</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
+  <th  mat-header-cell *matHeaderCellDef>Pasivos por impuestos corrientes</th>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never" style ="width: 100px;">
     <input matInput  [value]="element.pasivosI" [(ngModel)]="element.pasivosI">
   </mat-form-field></td>
 
@@ -226,27 +230,47 @@
 <table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z8" style="width: 100%;" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
-  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="pasivos arrendamientos">
   <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
-  <td  mat-cell *matCellDef="let element">{{element.pasivosAr}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.pasivosAr" [(ngModel)]="element.pasivosAr">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="otras provisiones">
   <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
-  <td  mat-cell *matCellDef="let element">{{element.otrosP}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.otrosP" [(ngModel)]="element.otrosP">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="provisiones beneficios">
   <th mat-header-cell *matHeaderCellDef>Provisiones por beneficios a los empleados</th>
-  <td  mat-cell *matCellDef="let element">{{element.provisionesB}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.provisionesB" [(ngModel)]="element.provisionesB">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="total pasivos no corrientes">
   <th mat-header-cell *matHeaderCellDef>Total pasivos no corrientes</th>
-  <td  mat-cell *matCellDef="let element">{{element.total}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.total" [(ngModel)]="element.total">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
@@ -260,39 +284,67 @@
 <table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z8" style="width: 100%;" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
-  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="aportes">
   <th mat-header-cell *matHeaderCellDef>Aportes y donaciones</th>
-  <td  mat-cell *matCellDef="let element">{{element.aportes}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.aportes" [(ngModel)]="element.aportes">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="resultados retenidos">
   <th mat-header-cell *matHeaderCellDef>Resultados retenidos</th>
-  <td  mat-cell *matCellDef="let element">{{element.resultadosR}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.resultadosR" [(ngModel)]="element.resultadosR">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="patrimonio contador">
   <th mat-header-cell *matHeaderCellDef>Patrimonio atribuible al contador</th>
-  <td  mat-cell *matCellDef="let element">{{element.patrimonioContador}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.patrimonioContador" [(ngModel)]="element.patrimonioContador">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="participaciones">
   <th mat-header-cell *matHeaderCellDef>Participaciones no controladoras</th>
-  <td  mat-cell *matCellDef="let element">{{element.participaciones}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.participaciones" [(ngModel)]="element.participaciones">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="total patrimonio neto">
   <th mat-header-cell *matHeaderCellDef>Total patrimonio neto</th>
-  <td  mat-cell *matCellDef="let element">{{element.totalPNeto}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.totalPNeto" [(ngModel)]="element.totalPNeto">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="total pasivos y patrimonio">
   <th mat-header-cell *matHeaderCellDef>Total pasivos y patrimonio</th>
-  <td  mat-cell *matCellDef="let element">{{element.totalPP}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.totalPP" [(ngModel)]="element.totalPP">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
@@ -306,57 +358,97 @@
 <table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z8" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
-  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never" style ="width: 100px;">
+      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="ingresos">
   <th mat-header-cell *matHeaderCellDef>Ingresos de actividades ordinarios</th>
-  <td  mat-cell *matCellDef="let element">{{element.ingresos}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never" style ="width: 100px;">
+      <input matInput  [value]="element.ingresos" [(ngModel)]="element.ingresos">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="costo ventas">
   <th mat-header-cell *matHeaderCellDef>Costo de ventas</th>
-  <td  mat-cell *matCellDef="let element">{{element.costoVentas}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.costoVentas" [(ngModel)]="element.costoVentas">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="margen">
   <th mat-header-cell *matHeaderCellDef>Margen bruto</th>
-  <td  mat-cell *matCellDef="let element">{{element.margen}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.margen" [(ngModel)]="element.margen">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="otros ingresos">
   <th mat-header-cell *matHeaderCellDef>Otros ingresos por función</th>
-  <td  mat-cell *matCellDef="let element">{{element.otrosI}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.otrosI" [(ngModel)]="element.otrosI">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="gastos admin">
   <th mat-header-cell *matHeaderCellDef>Gastos de administración</th>
-  <td  mat-cell *matCellDef="let element">{{element.gastosAdm}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.gastosAdm" [(ngModel)]="element.gastosAdm">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="otras ganancias">
   <th mat-header-cell *matHeaderCellDef>Otras ganancias(pérdidas)</th>
-  <td  mat-cell *matCellDef="let element">{{element.otrasGanancias}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never" style ="width: 100px;">
+      <input matInput  [value]="element.otrasGanancias" [(ngModel)]="element.otrasGanancias">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="ingresos financieros">
   <th mat-header-cell *matHeaderCellDef>Ingresos financieros</th>
-  <td  mat-cell *matCellDef="let element">{{element.ingresosF}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.ingresosF" [(ngModel)]="element.ingresosF">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="costos financieros">
   <th mat-header-cell *matHeaderCellDef>Costos financieros</th>
-  <td  mat-cell *matCellDef="let element">{{element.costosF}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.costosF" [(ngModel)]="element.costosF">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="resultado reajuste">
   <th mat-header-cell *matHeaderCellDef>Resultado por unidad de reajuste</th>
-  <td  mat-cell *matCellDef="let element">{{element.resultadoR}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never" style ="width: 70px;">
+      <input matInput  [value]="element.resultadoR" [(ngModel)]="element.resultadoR">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
@@ -370,25 +462,41 @@
 <table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z8" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
-  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="gastoImp">
   <th mat-header-cell *matHeaderCellDef>Gasto por impuesto a las ganancias</th>
-  <td  mat-cell *matCellDef="let element">{{element.gastoImp}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.gastoImp" [(ngModel)]="element.gastoImp">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="gananciaDespImp">
   <th mat-header-cell *matHeaderCellDef>Ganancia después de impuesto</th>
-  <td  mat-cell *matCellDef="let element">{{element.gastoDespImp}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.gastoDespImp" [(ngModel)]="element.gastoDespImp">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="totalRes">
   <th mat-header-cell *matHeaderCellDef>Total resultados</th>
-  <td  mat-cell *matCellDef="let element">{{element.totalRes}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.totalRes" [(ngModel)]="element.totalRes">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
@@ -401,25 +509,41 @@
 <table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z8" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
-  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="gananciaControlador">
   <th mat-header-cell *matHeaderCellDef>Ganancia atribuible al controlador</th>
-  <td  mat-cell *matCellDef="let element">{{element.gananciaControlador}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.gananciaControlador" [(ngModel)]="element.gananciaControlador">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="gananciaNoControl">
   <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
-  <td  mat-cell *matCellDef="let element">{{element.gananciaNoControladora}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.gananciaNoControladora" [(ngModel)]="element.gananciaNoControladora">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="ganancia">
   <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
-  <td  mat-cell *matCellDef="let element">{{element.ganancia}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.ganancia" [(ngModel)]="element.ganancia">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
@@ -432,25 +556,41 @@
 <table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z8" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
-  <td  mat-cell *matCellDef="let element">{{element.anio}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="ganancia">
   <th mat-header-cell *matHeaderCellDef>Ganancia</th>
-  <td  mat-cell *matCellDef="let element">{{element.ganancia}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.ganancia" [(ngModel)]="element.ganancia">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="gananciaActuariales">
   <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
-  <td  mat-cell *matCellDef="let element">{{element.gananciaAct}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.gananciaAct" [(ngModel)]="element.gananciaAct">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
 <ng-container matColumnDef ="totalResIntegrales">
   <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
-  <td  mat-cell *matCellDef="let element">{{element.total}}</td>
+  <td  mat-cell *matCellDef="let element">
+    <mat-form-field floatLabel="never">
+      <input matInput  [value]="element.total" [(ngModel)]="element.total">
+    </mat-form-field>
+  </td>
 
 </ng-container>
 
@@ -459,6 +599,6 @@
 </table>
 </mat-card-content>
 <mat-card-actions style="text-align: center;">
-  <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Estado Financiero</button>
+
 </mat-card-actions>
 </mat-card>
