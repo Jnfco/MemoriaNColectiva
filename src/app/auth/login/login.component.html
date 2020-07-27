@@ -38,7 +38,7 @@
       </form>
 
       <mat-card-actions class="botonSection">
-        <button mat-raised-button class="boton" color="primary" type="submit" (click)="onLogin()">Iniciar
+        <button mat-raised-button class="boton" color="primary" type="submit" (keyup.enter)="onLogin()" (click)="onLogin()">Iniciar
           Sesión</button>
       </mat-card-actions>
     </mat-card-content>

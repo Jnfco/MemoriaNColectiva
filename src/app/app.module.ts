@@ -14,7 +14,6 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
 
 //Componentes
 import { HomeComponent } from './home/home.component';
-import { NavbarComponent } from './shared/navbar/navbar.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 
@@ -53,13 +52,13 @@ import { InnominadaComponent } from './innominada/innominada.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {BD2NgxHBoxplotModule} from 'bd2-ngx-hboxplot';
 import { ChartsModule } from 'ng2-charts';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    NavbarComponent,
     LoginComponent,
     RegisterComponent,
     RecuperarPassComponent,
@@ -103,7 +102,8 @@ import { ChartsModule } from 'ng2-charts';
     SatPopoverModule,
     MatProgressBarModule,
     BD2NgxHBoxplotModule,
-    ChartsModule
+    ChartsModule,
+    MatSnackBarModule
   ],
   providers: [DocumentService,
     AuthService],

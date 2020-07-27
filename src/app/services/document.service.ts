@@ -17,6 +17,8 @@ import {
 import { EstadoFinanciero } from '../shared/Interfaces/EstadoFinanciero';
 import { BREAKPOINT } from '@angular/flex-layout';
 import { snapshotChanges } from '@angular/fire/database';
+import { InformacionInominada } from '../shared/Interfaces/InformacionInominada';
+import { MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +30,8 @@ export class DocumentService {
   private estadoFinancieroGet: EstadoFinanciero;
   constructor(
     public fireservices: AngularFirestore,
-    public db: AngularFirestore
+    public db: AngularFirestore,
+    private snackbar: MatSnackBar
   ) {}
 
   SaveDocument(
@@ -59,7 +62,29 @@ export class DocumentService {
       `EstadoFinanciero/${userId}`
     );
     console.log('Estado financiero ref: ',estadoFinanciero)
+    this.snackbar.open("Datos guardados exitosamente!",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
     return estadoFinancieroRef.set(estadoFinanciero, { merge: true });
+  }
+
+  SaveInfoDocument (informacionInominada: InformacionInominada[],userId:any){
+
+
+    const info = {
+      info:informacionInominada
+    }
+    const informacionInominadaRef: AngularFirestoreDocument<any>= this.db.doc(
+      `InformacionInnominada/${userId}`
+    );
+    console.log('Informacion innominada ref: ',informacionInominada)
+    this.snackbar.open("Datos guardados exitosamente!",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
+    return informacionInominadaRef.set(info,{merge:true});
+
   }
 
   returnEstadoFinanciero(doc: any):EstadoFinanciero {

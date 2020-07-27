@@ -1,12 +1,10 @@
 .btnGuardar{
-  letter-spacing: .1rem;
   transition: all 0.2s;
-  width: 20%;
   background-color:#36A0F5;
   color: white;
-  text-align: center;
-  margin-bottom: 5%;
 }
+
+
 
 .table-title{
   margin-top: 5%;
@@ -37,6 +35,6 @@ input[type="file"] {
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
-  background-color: #1C46EF;
+  background-color:#36A0F5;
   color: white;
 }

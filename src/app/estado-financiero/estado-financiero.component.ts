@@ -31,6 +31,7 @@ import * as firebase from 'firebase';
 
 import { EstadoFinanciero } from '../shared/Interfaces/EstadoFinanciero';
 
+
 @Component({
   selector: 'app-estado-financiero',
   templateUrl: './estado-financiero.component.html',
@@ -151,6 +152,8 @@ export class EstadoFinancieroComponent implements OnInit {
   arrData: any;
   jsonArray: any[];
   noData: boolean = true;
+  isLoading: boolean =false;
+  noDataMessage: boolean = false;
   jsonSinTransformar: any;
   userId: any;
 
@@ -166,7 +169,10 @@ export class EstadoFinancieroComponent implements OnInit {
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
     console.log('user id: ', this.userId)
+    this.noData = true;
+    this.isLoading = true;
     this.getDocument(this.userId);
+
   }
 
   uploadedFile(ev: any) {
@@ -174,7 +180,8 @@ export class EstadoFinancieroComponent implements OnInit {
     let jsonData = null;
     const reader = new FileReader();
     const file = ev.target.files[0];
-    console.log('HOLA');
+    this.noData=true;
+    this.isLoading=true;
     reader.onload = (event) => {
       this.activosC = [];
       this.activosNC = [];
@@ -369,6 +376,8 @@ export class EstadoFinancieroComponent implements OnInit {
       );
     };
     this.noData = false;
+    this.isLoading = false;
+    this.noDataMessage =false;
 
     reader.readAsBinaryString(file);
   }
@@ -388,6 +397,7 @@ export class EstadoFinancieroComponent implements OnInit {
       this.estadoResInt,
       this.userId
     );
+
   }
 
   getDocument(userId: any) {
@@ -406,6 +416,7 @@ export class EstadoFinancieroComponent implements OnInit {
     this.db.collection('EstadoFinanciero').doc(userId).get().subscribe((snapshotChanges) => {
       //let e = this.estadoFinanciero = this.docSvc.returnEstadoFinanciero(snapshotChanges.data());
       if (snapshotChanges.exists) {
+        this.noDataMessage=false;
 
         var doc = snapshotChanges.data();
         var activosC = doc.activosCorrientes;
@@ -563,9 +574,15 @@ export class EstadoFinancieroComponent implements OnInit {
         this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(this.gananciaAntesImpuesto);
         this.dataSourceGananciaAtribuible = new MatTableDataSource<GananciaAtribuible>(this.gananciaAtribuible);
         this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
-
+        this.noData = false;
+        this.isLoading = false;
       }
-      this.noData = false;
+      else{
+        this.noDataMessage = true;
+        this.noData=true;
+        this.isLoading= false;
+      }
+
 
     });
 

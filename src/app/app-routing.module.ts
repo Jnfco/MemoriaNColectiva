@@ -21,7 +21,7 @@ const routes: Routes = [
    component: HomeComponent,
    children:[{
      path: '',
-     component: InicioComponent
+     component: EstadoFinancieroComponent
    },
   {
     path: 'estadoFinanciero',

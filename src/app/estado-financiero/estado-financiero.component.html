@@ -1,19 +1,21 @@
 
-<div id="div_file" style="display: flex;flex-direction: row;">
-
-  <label for="file-upload" class="custom-file-upload">
+<div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;" >
+  <label for="file-upload" class="custom-file-upload" >
     Cargar Datos
  </label>
    <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
-   <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Estado Financiero</button>
-</div>
+   <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Datos</button>
+
+  </div>
+
 
 <!--Tabla Activos Corrientes-->
-<mat-progress-bar mode="indeterminate" *ngIf="noData"></mat-progress-bar>
+<h2 *ngIf="noDataMessage">No se ha cargado el estado financiero</h2>
+<mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>
 <mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="!noData">
   <mat-card-content>
 <h1 class ="table-title" style="text-align: center;">  Activos Corrientes</h1>
-<table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%" >
+<table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%"  >
 <ng-container  matColumnDef ="Año">
   <th class="w-a"mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element" >

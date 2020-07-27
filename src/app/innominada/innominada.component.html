@@ -1,22 +1,23 @@
 
-<div id="div_file" style="display: flex;flex-direction: row;" >
+<div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;" >
 
 
    <label for="file-upload" class="custom-file-upload">
    Cargar Datos
 </label>
   <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
-  <label for="file-upload" class="custom-file-upload">
+  <label  class="custom-file-upload" (click)="saveDocumentInfo()">
     Guardar Datos
  </label>
 
 </div>
-
+<h2 *ngIf="noDataMessage">No se han cargado los datos</h2>
+<mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>
 <mat-card class="card asd cardPardding" *ngIf=!noData>
 <mat-card-header>
-  <h2>Gráfico de cajas</h2>
+  <h2>Sueldos por cargo</h2>
 </mat-card-header>
-<mat-card-content style="width: 60%; display: flex;flex-direction: column;">
+<mat-card-content style="width: 60%; display: flex;flex-direction: row;">
   <bd2-ngx-hbox-plot style="width: 90%;"
   [data]="data"
   [labels]="this.nombreCargos"
@@ -29,7 +30,7 @@
 
 <mat-card class="card asd cardPardding" *ngIf =!noData>
   <mat-card-header>
-    <h2>Sueldos agrupados por cargo</h2>
+    <h2>Promedios de sueldos por cargo</h2>
   </mat-card-header>
 <mat-card-content>
   <div>
@@ -50,14 +51,18 @@
 </mat-card>
 
 
-<mat-card class="card asd cardPardding">
+<mat-card class="card asd cardPardding"  *ngIf =!noData>
   <mat-card-header>
-    <h2>Gráfico de barras</h2>
+    <h2>Mayor sueldo por cargo</h2>
   </mat-card-header>
+  <mat-card-content>
+    <div >
+      <canvas baseChart
+        [datasets]="barChartData"
+        [labels]="this.nombreCargos"
+        chartType="bar">
+      </canvas>
+    </div>
+  </mat-card-content>
 </mat-card>
 
-<mat-card class="card asd cardPardding">
-  <mat-card-header>
-    <h2>Gráfico de campana de sueldos</h2>
-  </mat-card-header>
-</mat-card>
