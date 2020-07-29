@@ -53,6 +53,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {BD2NgxHBoxplotModule} from 'bd2-ngx-hboxplot';
 import { ChartsModule } from 'ng2-charts';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatTabsModule} from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -103,7 +105,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatProgressBarModule,
     BD2NgxHBoxplotModule,
     ChartsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTabsModule,
+    MatTooltipModule
   ],
   providers: [DocumentService,
     AuthService],

@@ -30,6 +30,9 @@ import { DocumentService } from '../services/document.service';
 import * as firebase from 'firebase';
 
 import { EstadoFinanciero } from '../shared/Interfaces/EstadoFinanciero';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {ErrorStateMatcher} from '@angular/material/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -159,16 +162,20 @@ export class EstadoFinancieroComponent implements OnInit {
 
   estadoFinanciero: EstadoFinanciero;
 
+  matcher = new ErrorStateMatcher();
+  fieldForm = new FormControl('',[Validators.pattern('[0-9]*')]);
+  test:boolean = true;
+
   constructor(
     public afAuth: AngularFireAuth,
     public db: AngularFirestore,
     private authSvc: AuthService,
-    private docSvc: DocumentService
+    private docSvc: DocumentService,
+    private snackbar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
-    console.log('user id: ', this.userId)
     this.noData = true;
     this.isLoading = true;
     this.getDocument(this.userId);
@@ -200,14 +207,15 @@ export class EstadoFinancieroComponent implements OnInit {
         initial[name] = XLSX.utils.sheet_to_json(sheet);
         return initial;
       }, {});
-      this.jsonSinTransformar = JSON.stringify(jsonData.Activos_no_corrientes);
+      this.jsonSinTransformar =JSON.stringify(jsonData).split('.').join("");
+      console.log('sin puntos: ', this.jsonSinTransformar)
       //console.log('Data: ',dataString);
 
       //console.log("Cantidad filas: ",jsonData.Activos_corrientes.length);
 
       //Recorre el JSON de la primera hoja y agrega las tablas al datasource
       //console.log("Data: ",this.jsonSinTransformar)
-      console.log('Data archivo: ', Array.of(jsonData))
+
       for (let i = 0; i < jsonData.Activos_corrientes.length; i++) {
         this.jsonArray = Array.of(jsonData.Activos_corrientes[i]);
 
@@ -223,6 +231,7 @@ export class EstadoFinancieroComponent implements OnInit {
           total: this.jsonArray[0].Total_activos_corrientes,
         };
         //console.log('Arreglo 1: ',activosCorrientes)
+
         this.activosC.push(activosCorrientes);
       }
 
@@ -382,23 +391,127 @@ export class EstadoFinancieroComponent implements OnInit {
     reader.readAsBinaryString(file);
   }
 
+  evaluateRegex(expresion:string):void{
+    var regex =  /(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)/;
+
+
+    if(!regex.test(expresion))
+    {
+      console.log(expresion);
+      console.log('No pasa la prueba no se sube !!',regex.test(expresion));
+      this.test = false;
+    }
+
+
+  }
+
   saveDocument() {
     console.log('A guardar !');
     console.log("estado REs: ", this.resultadoEstado);
-    this.docSvc.SaveDocument(
-      this.activosC,
-      this.activosNC,
-      this.pasivosC,
-      this.pasivosNC,
-      this.patrimonio,
-      this.resultadoEstado,
-      this.gananciaAntesImpuesto,
-      this.gananciaAtribuible,
-      this.estadoResInt,
-      this.userId
-    );
+    console.log('Test: ',this.test)
+    this.test = true;
+    this.activosC.forEach(element => {
+      this.evaluateRegex(element.activoImpC);
+      this.evaluateRegex(element.activosF);
+      this.evaluateRegex(element.cuentas);
+      this.evaluateRegex(element.deudores);
+      this.evaluateRegex(element.efectivo);
+      this.evaluateRegex(element.otrosAc);
+      this.evaluateRegex(element.total);
 
+    });
+
+    this.activosNC.forEach(element =>{
+      this.evaluateRegex(element.activosD);
+      this.evaluateRegex(element.activosI);
+      this.evaluateRegex(element.otrosA);
+      this.evaluateRegex(element.prop);
+      this.evaluateRegex(element.totalA);
+      this.evaluateRegex(element.totalNC);
+    })
+
+    this.pasivosC.forEach(element =>{
+      this.evaluateRegex(element.cuentasC);
+      this.evaluateRegex(element.cuentasR);
+      this.evaluateRegex(element.otras);
+      this.evaluateRegex(element.otrosP);
+      this.evaluateRegex(element.pasivosAr);
+      this.evaluateRegex(element.pasivosI);
+      this.evaluateRegex(element.provisiones);
+      this.evaluateRegex(element.totalPC);
+    })
+
+    this.pasivosNC.forEach(element => {
+      this.evaluateRegex(element.otrosP);
+      this.evaluateRegex(element.pasivosAr);
+      this.evaluateRegex(element.provisionesB);
+      this.evaluateRegex(element.total);
+    })
+
+    this.patrimonio.forEach(element => {
+      this.evaluateRegex(element.aportes);
+      this.evaluateRegex(element.participaciones);
+      this.evaluateRegex(element.patrimonioContador);
+      this.evaluateRegex(element.resultadosR);
+      this.evaluateRegex(element.totalPNeto);
+      this.evaluateRegex(element.totalPP);
+    })
+
+    this.resultadoEstado.forEach(element => {
+      this.evaluateRegex(element.costoVentas);
+      this.evaluateRegex(element.costosF);
+      this.evaluateRegex(element.gastosAdm);
+      this.evaluateRegex(element.ingresos);
+      this.evaluateRegex(element.ingresosF);
+      this.evaluateRegex(element.margen);
+      this.evaluateRegex(element.otrasGanancias);
+      this.evaluateRegex(element.otrosI);
+      this.evaluateRegex(element.resultadoR);
+    })
+
+    this.gananciaAntesImpuesto.forEach(element => {
+      this.evaluateRegex(element.gastoDespImp);
+      this.evaluateRegex(element.gastoImp);
+      this.evaluateRegex(element.totalRes);
+    })
+
+    this.gananciaAtribuible.forEach(element => {
+      this.evaluateRegex(element.ganancia);
+      this.evaluateRegex(element.gananciaControlador);
+      this.evaluateRegex(element.gananciaNoControladora);
+    })
+
+    this.estadoResInt.forEach(element => {
+      this.evaluateRegex(element.ganancia);
+      this.evaluateRegex(element.gananciaAct);
+      this.evaluateRegex(element.total);
+    })
+
+    if(this.test == true)
+    {
+      console.log()
+      this.docSvc.SaveDocument(
+        this.activosC,
+        this.activosNC,
+        this.pasivosC,
+        this.pasivosNC,
+        this.patrimonio,
+        this.resultadoEstado,
+        this.gananciaAntesImpuesto,
+        this.gananciaAtribuible,
+        this.estadoResInt,
+        this.userId
+      );
+    }
+    else{
+      this.snackbar.open("Ocurrió un problema al guardar el archivo, revise que los datos estén ingresados correctamente",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+    }
   }
+
+
 
   getDocument(userId: any) {
     this.activosC = [];
@@ -412,9 +525,8 @@ export class EstadoFinancieroComponent implements OnInit {
     this.gananciaAntesImpuesto = [];
     this.gananciaAtribuible = [];
     this.estadoResInt = [];
-    //var estadoFinancieroRef = this.db.collection(`EstadoFinanciero`).doc(userId);
     this.db.collection('EstadoFinanciero').doc(userId).get().subscribe((snapshotChanges) => {
-      //let e = this.estadoFinanciero = this.docSvc.returnEstadoFinanciero(snapshotChanges.data());
+
       if (snapshotChanges.exists) {
         this.noDataMessage=false;
 
@@ -428,7 +540,7 @@ export class EstadoFinancieroComponent implements OnInit {
         var gananciaAntesImpuesto = doc.gananciaAntesImp;
         var gananciaActuariales = doc.gananciaAtribuible;
         var estadoResIntegrales = doc.estadoResIntegrales;
-        console.log(estadoRes)
+
         for (let i = 0; i < activosC.length; i++) {
 
           let activosCorrientes = {
@@ -555,15 +667,7 @@ export class EstadoFinancieroComponent implements OnInit {
 
 
         console.log(this.resultadoEstado);
-        /*
-        this.activosNC = this.estadoFinanciero.activosNoCorrientes;
-        this.pasivosC = this.estadoFinanciero.pasivosCorrientes;
-        this.pasivosNC = this.estadoFinanciero.pasivosNoCorrientes;
-        this.patrimonio = this.patrimonio;
-        this.gananciaAntesImpuesto = this.estadoFinanciero.gananciaAntesImp;
-        this.gananciaAtribuible = this.estadoFinanciero.gananciaAtribuible;
-        this.estadoResInt = this.estadoFinanciero.estadoResIntegrales;
-  */
+
         this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
 
         this.dataSourceActivosNC = new MatTableDataSource<ActivosNC>(this.activosNC);
@@ -591,4 +695,5 @@ export class EstadoFinancieroComponent implements OnInit {
 
 
   }
+
 }

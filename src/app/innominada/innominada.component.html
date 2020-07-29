@@ -1,68 +1,79 @@
+<div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;">
 
-<div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;" >
 
-
-   <label for="file-upload" class="custom-file-upload">
-   Cargar Datos
-</label>
-  <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
-  <label  class="custom-file-upload" (click)="saveDocumentInfo()">
+  <label for="file-upload" class="custom-file-upload">
+    Cargar Datos
+  </label>
+  <input type="file" id="file-upload" onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
+  <label class="custom-file-upload" (click)="saveDocumentInfo()">
     Guardar Datos
- </label>
+  </label>
 
 </div>
 <h2 *ngIf="noDataMessage">No se han cargado los datos</h2>
-<mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>
+<!--<mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>-->
 <mat-card class="card asd cardPardding" *ngIf=!noData>
-<mat-card-header>
-  <h2>Sueldos por cargo</h2>
-</mat-card-header>
-<mat-card-content style="width: 60%; display: flex;flex-direction: row;">
-  <bd2-ngx-hbox-plot style="width: 90%;"
-  [data]="data"
-  [labels]="this.nombreCargos"
-  sorted="median"
-  [domain] =[100000,this.maxVal]
-  labelsOn= "trigger">
-</bd2-ngx-hbox-plot>
-</mat-card-content>
-</mat-card>
-
-<mat-card class="card asd cardPardding" *ngIf =!noData>
-  <mat-card-header>
-    <h2>Promedios de sueldos por cargo</h2>
+  <mat-card-header style="display: flex;flex-direction: row;">
+    <h2>Sueldos por cargo</h2> <button mat-button (click)="onHideBoxChart()" style="margin-left: 10%;"
+      *ngIf="!this.hideBoxChart">Ocultar Gráfico</button>
+    <button mat-button (click)="onHideBoxChart()" style="margin-left: 10%;" *ngIf="this.hideBoxChart">Mostrar
+      Gráfico</button>
   </mat-card-header>
-<mat-card-content>
-  <div>
-    <div>
-      <div >
-        <canvas baseChart
-        [datasets]="lineChartData"
-        [labels]="this.nombreCargos"
-        [options]="lineChartOptions"
-        [colors]="lineChartColors"
-        [legend]="lineChartLegend"
-        [chartType]="lineChartType">
-        </canvas>
-      </div>
+
+  <mat-card-content style="width: 60%; display: flex;flex-direction: column;" *ngIf="!this.hideBoxChart">
+
+      <div style="display: flex;flex-direction: row;">
+      <button class ="pestañaActiva" mat-button  (click)="onHideBoxChartTab1()" *ngIf="!hideBoxChartTab1" style="width: 50%;">Gráfico 1</button>
+      <button class = "pestañaInactiva"mat-button  (click)="onHideBoxChartTab2()" *ngIf="hideBoxChartTab2" style="width: 50%;">Gráfico 2</button>
+      <button class ="pestañaInactiva" mat-button  (click)="onHideBoxChartTab1()" *ngIf="hideBoxChartTab1" style="width: 50%;">Gráfico 1</button>
+      <button class = "pestañaActiva"mat-button  (click)="onHideBoxChartTab2()" *ngIf="!hideBoxChartTab2" style="width: 50%;">Gráfico 2</button>
     </div>
-  </div>
-</mat-card-content>
-</mat-card>
+<div style="display: flex;flex-direction: row;">
+      <bd2-ngx-hbox-plot style="width: 60%;" [data]="this.dataHalf" [labels]="this.nombreCargos1Mitad" sorted="median"
+        [domain]=[100000,this.maxVal] labelsOn="trigger" *ngIf="!hideBoxChartTab1">
+      </bd2-ngx-hbox-plot>
+
+      <bd2-ngx-hbox-plot style="width: 60%;" [data]="this.dataHalf2" [labels]="this.nombreCargos2Mitad" sorted="median"
+        [domain]=[100000,this.maxVal] labelsOn="trigger" *ngIf="!hideBoxChartTab2">
+      </bd2-ngx-hbox-plot>
+<button mat-button matTooltip="Acerca de este gráfico" style="height: 50%;"  (click)="openDialog()"><mat-icon>info</mat-icon></button>
+</div>
+  </mat-card-content>
 
 
-<mat-card class="card asd cardPardding"  *ngIf =!noData>
+<mat-card class="card asd cardPardding" *ngIf=!noData>
   <mat-card-header>
-    <h2>Mayor sueldo por cargo</h2>
+    <h2>Promedios de sueldos por cargo</h2><button mat-button (click)="onHideBarChart()" style="margin-left: 10%;"
+      *ngIf="!this.hideBarChart">Mostrar gráfico</button>
+    <button mat-button (click)="onHideBarChart()" style="margin-left: 10%;" *ngIf="this.hideBarChart">Ocultar
+      gráfico</button>
   </mat-card-header>
   <mat-card-content>
-    <div >
-      <canvas baseChart
-        [datasets]="barChartData"
-        [labels]="this.nombreCargos"
-        chartType="bar">
-      </canvas>
+    <div>
+      <div>
+        <div>
+          <canvas baseChart [datasets]="barChartPromData" [labels]="this.nombreCargos" [options]="lineChartOptions"
+            [colors]="lineChartColors" [legend]="lineChartLegend" chartType="bar" *ngIf="this.hideBarChart">
+          </canvas>
+        </div>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>
 
+
+<mat-card class="card asd cardPardding" *ngIf=!noData>
+  <mat-card-header>
+    <h2>Mayor sueldo por cargo</h2><button mat-button (click)="onHideBarChart2()" style="margin-left: 10%;"
+      *ngIf="!this.hideBarChart2">Mostrar gráfico</button>
+    <button mat-button (click)="onHideBarChart2()" style="margin-left: 10%;" *ngIf="this.hideBarChart2">Ocultar
+      gráfico</button>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <canvas baseChart [datasets]="barChartData" [labels]="this.nombreCargos" chartType="bar"
+        *ngIf="this.hideBarChart2">
+      </canvas>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -6,6 +6,8 @@ import * as firebase from 'firebase';
 import { DocumentService } from '../services/document.service';
 import { InformacionInominada } from '../shared/Interfaces/InformacionInominada';
 import { AngularFirestore } from '@angular/fire/firestore';
+import {ModalComponent} from '../shared/modal/modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-innominada',
@@ -16,6 +18,8 @@ export class InnominadaComponent implements OnInit {
   public maxVal: number;
   public minVal:number;
   public nombreCargos: string[];
+  public nombreCargos1Mitad: string [];
+  public nombreCargos2Mitad: string[];
   public sueldos: any[];
   public sum: number;
   public noData: boolean=true;
@@ -25,11 +29,18 @@ export class InnominadaComponent implements OnInit {
   public promSueldos: number[];
   public chartLabels: Label[] = [];
   public data = [];
+  public dataHalf = [];
+  public dataHalf2 = [];
   public userId:any;
   public informacionInominada: InformacionInominada[];
 
   public countMap: any;
   public cargosAgrupados: any;
+  public hideBoxChart:boolean = true;
+  public hideBoxChartTab1 = false;
+  public hideBoxChartTab2 = true;
+  public hideBarChart:boolean = false;
+  public hideBarChart2: boolean=false;
 
 
   public doughnutChartLabels: Label[] = [
@@ -40,7 +51,7 @@ export class InnominadaComponent implements OnInit {
 
   public doughnutChartType: ChartType = 'line';
 
-  public lineChartData: ChartDataSets[] = [
+  public barChartPromData: ChartDataSets[] = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Promedio' }
   ];
 
@@ -93,7 +104,7 @@ export class InnominadaComponent implements OnInit {
       pointHoverBorderColor: 'rgba(15,109,250,85)'
     }
   ];
-  constructor(private docSvc: DocumentService,public db: AngularFirestore) {}
+  constructor(private docSvc: DocumentService,public db: AngularFirestore,public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.noData = true;
@@ -109,6 +120,7 @@ export class InnominadaComponent implements OnInit {
     this.promSueldos = [];
     this.informacionInominada =[];
     this.cargosAgrupados=[];
+    this.nombreCargos2Mitad = [];
 
     let workBook = null;
     let jsonData = null;
@@ -132,28 +144,43 @@ export class InnominadaComponent implements OnInit {
       // return item.REMUNERACION;
 
       //}));
-
-
+      //Ordenar de mayor a menor los datos
+      var jsonArray = Array.of(jsonData);
+      jsonArray = jsonArray.sort();
+      console.log('Data raw: ',jsonData)
+      console.log('Data arreglo:',jsonArray)
       //Encontrar los nombres de los cargos y agregarlos a una lista
-      this.countMap = jsonData.reduce((result, element) => {
+      this.countMap = jsonArray[0].reduce((result, element) => {
         result[element.CARGO] = (result[element.CARGO] || 0) + 1;
         return result;
       }, {});
+console.log('countmap ordenado: ',this.countMap)
 
       const result = Object.keys(this.countMap)
         .filter((title) => this.countMap[title] > 1)
         .map((CARGO) => {
           return { CARGO, repeat: this.countMap[CARGO] };
         });
-
+console.log('Result: ',result)
 
       for (let i = 0; i < result.length; i++) {
         this.nombreCargos.push(result[i].CARGO);
       }
       console.log('A: ', this.nombreCargos);
+      this.nombreCargos=this.nombreCargos.sort();
+
+      //Separar los nombres en 2 mitades
+
+      let halfwayThrough = Math.floor(this.nombreCargos.length / 2)
+
+      let arrayFirstHalf = this.nombreCargos.slice(0, halfwayThrough);
+      this.nombreCargos2Mitad = this.nombreCargos.slice(halfwayThrough, this.nombreCargos.length);
+
+
+
       //Agrupar los datos por arrays de cargos
 
-       this.cargosAgrupados = jsonData.reduce((grouping, item) => {
+       this.cargosAgrupados = jsonArray[0].reduce((grouping, item) => {
         let cargo = item.CARGO;
         grouping[cargo] = grouping[cargo] || [];
         grouping[cargo].push({
@@ -163,15 +190,29 @@ export class InnominadaComponent implements OnInit {
         return grouping;
       }, {});
 
+      console.log('Cargos agrupados: ',this.cargosAgrupados);
+      var arrayCargosAgrupados = Array.of(this.cargosAgrupados);
+
       //Crear la matriz que va a tener todos los sueldos pero agrupados por cargo
 
       var matrizSueldosPorCargo = [];
+      console.log('array cargos agrupados: ', arrayCargosAgrupados)
     for(let i = 0; i < this.nombreCargos.length; i++) {
         this.data[i] = [];
         for(let j = 0; j < this.countMap[this.nombreCargos[i]]; j++) {
-            this.data[i][j] =this.cargosAgrupados[this.nombreCargos[i]][j].sueldo ;
+            this.data[i][j] =arrayCargosAgrupados[0][this.nombreCargos[i]][j].sueldo ;
         }
     }
+
+     //Version de la matriz de sueldos por cargo pero cortada a la mitad
+     for(let i = 0; i < arrayFirstHalf.length; i++) {
+      this.dataHalf[i] = [];
+      for(let j = 0; j < this.countMap[arrayFirstHalf[i]]; j++) {
+          this.dataHalf[i][j] =this.cargosAgrupados[arrayFirstHalf[i]][j].sueldo ;
+      }
+  }
+
+    console.log('datas: ',this.data)
 
     //Aqui encontramos el sueldo maximo por cada cargo
     var arraySueldosMaxPorCargo = []
@@ -227,8 +268,8 @@ export class InnominadaComponent implements OnInit {
 
     console.log('Matriz de sueldos agrupados por cargo: ',matrizSueldosPorCargo)
 
-      var JSONResult = JSON.stringify(result);
-      console.log('Result: ', JSONResult[''])
+      //var JSONResult = JSON.stringify(result);
+      //console.log('Result: ', JSONResult[''])
 
       //var arrayCargos = Array.of(cargosAgrupados);
       //console.log('Cargos arreglo: ',JSON.stringify(cargosAgrupados));
@@ -239,7 +280,7 @@ export class InnominadaComponent implements OnInit {
 
       //Tratar de generar un json con los sueldos sumados de cada cargo
 
-      var r = jsonData.reduce(function (pv, cv) {
+      var r = jsonArray[0].reduce(function (pv, cv) {
 
         if (pv[cv.CARGO]) {
           pv[cv.CARGO] += parseInt(cv.REMUNERACION);
@@ -249,7 +290,7 @@ export class InnominadaComponent implements OnInit {
         return pv;
       }, {});
 
-      // mostrar los valores de plata de todos los cargos sin saber cuales hay
+      // mostrar los valores de dinero de todos los cargos sin saber cuales hay
       for (let i = 0; i < this.nombreCargos.length; i++) {
 
         this.sueldos.push(r[this.nombreCargos[i]]);
@@ -260,7 +301,7 @@ export class InnominadaComponent implements OnInit {
       //console.log('AA: ',this.doughnutChartData)
 
       //Sacar el promedio de los sueldos de cada cargo
-      this.lineChartData[0].data = this.promSueldos;
+      this.barChartPromData[0].data = this.promSueldos;
 
 
       for (let i =0; i<this.nombreCargos.length;i++){
@@ -313,6 +354,18 @@ export class InnominadaComponent implements OnInit {
 
   }
 
+
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      width: '800px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+    });
+  }
+
   public getDocumentInfo(){
     this.sueldos = [];
     this.nombreCargos = [];
@@ -322,6 +375,8 @@ export class InnominadaComponent implements OnInit {
     this.nombreCargos = [];
     this.data = [];
     this.noData=true;
+    this.nombreCargos1Mitad = [];
+    this.nombreCargos2Mitad =[];
 
     this.db.collection('InformacionInnominada').doc(this.userId).get().subscribe((snapshotChanges) => {
       //let e = this.estadoFinanciero = this.docSvc.returnEstadoFinanciero(snapshotChanges.data());
@@ -346,7 +401,18 @@ export class InnominadaComponent implements OnInit {
         for (let i = 0; i < result.length; i++) {
           this.nombreCargos.push(result[i].cargo);
         }
+        this.nombreCargos = this.nombreCargos.sort();
         console.log('A: ', this.nombreCargos);
+
+        //Cortar el data por la mitad para el gráfico de caja
+        let halfwayThrough = Math.floor(this.nombreCargos.length / 2)
+
+    this.nombreCargos1Mitad = this.nombreCargos.slice(0, halfwayThrough);
+    this.nombreCargos2Mitad = this.nombreCargos.slice(halfwayThrough, this.nombreCargos.length);
+        console.log('Nombres 2 mitad: ',this.nombreCargos2Mitad)
+
+
+    console.log('nombre cargos primera mitad: ',this.nombreCargos1Mitad)
 
         //Agrupar los datos por arrays de cargos
 
@@ -359,6 +425,7 @@ export class InnominadaComponent implements OnInit {
         });
         return grouping;
       }, {});
+
       console.log('cargos agrupados: ',this.cargosAgrupados)
 
       //Crear la matriz que va a tener todos los sueldos pero agrupados por cargo
@@ -371,7 +438,43 @@ export class InnominadaComponent implements OnInit {
         }
     }
 
+    //Version de la matriz de sueldos por cargo pero cortada a la mitad
+    for(let i = 0; i <this.nombreCargos1Mitad.length; i++) {
+      this.dataHalf[i] = [];
+      for(let j = 0; j < this.countMap[this.nombreCargos1Mitad[i]]; j++) {
+          this.dataHalf[i][j] =this.cargosAgrupados[this.nombreCargos1Mitad[i]][j].sueldo ;
+      }
+  }
+
+  //Version de la matriz de sueldos por cargo pero con la segunda mitad
+  for(let i = 0; i < this.nombreCargos2Mitad.length; i++) {
+    this.dataHalf2[i] = [];
+    for(let j = 0; j < this.countMap[this.nombreCargos2Mitad[i]]; j++) {
+        this.dataHalf2[i][j] =this.cargosAgrupados[this.nombreCargos2Mitad[i]][j].sueldo ;
+    }
+}
+
+console.log('Data half: ',this.dataHalf)
+//maximo sueldo por cargo
     console.log('data: ',this.data)
+
+    var arraySueldosMaxPorCargo = []
+
+    for(let i =0;i<this.data.length;i++){
+      var maxAux=0;
+      for(let j=0;j<this.data[i].length;j++){
+
+          if(this.data[i][j]> maxAux){
+            maxAux=this.data[i][j]
+          }
+
+      }
+      arraySueldosMaxPorCargo.push(maxAux);
+
+    }
+    console.log('Sueldos maximos por cargo: ',arraySueldosMaxPorCargo)
+    this.barChartData[0]={data: arraySueldosMaxPorCargo,label: 'Mayor sueldo por cargo'}
+
 
      //Encontrar el valor maximo de sueldos
      var aux = 0;
@@ -435,7 +538,7 @@ export class InnominadaComponent implements OnInit {
      //console.log('AA: ',this.doughnutChartData)
 
      //Sacar el promedio de los sueldos de cada cargo
-     this.lineChartData[0].data = this.promSueldos;
+     this.barChartPromData[0].data = this.promSueldos;
 
 
      for (let i =0; i<this.nombreCargos.length;i++){
@@ -445,7 +548,7 @@ export class InnominadaComponent implements OnInit {
      }
      console.log(this.promSueldos)
 
-     this.noData = false;
+        this.noData = false;
         this.isLoading = false;
       }
       else{
@@ -458,6 +561,36 @@ export class InnominadaComponent implements OnInit {
 
     });
 
+
+
+
+  }
+
+
+  onHideBoxChart (){
+
+    this.hideBoxChart = !this.hideBoxChart
+  }
+
+  onHideBarChart(){
+    this.hideBarChart = !this.hideBarChart;
+
+  }
+
+  onHideBarChart2(){
+
+    this.hideBarChart2 =!this.hideBarChart2;
+
+  }
+
+  onHideBoxChartTab1 (){
+    this.hideBoxChartTab1 = false;
+    this.hideBoxChartTab2 = true;
+  }
+
+  onHideBoxChartTab2(){
+    this.hideBoxChartTab1= true;
+    this.hideBoxChartTab2 = false;
   }
 
   public chartClicked({

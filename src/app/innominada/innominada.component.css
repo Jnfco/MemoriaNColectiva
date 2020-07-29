@@ -19,3 +19,7 @@ input[type="file"] {
   background-color: #36A0F5;
   color: white;
 }
+
+.pestañaActiva{
+  background-color: gainsboro ;
+}
