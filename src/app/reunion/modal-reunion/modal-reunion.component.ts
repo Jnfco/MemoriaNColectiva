@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {MatDatepickerModule} from '@angular/material/datepicker/';
 import { FormControl, Validators } from '@angular/forms';
 import { Reunion } from 'src/app/shared/Interfaces/Reunion';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'modal-reunion',
@@ -37,6 +38,7 @@ export class ModalReunionComponent {
 
   //Interfaz Reunion
   reunion : Reunion;
+  userId: any;
 
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
@@ -50,19 +52,21 @@ export class ModalReunionComponent {
 
 
   onAgendar ():void {
-    console.log('Titulo', this.tituloFormControl.value)
-    console.log('Descripcion', this.descripcionFormControl.value)
-    console.log('Fecha', this.fechaFormControl.value)
-    console.log('Hora Inicio', this.horaInicioFormControl.value)
-    console.log('Hora Término', this.horaTerminoFormControl.value)
 
-    var r= {
+
+    this.userId = firebase.auth().currentUser.uid;
+
+    this.reunion = {
       titulo: this.tituloFormControl.value,
       descripcion: this.descripcionFormControl.value,
-      fecha:this.fechaFormControl.value,
+      fecha:this.fechaFormControl.value.getFullYear()+"-"+this.fechaFormControl.value.getMonth()+"-"+this.fechaFormControl.value.getDay(),
       horaInicio:this.horaInicioFormControl.value,
-      horaTermino: this.horaTerminoFormControl.value
+      horaTermino: this.horaTerminoFormControl.value,
+      idCreador: this.userId
     }
+
+    console.log('Reunion: ',this.reunion)
+
 
     this.dialogRef.close({});
   }
