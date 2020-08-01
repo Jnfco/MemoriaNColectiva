@@ -145,6 +145,7 @@ export class EstadoFinancieroComponent implements OnInit {
   dataSourceGananciaA: any;
   dataSourceGananciaAtribuible: any;
   dataSourceEstadoResInt: any;
+  dataSourceActivosCDinamica: any;
 
   importFile: File;
   storeData: any;
@@ -166,6 +167,8 @@ export class EstadoFinancieroComponent implements OnInit {
   fieldForm = new FormControl('',[Validators.pattern('[0-9]*')]);
   test:boolean = true;
 
+  disCol:string;
+
   constructor(
     public afAuth: AngularFireAuth,
     public db: AngularFirestore,
@@ -178,6 +181,7 @@ export class EstadoFinancieroComponent implements OnInit {
     this.userId = firebase.auth().currentUser.uid;
     this.noData = true;
     this.isLoading = true;
+    this.disCol="Hola"
     this.getDocument(this.userId);
 
   }
@@ -216,8 +220,12 @@ export class EstadoFinancieroComponent implements OnInit {
       //Recorre el JSON de la primera hoja y agrega las tablas al datasource
       //console.log("Data: ",this.jsonSinTransformar)
 
+
+      //A probar con un ingreso dinamico de la primera hoja
+
       for (let i = 0; i < jsonData.Activos_corrientes.length; i++) {
         this.jsonArray = Array.of(jsonData.Activos_corrientes[i]);
+        console.log('data matriz sin saber nombres: ', this.jsonArray);
 
         let activosCorrientes = {
           anio: this.jsonArray[0].Año,

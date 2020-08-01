@@ -12,6 +12,7 @@ import { HistorialComponent } from './historial/historial.component';
 import { ComparativaComponent } from './comparativa/comparativa.component';
 import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
 import { InnominadaComponent } from './innominada/innominada.component';
+import { ReunionComponent } from './reunion/reunion.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: 'estadoFinanciero',
     component: EstadoFinancieroComponent
+  },
+  {
+    path: 'reunion',
+    component: ReunionComponent
   },
   {
     path: 'innominada',

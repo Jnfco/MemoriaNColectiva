@@ -8,6 +8,20 @@
 
   </div>
 
+<!--Tabla dinamica prueba-->
+
+<mat-table #table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8">
+
+  <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{this.disCol}}">
+      <mat-header-cell *matHeaderCellDef>{{this.disCol}}</mat-header-cell>
+      <mat-cell *matCellDef="let element "> {{element.disCol}}
+      </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
 
 <!--Tabla Activos Corrientes-->
 <h2 *ngIf="noDataMessage">No se ha cargado el estado financiero</h2>

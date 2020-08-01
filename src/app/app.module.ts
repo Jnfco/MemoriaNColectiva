@@ -55,6 +55,28 @@ import { ChartsModule } from 'ng2-charts';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ReunionComponent } from './reunion/reunion.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {ModalReunionComponent} from './reunion/modal-reunion/modal-reunion.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+//calendar
+import { FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
+
+//TimePicker
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+
+FullCalendarModule.registerPlugins([
+  dayGridPlugin,
+  timeGridPlugin,
+  listPlugin,
+  interactionPlugin
+])
 
 
 @NgModule({
@@ -74,7 +96,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ContratoColectivoComponent,
     ComparativaComponent,
     SpinnerComponent,
-    InnominadaComponent
+    InnominadaComponent,
+    ReunionComponent,
+    ModalReunionComponent
 
 
   ],
@@ -107,10 +131,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ChartsModule,
     MatSnackBarModule,
     MatTabsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    FullCalendarModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    NgxMaterialTimepickerModule
   ],
   providers: [DocumentService,
-    AuthService],
+    AuthService, MatDatepickerModule,
+    MatNativeDateModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
