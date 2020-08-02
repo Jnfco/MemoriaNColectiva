@@ -32,15 +32,17 @@
     <ngx-material-timepicker #horaInicio  ></ngx-material-timepicker>
 </div>
 <mat-label>Hora término</mat-label>
-<!--<mat-error *ngIf="this.horaTerminoVacia" >Hora término no puede estar vacía</mat-error>-->
+
 <div class="timepicker-overlay" style="display: flex;flex-direction: row;">
 
   <input [ngxTimepicker]="horaTermino" [disableClick]="true" [format]=24 readonly required [formControl]="horaTerminoFormControl">
   <ngx-material-timepicker-toggle [for]="horaTermino"></ngx-material-timepicker-toggle>
   <ngx-material-timepicker #horaTermino></ngx-material-timepicker>
 </div>
+
 </div>
-<mat-error *ngIf="!this.horaCorrecta && !this.horaInicioVacia && !this.horaTerminoVacia" style="text-align: center;margin-top: 10px;">La hora de inicio no puede ser mayor a la hora de término</mat-error>
+<mat-error *ngIf="this.horaTerminoVacia == true || this.horaInicioVacia == true" style="text-align: center;margin-top: 10px;" >Las horas no pueden estar vacías!</mat-error>
+<mat-error *ngIf="this.horaCorrecta == false && (this.horaInicioVacia == false && this.horaTerminoVacia == false)" style="text-align: center;margin-top: 10px;">La hora de inicio no puede ser mayor a la hora de término</mat-error>
 <mat-card-actions class="modal-buttons">
 <button (click)="onAgendar()" mat-raised-button color="primary">Agendar</button>
 <button (click)="onCerrar()" mat-raised-button color="warn">Cancelar</button>

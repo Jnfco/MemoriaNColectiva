@@ -44,10 +44,12 @@ export class ModalReunionComponent {
   userId: any;
 
   //booleanos
-  horaCorrecta:boolean = true;
+  horaCorrecta = true;
   horaInicioVacia = false;
   horaTerminoVacia = false;
   tituloVacío = true;
+  horaInicioMayorNoVacio = false;
+  fechaVacia = true;
 
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
@@ -67,26 +69,58 @@ export class ModalReunionComponent {
 
     this.userId = firebase.auth().currentUser.uid;
 
-    this.horaInicioVacia = true;
-    this.horaTerminoVacia = true;
+
     console.log('horacorrecta: ',this.horaCorrecta);
     console.log('inicio > final ?',this.horaInicioFormControl.value > this.horaTerminoFormControl.value)
     console.log('tamaño hora inicio: ',this.horaInicioFormControl.value.length);
-    if(this.horaInicioFormControl.value < this.horaTerminoFormControl.value)
+    console.log('hora termino size: ', this.horaTerminoFormControl.value.length)
+    console.log('comparacion antes del if: ',  (this.horaInicioFormControl.value.length !=0 && this.horaTerminoFormControl.value.length !=0)) ;
+    if((this.horaInicioFormControl.value < this.horaTerminoFormControl.value ))
     {
-
       this.horaCorrecta = true;
-      console.log('horacorrecta: ',this.horaCorrecta);
+      if((this.horaInicioFormControl.value.length !=0 && this.horaTerminoFormControl.value.length !=0))
+      {
+
+
+        this.horaInicioVacia = false;
+        this.horaTerminoVacia = false;
+        console.log('horacorrecta: ',this.horaCorrecta);
+        console.log('hora inicio vacia: ',this.horaInicioVacia);
+        console.log ('hora termino vacia: ',this.horaTerminoVacia)
+      }
+      else {
+        this.horaInicioVacia = true;
+        this.horaTerminoVacia = true;
+      }
+
     }
     else{
       this.horaCorrecta = false;
+      console.log('else hora mayor menor')
       console.log('horacorrecta: ',this.horaCorrecta);
+      console.log('hora inicio vacia: ',this.horaInicioVacia);
+      console.log ('hora termino vacia: ',this.horaTerminoVacia)
+    }
+    if (this.horaCorrecta == false){
+
+      if((this.horaInicioFormControl.value.length !=0 && this.horaTerminoFormControl.value.length !=0))
+      {
+        this.horaInicioVacia = false;
+        this.horaTerminoVacia = false;
+      }
+      else {
+        this.horaInicioVacia = true;
+        this.horaTerminoVacia = true;
+      }
+
+
     }
 
     if(this.horaCorrecta == true)
     {
-      console.log('horacorrecta: ',this.horaCorrecta);
-      this.reunion = {
+
+        console.log('horacorrecta: ',this.horaCorrecta);
+        this.reunion = {
         titulo: this.tituloFormControl.value,
         descripcion: this.descripcionFormControl.value,
         fecha:this.fechaFormControl.value.getFullYear()+"-"+this.fechaFormControl.value.getMonth()+"-"+this.fechaFormControl.value.getDay(),
@@ -94,17 +128,23 @@ export class ModalReunionComponent {
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId
       }
-      if(this.reunion.horaInicio.length <=0){
+      if(this.reunion.horaInicio.length ==0){
         this.horaInicioVacia =true;
       }
-      else{
+      else if (this.reunion.horaInicio.length !=0){
         this.horaInicioVacia = false;
       }
-      if(this.reunion.horaTermino.length <=0){
+      if(this.reunion.horaTermino.length ==0){
           this.horaTerminoVacia = true;
       }
-      else{
+      else if(this.reunion.horaTermino.length !=0){
         this.horaTerminoVacia = false;
+      }
+      if (this.reunion.horaInicio > this.reunion.horaTermino){
+        this.horaCorrecta = true;
+      }
+      else {
+        this.horaCorrecta = false;
       }
 
       if(this.reunion.titulo.length <=0)
