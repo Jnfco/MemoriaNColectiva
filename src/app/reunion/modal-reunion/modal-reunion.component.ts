@@ -11,6 +11,7 @@ import * as firebase from 'firebase';
 
 import {MeetingService} from '../../services/meeting.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import * as moment from 'moment';
 
 @Component({
   selector: 'modal-reunion',
@@ -66,6 +67,8 @@ export class ModalReunionComponent {
 
   onAgendar ():void {
 
+    const momentDate = new Date(this.fechaFormControl.value);
+    const formattedDate = moment(momentDate).format("YYYY-MM-DD");
 
     this.userId = firebase.auth().currentUser.uid;
 
@@ -123,7 +126,7 @@ export class ModalReunionComponent {
         this.reunion = {
         titulo: this.tituloFormControl.value,
         descripcion: this.descripcionFormControl.value,
-        fecha:this.fechaFormControl.value.getFullYear()+"-"+this.fechaFormControl.value.getMonth()+"-"+this.fechaFormControl.value.getDay(),
+        fecha: formattedDate,
         horaInicio:this.horaInicioFormControl.value,
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId
