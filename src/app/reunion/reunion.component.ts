@@ -40,7 +40,7 @@ export class ReunionComponent implements OnInit {
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek addApointment'
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
           },
           buttonText:{
             today: 'Hoy',
@@ -51,16 +51,6 @@ export class ReunionComponent implements OnInit {
           }
           ,
           height: 500,
-          customButtons: {
-            addApointment: {
-              text: '+',
-              click: function() {
-                console.log('AAA')
-                this.openDialog()
-
-              }
-            }
-          },
          firstDay: 1,
          initialDate: this.today
 
