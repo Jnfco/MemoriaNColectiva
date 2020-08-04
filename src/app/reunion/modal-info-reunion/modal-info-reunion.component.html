@@ -1,0 +1,56 @@
+
+  <mat-card-header class="header">
+    <mat-card-title  >Detalles de la reunión</mat-card-title>
+</mat-card-header>
+<mat-divider></mat-divider>
+    <mat-card-content style="margin-top: 5%;">
+    <!-- put the form here -->
+    <form style="display: flex;flex-direction: column;justify-content: space-between;">
+      <mat-form-field>
+        <mat-label>Título reunión</mat-label>
+        <mat-error *ngIf="tituloFormControl.hasError('required')">Some error message!</mat-error>
+        <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl" readonly>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Descripción</mat-label>
+      <textarea  matInput [formControl]="descripcionFormControl" readonly></textarea>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Fecha</mat-label>
+    <mat-error >La fecha es requerida</mat-error>
+    <input   matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl"  readonly>
+    <mat-datepicker-toggle  matSuffix [for]="myPicker"></mat-datepicker-toggle>
+    <mat-datepicker #myPicker></mat-datepicker>
+</mat-form-field>
+<div class="fechas">
+<mat-label>Hora inicio</mat-label>
+
+<div class="timepicker-overlay" style="display: flex;flex-direction: row;">
+
+  <input readonly required [formControl]="horaInicioFormControl" readonly >
+  <!--
+  <ngx-material-timepicker-toggle [for]="horaInicio" ></ngx-material-timepicker-toggle>
+  <ngx-material-timepicker #horaInicio  ></ngx-material-timepicker>-->
+</div>
+<mat-label>Hora término</mat-label>
+
+<div class="timepicker-overlay" style="display: flex;flex-direction: row;">
+
+<input  readonly required [formControl]="horaTerminoFormControl" >
+<!--
+<ngx-material-timepicker-toggle [for]="horaTermino"></ngx-material-timepicker-toggle>
+<ngx-material-timepicker #horaTermino></ngx-material-timepicker>-->
+</div>
+
+</div>
+<mat-error *ngIf="this.horaTerminoVacia == true || this.horaInicioVacia == true" style="text-align: center;margin-top: 10px;" >Las horas no pueden estar vacías!</mat-error>
+<mat-error *ngIf="this.horaCorrecta == false && (this.horaInicioVacia == false && this.horaTerminoVacia == false)" style="text-align: center;margin-top: 10px;">La hora de inicio no puede ser mayor a la hora de término</mat-error>
+<mat-card-actions class="modal-buttons">
+<button (click)="onAgendar()" mat-raised-button color="primary">Aceptar</button>
+</mat-card-actions>
+    </form>
+    </mat-card-content>
+    <mat-card-actions>
+    <!-- put buttons here -->
+    </mat-card-actions>
+

@@ -12,8 +12,10 @@ export class MeetingService {
 
 
     addMeeting (reunion:Reunion,userId: any){
-
+      var uuid = require("uuid");
+      var id = uuid.v4();
       let reunionCreada = {
+        idReunion:id,
         idCreador: reunion.idCreador,
         titulo: reunion.titulo,
         descripcion: reunion.descripcion,
@@ -21,8 +23,7 @@ export class MeetingService {
         horaInicio:reunion.horaInicio,
         horaTermino:reunion.horaTermino,
       }
-      var uuid = require("uuid");
-      var id = uuid.v4();
+
       const reunionRef: AngularFirestoreDocument<any> = this.db.doc(`Reunion/${id}`);
       this.snackbar.open("Reunión agendada exitosamente!",'',{
         duration: 3000,

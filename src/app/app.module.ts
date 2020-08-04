@@ -70,6 +70,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 //TimePicker
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { ModalInfoReunionComponent } from './reunion/modal-info-reunion/modal-info-reunion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -98,7 +99,8 @@ FullCalendarModule.registerPlugins([
     SpinnerComponent,
     InnominadaComponent,
     ReunionComponent,
-    ModalReunionComponent
+    ModalReunionComponent,
+    ModalInfoReunionComponent
 
 
   ],

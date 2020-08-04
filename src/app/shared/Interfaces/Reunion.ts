@@ -5,4 +5,5 @@ export interface Reunion {
   horaInicio:string;
   horaTermino:string;
   idCreador: string;
+  idReunion: string;
 }

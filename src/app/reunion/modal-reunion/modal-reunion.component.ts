@@ -51,10 +51,13 @@ export class ModalReunionComponent {
   tituloVacío = true;
   horaInicioMayorNoVacio = false;
   fechaVacia = true;
+  listaEventos: any []
 
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService,public snackbar: MatSnackBar) {
+
+
 
      }
 
@@ -68,6 +71,7 @@ export class ModalReunionComponent {
   onAgendar ():void {
 
     const momentDate = new Date(this.fechaFormControl.value);
+
     const formattedDate = moment(momentDate).format("YYYY-MM-DD");
 
     this.userId = firebase.auth().currentUser.uid;
@@ -124,6 +128,7 @@ export class ModalReunionComponent {
 
         console.log('horacorrecta: ',this.horaCorrecta);
         this.reunion = {
+        idReunion:"",
         titulo: this.tituloFormControl.value,
         descripcion: this.descripcionFormControl.value,
         fecha: formattedDate,
