@@ -71,8 +71,11 @@ export class ModalReunionComponent {
   onAgendar ():void {
 
     const momentDate = new Date(this.fechaFormControl.value);
-
+    momentDate.setHours (parseInt(this.horaInicioFormControl.value))
     const formattedDate = moment(momentDate).format("YYYY-MM-DD");
+
+
+    console.log ('Agendar formated date: ', momentDate)
 
     this.userId = firebase.auth().currentUser.uid;
 

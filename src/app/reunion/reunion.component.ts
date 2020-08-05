@@ -57,6 +57,17 @@ openInfoReunion (reunion:Reunion): void {
     data: {reunion: reunion},
     width: '800px'
   });
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed', result);
+    const nowDate = new Date();
+  const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
+
+
+
+
+    this.getMeeting();
+  });
+
 }
 
   openDialog(): void {

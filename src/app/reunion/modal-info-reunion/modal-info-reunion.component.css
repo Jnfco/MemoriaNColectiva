@@ -1,0 +1,27 @@
+.modal-dialog {
+  display: inline-block;
+  vertical-align: middle;
+}
+::ng-deep .cdk-overlay-container {
+  z-index: 1200 !important;
+}
+
+.timepicker-overlay {
+  z-index: 10000000 !important;
+}
+
+.timepicker-backdrop-overlay {
+  z-index: 10000000 !important;
+}
+
+.fechas{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.modal-buttons{
+  display: flex;
+  flex-direction:row;
+  justify-content: space-around;
+  margin-top:5%
+}

@@ -1,6 +1,10 @@
 
-  <mat-card-header class="header">
+  <mat-card-header class="header" style="display: flex;flex-direction: row; justify-content: space-between;">
     <mat-card-title  >Detalles de la reunión</mat-card-title>
+    <div class="buttons" style="display: flex;flex-direction: row;">
+      <button mat-flat-button color="primary" style="margin-bottom: 1%;margin-right: 5%;" (click)="this.onModificar()" >Modificar reunión</button>
+      <button mat-flat-button color="warn" style="margin-bottom: 1%;">Eliminar reunión</button>
+  </div>
 </mat-card-header>
 <mat-divider></mat-divider>
     <mat-card-content style="margin-top: 5%;">
@@ -9,45 +13,40 @@
       <mat-form-field>
         <mat-label>Título reunión</mat-label>
         <mat-error *ngIf="tituloFormControl.hasError('required')">Some error message!</mat-error>
-        <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl" readonly>
+        <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl" >
     </mat-form-field>
     <mat-form-field>
       <mat-label>Descripción</mat-label>
-      <textarea  matInput [formControl]="descripcionFormControl" readonly></textarea>
+      <textarea  matInput [formControl]="descripcionFormControl"></textarea>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Fecha</mat-label>
     <mat-error >La fecha es requerida</mat-error>
-    <input   matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl"  readonly>
+    <input  matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl">
     <mat-datepicker-toggle  matSuffix [for]="myPicker"></mat-datepicker-toggle>
     <mat-datepicker #myPicker></mat-datepicker>
 </mat-form-field>
-<div class="fechas">
+<div class="fechas" style="display: flex;flex-direction: row;justify-content: space-evenly;">
 <mat-label>Hora inicio</mat-label>
-
 <div class="timepicker-overlay" style="display: flex;flex-direction: row;">
 
-  <input readonly required [formControl]="horaInicioFormControl" readonly >
-  <!--
-  <ngx-material-timepicker-toggle [for]="horaInicio" ></ngx-material-timepicker-toggle>
-  <ngx-material-timepicker #horaInicio  ></ngx-material-timepicker>-->
+  <input [ngxTimepicker]="horaInicio" [disableClick]="true" [format]=24 readonly required [formControl]="horaInicioFormControl">
+  <ngx-material-timepicker-toggle [for]="horaInicio"></ngx-material-timepicker-toggle>
+  <ngx-material-timepicker #horaInicio  ></ngx-material-timepicker>
 </div>
 <mat-label>Hora término</mat-label>
 
 <div class="timepicker-overlay" style="display: flex;flex-direction: row;">
 
-<input  readonly required [formControl]="horaTerminoFormControl" >
-<!--
-<ngx-material-timepicker-toggle [for]="horaTermino"></ngx-material-timepicker-toggle>
-<ngx-material-timepicker #horaTermino></ngx-material-timepicker>-->
+  <input [ngxTimepicker]="horaTermino" [disableClick]="true" [format]=24 readonly required [formControl]="horaTerminoFormControl">
+  <ngx-material-timepicker-toggle [for]="horaTermino"></ngx-material-timepicker-toggle>
+  <ngx-material-timepicker #horaTermino></ngx-material-timepicker>
 </div>
 
 </div>
 <mat-error *ngIf="this.horaTerminoVacia == true || this.horaInicioVacia == true" style="text-align: center;margin-top: 10px;" >Las horas no pueden estar vacías!</mat-error>
 <mat-error *ngIf="this.horaCorrecta == false && (this.horaInicioVacia == false && this.horaTerminoVacia == false)" style="text-align: center;margin-top: 10px;">La hora de inicio no puede ser mayor a la hora de término</mat-error>
-<mat-card-actions class="modal-buttons">
-<button (click)="onAgendar()" mat-raised-button color="primary">Aceptar</button>
-</mat-card-actions>
+
     </form>
     </mat-card-content>
     <mat-card-actions>

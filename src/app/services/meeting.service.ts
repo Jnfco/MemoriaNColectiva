@@ -32,5 +32,26 @@ export class MeetingService {
       return reunionRef.set(reunionCreada,{merge: true});
     }
 
+    updateMeeting (reunion:Reunion, userId: any , reunionId:string){
+
+      let reunionCreada = {
+        idReunion:reunionId,
+        idCreador: reunion.idCreador,
+        titulo: reunion.titulo,
+        descripcion: reunion.descripcion,
+        fecha: reunion.fecha,
+        horaInicio:reunion.horaInicio,
+        horaTermino:reunion.horaTermino,
+      }
+
+      this.snackbar.open("Reunión modificada exitosamente!",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+      return this.fireservices.collection("Reunion").doc(reunionId).set(reunionCreada,{merge:true});
+
+
+    }
+
 
 }
