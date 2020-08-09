@@ -6,4 +6,5 @@ export interface Reunion {
   horaTermino:string;
   idCreador: string;
   idReunion: string;
+  email: string;
 }

@@ -10,6 +10,9 @@ import { Reunion } from '../shared/Interfaces/Reunion';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ModalInfoReunionComponent } from './modal-info-reunion/modal-info-reunion.component';
 import * as moment from 'moment';
+import { DataService } from '../services/data.service';
+import { postData, respData } from '../shared/Interfaces/postDataObj';
+import { HttpClient } from '@angular/common/http';
 /*import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -35,18 +38,51 @@ export class ReunionComponent implements OnInit {
   header: any;
   today: Date;
   userId: any;
+  userEmail:any;
   reuniones: Reunion [] = [];
   reunionesSimple: any []=[];
   listaTest: any [];
 
-  constructor(public dialog: MatDialog, public meetingSvc: MeetingService,public db: AngularFirestore) { }
+  //campos correo
+
+  public email = "jnfco_18@hotmail.com"
+  public horaInicio = "15:30"
+  public horaTermino = "18:00"
+  public titulo  = "Reunion mesa negociadora"
+
+   //Email
+
+   dataEmail:string;
+   posData:postData;
+   resultData: respData;
+
+   postData = {
+    test: 'my content',
+  };
+  url = "http://localhost:5001/negociacioncolectiva-80355/us-central1/sendMail?dest="+this.email+"&horaInicio="+this.horaInicio+"&horaTermino="+this.horaTermino+"&titulo="+this.titulo;
+  json;
+
+  constructor(public dialog: MatDialog, public meetingSvc: MeetingService,public db: AngularFirestore, public http:HttpClient) { }
 
   ngOnInit():void {
       //this.eventService.getEvents().then(events => {this.events = events;});
       this.userId = firebase.auth().currentUser.uid;
+      this.userEmail= firebase.auth().currentUser.email;
 
     this.getMeeting();
 
+
+  }
+
+  onEnviarCorreo(){
+
+
+
+    this.http.post(this.url, this.postData).toPromise().then((data:any) => {
+      console.log(data);
+      console.log(data.json.test);
+      this.json = JSON.stringify(data.json);
+   });
 
   }
   handleDateClick(arg) {
@@ -109,7 +145,8 @@ openInfoReunion (reunion:Reunion): void {
      idCreador: this.userId,
      fecha: fecha,
      horaInicio: horaInicio,
-     horaTermino: horaTermino
+     horaTermino: horaTermino,
+     email:this.userEmail
    }
     this.openInfoReunion(reunion);
   }
@@ -136,7 +173,8 @@ openInfoReunion (reunion:Reunion): void {
               descripcion: doc.data().descripcion,
               fecha: doc.data().fecha,
               horaInicio: doc.data().horaInicio,
-              horaTermino: doc.data().horaTermino
+              horaTermino: doc.data().horaTermino,
+              email: this.userEmail
             }
             this.reuniones.push(reunion);
 

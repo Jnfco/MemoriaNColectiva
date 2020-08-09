@@ -18,6 +18,11 @@ import { MeetingService } from '../../services/meeting.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as moment from 'moment';
 
+//enviar correo
+
+import { DataService } from "../../services/data.service"
+import { postData, respData} from "../../shared/Interfaces/postDataObj";
+
 @Component({
   selector: 'modal-info-reunion',
   templateUrl: './modal-info-reunion.component.html',
@@ -36,6 +41,7 @@ export class ModalInfoReunionComponent {
   //Interfaz Reunion
   reunion: Reunion;
   userId: any;
+  userEmail: any;
 
   //booleanos
   horaCorrecta = true;
@@ -49,6 +55,8 @@ export class ModalInfoReunionComponent {
   listaEventos: any[];
   idReunion: string;
 
+
+
   constructor(
     public dialogRef: MatDialogRef<ModalInfoReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -56,6 +64,7 @@ export class ModalInfoReunionComponent {
     public snackbar: MatSnackBar
   ) {
 
+    this.userEmail = firebase.auth().currentUser.email;
     console.log('Reunion: ', this.data.reunion);
     this.idReunion = this.data.reunion.idReunion;
     this.tituloFormControl.setValue(this.data.reunion.titulo);
@@ -79,6 +88,12 @@ export class ModalInfoReunionComponent {
   onNoClick(): void {
     this.dialogRef.close({});
   }
+
+  onEliminar(){
+    this.meetingSvc.deleteMeeting(this.userId,this.idReunion);
+    this.dialogRef.close({});
+  }
+
 
   onModificar() {
     const momentDate = new Date(this.fechaFormControl.value);
@@ -149,6 +164,7 @@ export class ModalInfoReunionComponent {
         horaInicio: this.horaInicioFormControl.value,
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId,
+        email: this.userEmail
       };
       if (this.reunion.horaInicio.length == 0) {
         this.horaInicioVacia = true;

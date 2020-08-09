@@ -212,7 +212,7 @@ export class EstadoFinancieroComponent implements OnInit {
         return initial;
       }, {});
       this.jsonSinTransformar =JSON.stringify(jsonData).split('.').join("");
-      console.log('sin puntos: ', this.jsonSinTransformar)
+      //console.log('sin puntos: ', this.jsonSinTransformar)
       //console.log('Data: ',dataString);
 
       //console.log("Cantidad filas: ",jsonData.Activos_corrientes.length);
@@ -334,7 +334,7 @@ export class EstadoFinancieroComponent implements OnInit {
         var gananciaAntesImp = {
           anio: this.jsonArray[0].Año,
           gastoImp: this.jsonArray[0].Gasto_por_impuesto_a_las_ganancias,
-          gastoDespImp: this.jsonArray[0].Ganancia_después_de_impuesto,
+          gastoDespImp: this.jsonArray[0].Ganancia_despues_de_impuesto,
           totalRes: this.jsonArray[0].Total_resultados,
         };
         this.gananciaAntesImpuesto.push(gananciaAntesImp);

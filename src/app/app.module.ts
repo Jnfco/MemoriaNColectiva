@@ -60,6 +60,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {ModalReunionComponent} from './reunion/modal-reunion/modal-reunion.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { HttpRequest, HttpResponse, HttpInterceptor, HttpHandler, HttpEvent, HttpClient, HttpClientModule } from '@angular/common/http'
 
 //calendar
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -105,6 +106,7 @@ FullCalendarModule.registerPlugins([
 
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -138,11 +140,11 @@ FullCalendarModule.registerPlugins([
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    NgxMaterialTimepickerModule
+    NgxMaterialTimepickerModule,
   ],
   providers: [DocumentService,
     AuthService, MatDatepickerModule,
-    MatNativeDateModule],
+    MatNativeDateModule,HttpClient],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

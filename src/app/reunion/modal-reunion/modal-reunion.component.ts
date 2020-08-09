@@ -43,6 +43,7 @@ export class ModalReunionComponent {
   //Interfaz Reunion
   reunion : Reunion;
   userId: any;
+  userEmail: any;
 
   //booleanos
   horaCorrecta = true;
@@ -57,7 +58,7 @@ export class ModalReunionComponent {
     public dialogRef: MatDialogRef<ModalReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService,public snackbar: MatSnackBar) {
 
-
+        this.userEmail = firebase.auth().currentUser.email;
 
      }
 
@@ -137,7 +138,8 @@ export class ModalReunionComponent {
         fecha: formattedDate,
         horaInicio:this.horaInicioFormControl.value,
         horaTermino: this.horaTerminoFormControl.value,
-        idCreador: this.userId
+        idCreador: this.userId,
+        email: this.userEmail
       }
       if(this.reunion.horaInicio.length ==0){
         this.horaInicioVacia =true;

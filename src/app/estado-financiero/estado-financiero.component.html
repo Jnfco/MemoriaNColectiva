@@ -668,7 +668,7 @@
   <th mat-header-cell *matHeaderCellDef>Ganancia después de impuesto</th>
   <td  mat-cell *matCellDef="let element">
     <mat-form-field floatLabel="never">
-      <input matInput   #gastoDespImp="ngModel" [value]="element.gastoDespImp"  [(ngModel)]="element.gastpDespImp" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+      <input matInput   #gastoDespImp="ngModel" [value]="element.gastoDespImp"  [(ngModel)]="element.gastoDespImp" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
     <mat-error *ngIf="gastoDespImp?.invalid">
       <div *ngIf="gastoDespImp.errors.required">El campo no puede estar vacío</div>
       <div *ngIf="gastoDespImp.errors.pattern">Sólo números y puntos</div>

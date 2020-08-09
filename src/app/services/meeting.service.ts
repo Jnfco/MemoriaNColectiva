@@ -22,6 +22,7 @@ export class MeetingService {
         fecha: reunion.fecha,
         horaInicio:reunion.horaInicio,
         horaTermino:reunion.horaTermino,
+        email:reunion.email
       }
 
       const reunionRef: AngularFirestoreDocument<any> = this.db.doc(`Reunion/${id}`);
@@ -31,6 +32,8 @@ export class MeetingService {
       });
       return reunionRef.set(reunionCreada,{merge: true});
     }
+
+
 
     updateMeeting (reunion:Reunion, userId: any , reunionId:string){
 
@@ -42,6 +45,7 @@ export class MeetingService {
         fecha: reunion.fecha,
         horaInicio:reunion.horaInicio,
         horaTermino:reunion.horaTermino,
+        emailCreador: reunion.email
       }
 
       this.snackbar.open("Reunión modificada exitosamente!",'',{
@@ -50,6 +54,17 @@ export class MeetingService {
       });
       return this.fireservices.collection("Reunion").doc(reunionId).set(reunionCreada,{merge:true});
 
+
+    }
+
+    deleteMeeting (userId:any, reunionId:string){
+
+      this.snackbar.open("Reunión eliminada exitosamente!",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+
+      return this.fireservices.collection("Reunion").doc(reunionId).delete();
 
     }
 

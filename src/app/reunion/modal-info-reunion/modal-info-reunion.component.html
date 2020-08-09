@@ -3,7 +3,8 @@
     <mat-card-title  >Detalles de la reunión</mat-card-title>
     <div class="buttons" style="display: flex;flex-direction: row;">
       <button mat-flat-button color="primary" style="margin-bottom: 1%;margin-right: 5%;" (click)="this.onModificar()" >Modificar reunión</button>
-      <button mat-flat-button color="warn" style="margin-bottom: 1%;">Eliminar reunión</button>
+      <button mat-flat-button color="warn" style="margin-bottom: 1%;" (click)="this.onEliminar()">Eliminar reunión</button>
+
   </div>
 </mat-card-header>
 <mat-divider></mat-divider>

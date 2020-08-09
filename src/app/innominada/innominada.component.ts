@@ -232,6 +232,22 @@ console.log('Result: ',result)
     console.log('Sueldos maximos por cargo: ',arraySueldosMaxPorCargo)
     this.barChartData[0]={data: arraySueldosMaxPorCargo,label: 'Mayor sueldo por cargo'}
 
+//Aquí encontramos el sueldo minimo por cada cargo
+var arraySueldosMinPorCargo = [];
+for(let i = 0; i<this.data.length;i++){
+  var minAux = this.data[i][0]
+  for(let j = 0;j<this.data[i].length;j++){
+
+    if(this.data[i][j]< minAux)
+    {
+      minAux = this.data[i][j];
+    }
+
+  }
+  arraySueldosMinPorCargo.push(minAux);
+}
+console.log('Sueldos mínimos por cargo: ',arraySueldosMinPorCargo)
+this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por cargo'}
 
 
 
@@ -247,7 +263,7 @@ console.log('Result: ',result)
         }
       }
     }
-    this.maxVal = aux-100;
+    this.maxVal = aux +100000;
 
     //Encontrar el valor minimo de sueldos
 
@@ -475,6 +491,22 @@ console.log('Data half: ',this.dataHalf)
     console.log('Sueldos maximos por cargo: ',arraySueldosMaxPorCargo)
     this.barChartData[0]={data: arraySueldosMaxPorCargo,label: 'Mayor sueldo por cargo'}
 
+    //Aquí encontramos el sueldo minimo por cada cargo
+var arraySueldosMinPorCargo = [];
+for(let i = 0; i<this.data.length;i++){
+  var minAux = this.data[i][0]
+  for(let j = 0;j<this.data[i].length;j++){
+
+    if(this.data[i][j]< minAux)
+    {
+      minAux = this.data[i][j];
+    }
+
+  }
+  arraySueldosMinPorCargo.push(minAux);
+}
+console.log('Sueldos mínimos por cargo: ',arraySueldosMinPorCargo)
+this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por cargo'}
 
      //Encontrar el valor maximo de sueldos
      var aux = 0;
@@ -486,7 +518,7 @@ console.log('Data half: ',this.dataHalf)
          }
        }
      }
-     this.maxVal = aux-100;
+     this.maxVal = aux +100000;
 
      //Encontrar el valor minimo de sueldos
 
