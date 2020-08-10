@@ -111,4 +111,27 @@ export class DocumentService {
       });
 
   }
+
+  deleteInfo (userId:any){
+
+    this.snackbar.open("Datos eliminados exitosamente!",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
+
+    return this.fireservices.collection("InformacionInnominada").doc(userId).delete();
+
+  }
+
+  deleteEstado(userId:any){
+
+    this.snackbar.open("Datos eliminados exitosamente!",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
+
+    return this.fireservices.collection("EstadoFinanciero").doc(userId).delete();
+
+  }
+
 }

@@ -8,9 +8,12 @@
   <label class="custom-file-upload" (click)="saveDocumentInfo()">
     Guardar Datos
   </label>
+  <label class="custom-file-upload" (click)="deleteInfo()">
+    Eliminar Datos
+  </label>
 
 </div>
-<h2 *ngIf="noDataMessage">No se han cargado los datos</h2>
+<h2 *ngIf="noDataMessage == true">No se han cargado los datos</h2>
 <!--<mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>-->
 <mat-card class="card asd cardPardding" *ngIf=!noData>
   <mat-card-header style="display: flex;flex-direction: row;">

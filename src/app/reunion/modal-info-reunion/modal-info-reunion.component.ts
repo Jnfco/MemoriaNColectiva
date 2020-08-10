@@ -51,6 +51,7 @@ export class ModalInfoReunionComponent {
   horaInicioMayorNoVacio = false;
   fechaVacia = true;
   modificar = false;
+  fechaCorrecta = true;
 
   listaEventos: any[];
   idReunion: string;
@@ -100,6 +101,17 @@ export class ModalInfoReunionComponent {
     const formattedDate = moment(momentDate).format('YYYY-MM-DD');
 
     this.userId = firebase.auth().currentUser.uid;
+
+    var fecha = new Date(this.fechaFormControl.value);
+    var fechaHoy = new Date( Date.now());
+
+    this.userId = firebase.auth().currentUser.uid;
+    if(fecha < fechaHoy){
+        this.fechaCorrecta = false;
+    }
+    else if (fecha >= fechaHoy){
+      this.fechaCorrecta = true;
+    }
 
     console.log('horacorrecta: ', this.horaCorrecta);
     console.log(
@@ -154,7 +166,7 @@ export class ModalInfoReunionComponent {
       }
     }
 
-    if (this.horaCorrecta == true) {
+    if (this.horaCorrecta == true && this.fechaCorrecta ==true) {
       console.log('horacorrecta: ', this.horaCorrecta);
       this.reunion = {
         idReunion: '',

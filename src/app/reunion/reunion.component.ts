@@ -198,7 +198,7 @@ openInfoReunion (reunion:Reunion): void {
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            right: 'dayGridMonth'//timeGridWeek,timeGridDay'
           },
           buttonText:{
             today: 'Hoy',

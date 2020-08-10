@@ -121,6 +121,16 @@ export class InnominadaComponent implements OnInit {
     this.informacionInominada =[];
     this.cargosAgrupados=[];
     this.nombreCargos2Mitad = [];
+    this.sueldos = [];
+    this.nombreCargos = [];
+    this.promSueldos = [];
+    this.informacionInominada =[];
+    this.cargosAgrupados=[];
+    this.nombreCargos = [];
+    this.data = [];
+    this.noData=true;
+    this.nombreCargos1Mitad = [];
+    this.nombreCargos2Mitad =[];
 
     let workBook = null;
     let jsonData = null;
@@ -209,6 +219,14 @@ console.log('Result: ',result)
       this.dataHalf[i] = [];
       for(let j = 0; j < this.countMap[arrayFirstHalf[i]]; j++) {
           this.dataHalf[i][j] =this.cargosAgrupados[arrayFirstHalf[i]][j].sueldo ;
+      }
+  }
+
+    //Version de la matriz de sueldos por cargo pero con la segunda mitad
+    for(let i = 0; i < this.nombreCargos2Mitad.length; i++) {
+      this.dataHalf2[i] = [];
+      for(let j = 0; j < this.countMap[this.nombreCargos2Mitad[i]]; j++) {
+          this.dataHalf2[i][j] =this.cargosAgrupados[this.nombreCargos2Mitad[i]][j].sueldo ;
       }
   }
 
@@ -380,6 +398,8 @@ this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por ca
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed', result);
     });
+
+
   }
 
   public getDocumentInfo(){
@@ -598,6 +618,19 @@ this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por ca
 
   }
 
+
+  public deleteInfo (){
+
+    this.docSvc.deleteInfo(this.userId);
+    this.data = [];
+    this.dataHalf = [];
+    this.dataHalf2 = [];
+    this.barChartData= [];
+    this.barChartPromData = [];
+    this.noDataMessage = true;
+    this.noData = true;
+
+  }
 
   onHideBoxChart (){
 

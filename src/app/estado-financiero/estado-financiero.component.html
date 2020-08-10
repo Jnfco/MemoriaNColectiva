@@ -5,6 +5,9 @@
  </label>
    <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
    <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Datos</button>
+   <label class="custom-file-upload" (click)="deleteEstado()">
+    Eliminar Datos
+  </label>
 
   </div>
 
@@ -24,7 +27,7 @@
 
 
 <!--Tabla Activos Corrientes-->
-<h2 *ngIf="noDataMessage">No se ha cargado el estado financiero</h2>
+<h2 *ngIf="noDataMessage == true">No se ha cargado el estado financiero</h2>
 <mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>
 <mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="!noData">
   <mat-card-content>

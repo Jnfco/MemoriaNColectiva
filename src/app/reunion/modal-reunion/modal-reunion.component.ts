@@ -53,12 +53,17 @@ export class ModalReunionComponent {
   horaInicioMayorNoVacio = false;
   fechaVacia = true;
   listaEventos: any []
+  fechaCorrecta: boolean = true;
 
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService,public snackbar: MatSnackBar) {
 
         this.userEmail = firebase.auth().currentUser.email;
+        var actualDate = moment();
+        var formattedFecha =actualDate.format("YYYY-MM-DD")
+
+        console.log('Fecha actual: ',formattedFecha);
 
      }
 
@@ -74,11 +79,23 @@ export class ModalReunionComponent {
     const momentDate = new Date(this.fechaFormControl.value);
     momentDate.setHours (parseInt(this.horaInicioFormControl.value))
     const formattedDate = moment(momentDate).format("YYYY-MM-DD");
+    var fecha = new Date(this.fechaFormControl.value);
+    var fechaHoy = new Date( Date.now());
 
+    console.log('fecha: ',fecha)
+    console.log('fecha hoy: ',fechaHoy)
+    console.log('fecha ingresada es mayor que hoy?: ', fecha > fechaHoy);
 
-    console.log ('Agendar formated date: ', momentDate)
+    console.log('fecha sin formato: ', this.fechaFormControl.value)
+    console.log ('Agendar formated date: ', formattedDate)
 
     this.userId = firebase.auth().currentUser.uid;
+    if(fecha < fechaHoy){
+        this.fechaCorrecta = false;
+    }
+    else if (fecha >= fechaHoy){
+      this.fechaCorrecta = true;
+    }
 
 
     console.log('horacorrecta: ',this.horaCorrecta);
@@ -127,7 +144,7 @@ export class ModalReunionComponent {
 
     }
 
-    if(this.horaCorrecta == true)
+    if(this.horaCorrecta == true && this.fechaCorrecta == true)
     {
 
         console.log('horacorrecta: ',this.horaCorrecta);

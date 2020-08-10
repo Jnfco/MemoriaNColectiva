@@ -399,6 +399,15 @@ export class EstadoFinancieroComponent implements OnInit {
     reader.readAsBinaryString(file);
   }
 
+  public deleteEstado (){
+
+    this.docSvc.deleteEstado(this.userId);
+    this.data = [];
+    this.noDataMessage = true;
+    this.noData = true;
+
+  }
+
   evaluateRegex(expresion:string):void{
     var regex =  /(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)/;
 
