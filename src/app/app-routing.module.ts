@@ -13,6 +13,8 @@ import { ComparativaComponent } from './comparativa/comparativa.component';
 import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
 import { InnominadaComponent } from './innominada/innominada.component';
 import { ReunionComponent } from './reunion/reunion.component';
+import { CrearSindicatoComponent } from './crear-sindicato/crear-sindicato.component';
+import { SindicatoComponent } from './sindicato/sindicato.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -47,6 +49,16 @@ const routes: Routes = [
   {
     path:'contrato',
     component: ContratoColectivoComponent
+  },
+  
+  {
+    path: 'sindicato',
+    component: SindicatoComponent
+  }
+  ,
+  {
+    path: 'crearSindicato',
+    component: CrearSindicatoComponent
   }
 
 ]
