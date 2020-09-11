@@ -13,6 +13,7 @@ import { IUser } from './User';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable()
 export class AuthService implements CanActivate {
@@ -25,7 +26,8 @@ export class AuthService implements CanActivate {
     public afAuth: AngularFireAuth,
     public db: AngularFirestore,
     public router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackbar: MatSnackBar
   ) {
     this.afAuth.authState.subscribe((user) => {
       if (user) {
@@ -93,8 +95,10 @@ export class AuthService implements CanActivate {
     up and returns promise */
 
         this.SetUserData(result.user,name,organization);
-        this.dialog.open(DialogDataExampleDialog, {});
-        this.router.navigate(['/login']);
+        this.snackbar.open("Datos guardados exitosamente!",'',{
+          duration: 3000,
+          verticalPosition:'bottom'
+        });
       })
       .catch((error) => {
         if (error.code == 'auth/email-already-in-use') {
@@ -139,14 +143,5 @@ export class AuthService implements CanActivate {
 
 
 }
-@Component({
-  selector: 'dialog-data-example-dialog',
-  templateUrl: './Dialog.component.html',
-})
-export class DialogDataExampleDialog {
-  constructor() {}
-}
-export interface DialogData {
-  animal: 'Se ha creado la cuenta correctamente';
-}
+
 

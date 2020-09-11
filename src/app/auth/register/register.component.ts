@@ -50,12 +50,13 @@ export class RegisterComponent implements OnInit {
     try{
 
       const user =  this.authSvc.register(email,password,name,organization);
-
+      
       if(user){
         console.log("email control form:  ",this.authSvc.eventAuthError$);
         //this.router.navigate(["/home"]);
         this.isLoading = false;
       }
+      this.router.navigate(['/login']);
     }
     catch(error){
       console.log(error);

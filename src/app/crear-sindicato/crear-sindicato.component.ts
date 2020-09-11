@@ -3,7 +3,10 @@ import { UsuarioSindicato } from '../shared/Interfaces/UsuarioSindicato';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import * as firebase from 'firebase';
+import { SindicatoService } from '../services/sindicato.service';
+import { AuthService } from '../services/auth.service';
+import { MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-crear-sindicato',
@@ -12,7 +15,7 @@ import { Router } from '@angular/router';
 })
 export class CrearSindicatoComponent implements OnInit {
 
-  constructor(public router: Router) { }
+  constructor(public router: Router, private sinSvc:SindicatoService, private authSvc:AuthService,private snackbar: MatSnackBar) { }
   displayedColumns: string[] = [
     'Nombre','Correo','Contraseña','columndelete'
   ];
@@ -39,9 +42,13 @@ export class CrearSindicatoComponent implements OnInit {
     nameControl: new FormControl('', [Validators.required, Validators.minLength(3)])
   })
 
+  isUser = false;
+  userId: any;
+
   hide = true;
   ngOnInit(): void {
     this.usuarioSindicato = [];
+    this.userId = firebase.auth().currentUser.uid;
     /*var usuario = {
       nombre: " ",
       correo: " ",
@@ -54,6 +61,7 @@ export class CrearSindicatoComponent implements OnInit {
   get passwordInput() { return this.password }  
   onAddUser(){
     //this.usuarioSindicato = [];
+    this.isUser = true;
     var usuario = {
       nombre: "",
       correo: "",
@@ -61,6 +69,7 @@ export class CrearSindicatoComponent implements OnInit {
     }
     this.usuarioSindicato.push(usuario);
     this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
+    console.log('datasource', this.dataSource)
   }
 
   delete(elm) {
@@ -72,7 +81,22 @@ export class CrearSindicatoComponent implements OnInit {
   }
 
   onCrearSindicato (){
-    this.router.navigate(['/home']);
+
+    this.usuarioSindicato.forEach(element => {
+      const user = this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato");
+
+    });
+    
+
+    this.sinSvc.createSindicato(this.usuarioSindicato,this.group.get('nameControl').value,this.userId);
+    this.snackbar.open("Datos guardados exitosamente!",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
+    //this.router.navigate(['/home']);
+
+
+    
   }
 
   

@@ -1,4 +1,66 @@
-<div style="text-align: center;" > 
+<div *ngIf="this.tieneSindicato == false" style="text-align: center;" > 
     <h1>No tiene asociado un sindicato</h1>
     <button mat-flat-button color="primary" routerLink="contrato" (click) ="onCrearSindicato()" >Crear Sindicato</button>
+</div>
+<div style="display: flex;flex-direction: row;justify-content: flex-end; margin-bottom: 2%;">
+    <button mat-flat-button color="primary"  (click)="onModificarSindicato()">Modificar</button>
+</div>
+<table mat-table #mytable [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">
+    <ng-container matColumnDef="Nombre">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field >
+                <input matInput  #nombre="ngModel" [value]="element.nombre" [(ngModel)]="element.nombre" required>
+                <mat-error *ngIf="nombre?.invalid">
+                    <div *ngIf="nombre.errors.required">El campo no puede estar vacío</div>
+                </mat-error>
+            </mat-form-field>
+            
+        </td>
+
+    </ng-container>
+    <ng-container matColumnDef="Correo">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Correo</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field >
+                <input matInput   [value]="element.correo"   [(ngModel)]="element.correo"   required >
+                <mat-error *ngIf="emailFormControl.invalid">
+                    <div *ngIf="emailFormControl.errors.required">El campo no puede estar vacío</div>
+                    <div *ngIf="emailFormControl.errors.email">Formato de correo incorrecto</div>
+                </mat-error>
+            </mat-form-field>
+        </td>
+
+    </ng-container>
+
+    <ng-container matColumnDef="Contraseña">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Contraseña</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input matInput   [type]="hide ? 'password' : 'text'" 
+                    [value]="element.pass" [(ngModel)]="element.pass" required>
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-error *ngIf="password.invalid">
+                    <div *ngIf="password.errors.required">El campo no puede estar vacío</div>
+                    <div *ngIf="password.errors.minLength">Largo mínimo 7 caracteres</div>
+                </mat-error>
+                
+            </mat-form-field>
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="columndelete">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let element">
+            <mat-icon (click)="delete(element)">delete</mat-icon>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+    <button mat-flat-button color="primary" (click)="onAddUser()">+</button>
+    
 </div>
