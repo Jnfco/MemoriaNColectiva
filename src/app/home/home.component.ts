@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   constructor(public db: AngularFirestore) { }
 
   ngOnInit(): void {
+    
 
     //Implementar la notificacion mediante la aplicación de una reunión.
     /*this.userId = firebase.auth().currentUser.uid;

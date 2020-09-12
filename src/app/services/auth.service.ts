@@ -14,6 +14,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { MatSnackBar} from '@angular/material/snack-bar';
+import { snapshotChanges } from '@angular/fire/database';
 
 @Injectable()
 export class AuthService implements CanActivate {
@@ -87,14 +88,14 @@ export class AuthService implements CanActivate {
     return result;*/
   }
 
-  register(email: string, password: string,name: string,organization: string) {
+  register(email: string, password: string,name: string,organization: string,isAdmin:boolean) {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
       .then((result) => {
         /* Call the SendVerificaitonMail() function when new user sign
     up and returns promise */
 
-        this.SetUserData(result.user,name,organization);
+        this.SetUserData(result.user,name,organization,isAdmin);
         this.snackbar.open("Datos guardados exitosamente!",'',{
           duration: 3000,
           verticalPosition:'bottom'
@@ -122,7 +123,7 @@ export class AuthService implements CanActivate {
     return this.afAuth.sendPasswordResetEmail(email);
   }
 
-  SetUserData(user, name:string,organization:string) {
+  SetUserData(user, name:string,organization:string,isAdmin:boolean) {
 
     const userRef: AngularFirestoreDocument<any> = this.db.doc(
       `users/${user.uid}`
@@ -131,12 +132,33 @@ export class AuthService implements CanActivate {
       uid: user.uid,
       email: user.email,
       name: name,
-      organization: organization
+      organization: organization,
+      isAdmin:isAdmin
     };
     this.userID=user.uid;
     return userRef.set(userData, {
       merge: true,
     });
+  }
+
+
+  isAdmin(userId:string):boolean{
+
+    this.db.collection('users').doc(userId).get().subscribe((snapshotChanges)=>{
+      if(snapshotChanges.exists){
+        var doc = snapshotChanges.data();
+        var isAdmin = doc.isAdmin;
+        if(isAdmin == true){
+          return true;
+        }
+        else if(isAdmin == false){
+          return false;
+        }
+      }
+    })
+
+
+    return true;
   }
 
 

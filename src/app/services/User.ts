@@ -3,4 +3,5 @@ export interface IUser {
   email: string;
   name: string;
   organization: string;
+  isAdmin:boolean
 }

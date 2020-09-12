@@ -64,7 +64,7 @@ export class SindicatoComponent implements OnInit {
   }
 onModificarSindicato(){
   this.usuariosSindicato.forEach(element => {
-    const user = this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato");
+    const user = this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato",false);
 
   });
   

@@ -46,10 +46,11 @@ export class RegisterComponent implements OnInit {
     const password = this.passwordFormControl.value;
     const name = this.nameFormControl.value;
     const organization = this.selectedOrganization.org;
+    const isAdmin = true;
     this.isLoading = true;
     try{
 
-      const user =  this.authSvc.register(email,password,name,organization);
+      const user =  this.authSvc.register(email,password,name,organization,isAdmin);
       
       if(user){
         console.log("email control form:  ",this.authSvc.eventAuthError$);

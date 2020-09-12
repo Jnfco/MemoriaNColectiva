@@ -1,7 +1,9 @@
 <div style="text-align: center;">
     <h1>Agregar sindicato</h1>
 </div>
-
+<div style="display: flex;flex-direction: row;justify-content: flex-end;">
+    <button mat-flat-button color="primary" [disabled]="!sindicato.valid" (click)="onCrearSindicato()">Crear Sindicato</button>
+</div>
 <form style="display: flex;flex-direction: column;justify-content: space-between;" #sindicato="ngForm" [formGroup]="group" > 
     <mat-form-field>
         <mat-label>Nombre sindicato</mat-label>
@@ -66,7 +68,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-<div style="display:flex ;flex-direction: row;justify-content: space-between;">
+<div style="display:flex ;flex-direction: row;justify-content: center;margin-top: 2%;margin-bottom: 2%;">
     <button mat-flat-button color="primary" (click)="onAddUser()">+</button>
-    <button mat-flat-button color="primary"  (click)="onCrearSindicato()">Crear Sindicato</button>
+    
 </div>
