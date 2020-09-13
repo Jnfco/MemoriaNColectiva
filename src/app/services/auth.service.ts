@@ -143,11 +143,12 @@ export class AuthService implements CanActivate {
 
 
   isAdmin(userId:string):boolean{
-
+console.log('entró en el metodo isadmin de service')
     this.db.collection('users').doc(userId).get().subscribe((snapshotChanges)=>{
       if(snapshotChanges.exists){
         var doc = snapshotChanges.data();
         var isAdmin = doc.isAdmin;
+        console.log ('es admin en el service?: ',isAdmin)
         if(isAdmin == true){
           return true;
         }

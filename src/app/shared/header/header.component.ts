@@ -24,8 +24,10 @@ export class HeaderComponent implements OnInit {
 
     this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
       if(snapshotChanges.exists){
+        console.log('existe')
         var doc = snapshotChanges.data();
         var isAdmin = doc.isAdmin;
+        console.log('var isadmin= ',isAdmin)
         if(isAdmin == true){
           this.isAdmin =true;
         }

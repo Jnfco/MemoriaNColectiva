@@ -3,7 +3,9 @@
     <button mat-flat-button color="primary" routerLink="contrato" (click) ="onCrearSindicato()" >Crear Sindicato</button>
 </div>
 <div *ngIf="this.tieneSindicato == true">
-<div style="display: flex;flex-direction: row;justify-content: flex-end; margin-bottom: 2%;">
+<h1 style="text-align: center;">{{this.nombreSindicato}}</h1>
+<div style="display: flex;flex-direction: row;justify-content: space-between; margin-bottom: 2%;">
+    <h2>Miembros</h2>
     <button mat-flat-button color="primary"  (click)="onModificarSindicato()">Modificar</button>
 </div>
 <table mat-table #mytable [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">

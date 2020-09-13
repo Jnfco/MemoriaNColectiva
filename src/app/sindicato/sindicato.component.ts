@@ -47,6 +47,7 @@ export class SindicatoComponent implements OnInit {
   isUser = false;
   tieneSindicato = false;
   hide = true;
+  nombreSindicato = "";
   @ViewChild(MatTable,{static:true}) table: MatTable<any>;
   constructor(public router: Router,public db: AngularFirestore,private authSvc:AuthService,private snackbar: MatSnackBar,private sinSvc:SindicatoService) { }
 
@@ -82,9 +83,11 @@ onModificarSindicato(){
     this.db.collection('Sindicato').doc(userId).get().subscribe((snapshotChanges) =>{
 
       if(snapshotChanges.exists){
+        this.tieneSindicato = true;
         var doc = snapshotChanges.data();
         var sindicato = doc.usuarios;
-
+        this.nombreSindicato = doc.nombreSindicato
+        console.log (this.nombreSindicato)
         for(let i = 0;i< sindicato.length; i++){
 
           var usuario = {
@@ -99,9 +102,7 @@ onModificarSindicato(){
         this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuariosSindicato);
         console.log('usuarios: ',this.usuariosSindicato);
         console.log('datasource: ',this.dataSource.data)
-        if(this.usuariosSindicato.length > 0 ){
-          this.tieneSindicato = true;
-        }
+        
       }
     })
 
