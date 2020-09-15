@@ -8,7 +8,7 @@
       <form style="display: flex;flex-direction: column;justify-content: space-between;">
         <mat-form-field>
           <mat-label>Título reunión</mat-label>
-          <mat-error *ngIf="tituloFormControl.hasError('required')">Some error message!</mat-error>
+          <mat-error *ngIf="tituloFormControl.hasError('required')">Campo requerido</mat-error>
           <input  matInput  placeholder="Título"  name="Título"  required  [formControl]="tituloFormControl">
       </mat-form-field>
       <mat-form-field>
