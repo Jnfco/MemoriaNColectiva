@@ -7,6 +7,9 @@ import * as firebase from 'firebase';
 import { SindicatoService } from '../services/sindicato.service';
 import { AuthService } from '../services/auth.service';
 import { MatSnackBar} from '@angular/material/snack-bar';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-crear-sindicato',
@@ -15,12 +18,13 @@ import { MatSnackBar} from '@angular/material/snack-bar';
 })
 export class CrearSindicatoComponent implements OnInit {
 
-  constructor(public router: Router, private sinSvc:SindicatoService, private authSvc:AuthService,private snackbar: MatSnackBar) { }
+  constructor(public router: Router, private sinSvc:SindicatoService, private authSvc:AuthService,private snackbar: MatSnackBar,private dialog: MatDialog, public db:AngularFirestore) { }
   displayedColumns: string[] = [
     'Nombre','Correo','Contraseña','columndelete'
   ];
   dataSource: any;
   usuarioSindicato: UsuarioSindicato[];
+  sinUusuarios: UsuarioSindicato[];
   password = new FormControl('', [
     Validators.required,
     Validators.min(7),
@@ -65,7 +69,8 @@ export class CrearSindicatoComponent implements OnInit {
     var usuario = {
       nombre: "",
       correo: "",
-      pass: ""
+      pass: "",
+      uid:""
     }
     this.usuarioSindicato.push(usuario);
     this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
@@ -73,31 +78,54 @@ export class CrearSindicatoComponent implements OnInit {
   }
 
   delete(elm) {
-    this.dataSource.data = this.dataSource.data
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent,{
+      data:{
+        message: '¿Está seguro que quiere eliminar este usuario?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+    
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.dataSource.data = this.dataSource.data
       .filter(i => i !== elm)
       .map((i, idx) => (i.position = (idx + 1), i));
       const index: number = this.usuarioSindicato.indexOf(elm);
       this.usuarioSindicato.splice(index,1);
+       
+      }
+    });
+
+    
   }
+
 
   onCrearSindicato (){
 
+    
+    
+    
+  
     this.usuarioSindicato.forEach(element => {
-      const user = this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato",false);
-
+       this.authSvc.registerWithSindicate(element.correo,element.pass,element.nombre,"Sindicato",false,this.userId);
+         
+      console.log('element: ',element);
     });
     
 
     this.sinSvc.createSindicato(this.usuarioSindicato,this.group.get('nameControl').value,this.userId);
+    
     this.snackbar.open("Datos guardados exitosamente!",'',{
       duration: 3000,
       verticalPosition:'bottom'
     });
-    //this.router.navigate(['/home']);
-
-
-    
   }
+
 
   
 }

@@ -33,6 +33,7 @@ import { EstadoFinanciero } from '../shared/Interfaces/EstadoFinanciero';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { snapshotChanges } from '@angular/fire/database';
 
 
 @Component({
@@ -168,6 +169,8 @@ export class EstadoFinancieroComponent implements OnInit {
   test:boolean = true;
 
   disCol:string;
+
+  idSindicatoUser:string;
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -517,7 +520,7 @@ export class EstadoFinancieroComponent implements OnInit {
         this.gananciaAntesImpuesto,
         this.gananciaAtribuible,
         this.estadoResInt,
-        this.userId
+        this.idSindicatoUser
       );
     }
     else{
@@ -542,7 +545,28 @@ export class EstadoFinancieroComponent implements OnInit {
     this.gananciaAntesImpuesto = [];
     this.gananciaAtribuible = [];
     this.estadoResInt = [];
-    this.db.collection('EstadoFinanciero').doc(userId).get().subscribe((snapshotChanges) => {
+
+
+    //Ahora se va a buscar dentro de todos los estados financieros, el que tenga el id del sindicato del mismo usuario conectado actualmente
+
+    //Primero se obtiene el id del sindicato del usuario que está conectado actualmente buscando entre todos
+    this.db.collection('users').doc(userId).get().subscribe((snapshotChanges) =>{
+      if (snapshotChanges.exists){
+
+        var usuario = snapshotChanges.data();
+
+        if (usuario.uid == userId){
+
+          console.log('aqui')
+          this.idSindicatoUser = usuario.idSindicato;
+          console.log('id sindicato encontrada: ',this.idSindicatoUser)
+          console.log('es admin o no ?',usuario.isAdmin)
+          if(usuario.isAdmin == true){
+            this.idSindicatoUser =this.userId;
+
+          }
+          //Aqui se busca el documento ya por el sindicato en vez del userId
+    this.db.collection('EstadoFinanciero').doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
 
       if (snapshotChanges.exists) {
         this.noDataMessage=false;
@@ -706,6 +730,14 @@ export class EstadoFinancieroComponent implements OnInit {
 
 
     });
+        }
+
+      }
+    })
+
+    
+
+    
 
 
     //this.estadoFinanciero=this.docSvc.GetDocument(userId);

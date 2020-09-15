@@ -3,5 +3,14 @@ export interface IUser {
   email: string;
   name: string;
   organization: string;
-  isAdmin:boolean
+  isAdmin:boolean;
+}
+
+export interface IUserSindicato {
+  uid: string;
+  email: string;
+  name: string;
+  organization: string;
+  isAdmin:boolean;
+  idSindicato:string;
 }

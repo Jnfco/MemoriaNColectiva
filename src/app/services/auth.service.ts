@@ -9,7 +9,7 @@ import {
   AngularFirestoreDocument,
 } from '@angular/fire/firestore';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { IUser } from './User';
+import { IUser, IUserSindicato } from './User';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
 import { map } from 'rxjs/operators';
@@ -141,6 +141,25 @@ export class AuthService implements CanActivate {
     });
   }
 
+  SetUserDataSindicato(user, name:string,organization:string,isAdmin:boolean,idSindicato:string) {
+
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(
+      `users/${user.uid}`
+    );
+    const userData: IUserSindicato = {
+      uid: user.uid,
+      email: user.email,
+      name: name,
+      organization: organization,
+      isAdmin:isAdmin,
+      idSindicato:idSindicato
+
+    };
+    this.userID=user.uid;
+    return userRef.set(userData, {
+      merge: true,
+    });
+  }
 
   isAdmin(userId:string):boolean{
 console.log('entró en el metodo isadmin de service')
@@ -163,7 +182,25 @@ console.log('entró en el metodo isadmin de service')
   }
 
 
+  registerWithSindicate(email: string, password: string,name: string,organization: string,isAdmin:boolean,idSindicato:string) {
+    return this.afAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then((result) => {
+        /* Call the SendVerificaitonMail() function when new user sign
+    up and returns promise */
 
+        this.SetUserDataSindicato(result.user,name,organization,isAdmin,idSindicato);
+        this.snackbar.open("Datos guardados exitosamente!",'',{
+          duration: 3000,
+          verticalPosition:'bottom'
+        });
+      })
+      .catch((error) => {
+        if (error.code == 'auth/email-already-in-use') {
+          window.alert("Este correo está asociado a una cuenta ya existente!");
+        }
+      });
+  }
 
 }
 

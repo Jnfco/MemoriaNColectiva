@@ -9,6 +9,8 @@ import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { AuthService } from '../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SindicatoService } from '../services/sindicato.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 @Component({
   selector: 'app-sindicato',
   templateUrl: './sindicato.component.html',
@@ -49,7 +51,7 @@ export class SindicatoComponent implements OnInit {
   hide = true;
   nombreSindicato = "";
   @ViewChild(MatTable,{static:true}) table: MatTable<any>;
-  constructor(public router: Router,public db: AngularFirestore,private authSvc:AuthService,private snackbar: MatSnackBar,private sinSvc:SindicatoService) { }
+  constructor(public router: Router,public db: AngularFirestore,private authSvc:AuthService,private snackbar: MatSnackBar,private sinSvc:SindicatoService,private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
@@ -93,7 +95,8 @@ onModificarSindicato(){
           var usuario = {
             nombre: sindicato[i].nombre,
             correo: sindicato[i].correo,
-            pass: sindicato[i].pass
+            pass: sindicato[i].pass,
+            uid: sindicato[i].uid
           }
           this.usuariosSindicato.push(usuario);
          
@@ -114,7 +117,8 @@ onModificarSindicato(){
     var usuario = {
       nombre: "",
       correo: "",
-      pass: ""
+      pass: "",
+      uid:""
     }
     this.usuariosSindicato.push(usuario);
     console.log('usuarios nuevos: ',this.usuariosSindicato)
@@ -135,10 +139,29 @@ onModificarSindicato(){
   }
 
   delete(elm) {
-    this.dataSource.data = this.dataSource.data
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent,{
+      data:{
+        message: '¿Está seguro que quiere eliminar este usuario?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+    
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.dataSource.data = this.dataSource.data
       .filter(i => i !== elm)
       .map((i, idx) => (i.position = (idx + 1), i));
       const index: number = this.usuariosSindicato.indexOf(elm);
       this.usuariosSindicato.splice(index,1);
+       
+      }
+    });
+
+    
   }
 }

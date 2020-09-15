@@ -74,6 +74,7 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { ModalInfoReunionComponent } from './reunion/modal-info-reunion/modal-info-reunion.component';
 import { CrearSindicatoComponent } from './crear-sindicato/crear-sindicato.component';
 import { SindicatoComponent } from './sindicato/sindicato.component';
+import { ConfirmationDialogComponent } from './shared/confirmation-dialog/confirmation-dialog.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -105,7 +106,8 @@ FullCalendarModule.registerPlugins([
     ModalReunionComponent,
     ModalInfoReunionComponent,
     CrearSindicatoComponent,
-    SindicatoComponent
+    SindicatoComponent,
+    ConfirmationDialogComponent
 
 
   ],
