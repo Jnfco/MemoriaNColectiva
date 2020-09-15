@@ -7,4 +7,5 @@ export interface Reunion {
   idCreador: string;
   idReunion: string;
   email: string;
+  idSindicato: string;
 }

@@ -22,6 +22,7 @@ import * as moment from 'moment';
 
 import { DataService } from "../../services/data.service"
 import { postData, respData} from "../../shared/Interfaces/postDataObj";
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'modal-info-reunion',
@@ -55,14 +56,15 @@ export class ModalInfoReunionComponent {
 
   listaEventos: any[];
   idReunion: string;
-
+  public idSindicatoUser:string;
 
 
   constructor(
     public dialogRef: MatDialogRef<ModalInfoReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public meetingSvc: MeetingService,
-    public snackbar: MatSnackBar
+    public snackbar: MatSnackBar,
+    public db:AngularFirestore
   ) {
 
     this.userEmail = firebase.auth().currentUser.email;
@@ -95,6 +97,16 @@ export class ModalInfoReunionComponent {
     this.dialogRef.close({});
   }
 
+  getIdSindicato(){
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
+      if(snapshotChanges.exists){
+        var usuario =snapshotChanges.data();
+        if (usuario.uid == this.userId){
+          this.idSindicatoUser = usuario.idSindicato;
+        }
+      }
+    })
+  }
 
   onModificar() {
     const momentDate = new Date(this.fechaFormControl.value);
@@ -176,7 +188,8 @@ export class ModalInfoReunionComponent {
         horaInicio: this.horaInicioFormControl.value,
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId,
-        email: this.userEmail
+        email: this.userEmail,
+        idSindicato: this.idSindicatoUser
       };
       if (this.reunion.horaInicio.length == 0) {
         this.horaInicioVacia = true;

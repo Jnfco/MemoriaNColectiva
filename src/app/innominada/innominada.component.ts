@@ -8,6 +8,7 @@ import { InformacionInominada } from '../shared/Interfaces/InformacionInominada'
 import { AngularFirestore } from '@angular/fire/firestore';
 import {ModalComponent} from '../shared/modal/modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { snapshotChanges } from '@angular/fire/database';
 
 @Component({
   selector: 'app-innominada',
@@ -42,6 +43,7 @@ export class InnominadaComponent implements OnInit {
   public hideBarChart:boolean = false;
   public hideBarChart2: boolean=false;
 
+  public idSindicatoUser:string;
 
   public doughnutChartLabels: Label[] = [
     'Operador técnico',
@@ -414,204 +416,224 @@ this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por ca
     this.nombreCargos1Mitad = [];
     this.nombreCargos2Mitad =[];
 
-    this.db.collection('InformacionInnominada').doc(this.userId).get().subscribe((snapshotChanges) => {
-      //let e = this.estadoFinanciero = this.docSvc.returnEstadoFinanciero(snapshotChanges.data());
-      if (snapshotChanges.exists) {
-        /*for (let index = 0; index < snapshotChanges.data()['info'].length; index++) {
-            console.log( snapshotChanges.data()['info'][index])
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges) =>{
+      if(snapshotChanges.exists){
 
-        }*/
-        //console.log(snapshotChanges.data()['info'].length);
-        this.countMap = snapshotChanges.data()['info'].reduce((result, element) => {
-          result[element.cargo] = (result[element.cargo] || 0) + 1;
-          return result;
-        }, {});
+        var usuario = snapshotChanges.data();
 
+        if(usuario.uid == this.userId){
+          this.idSindicatoUser = usuario.idSindicato;
+          console.log('id sindicato encontrada: ',this.idSindicatoUser)
+          console.log('es admin o no ?',usuario.isAdmin)
+          if(usuario.isAdmin == true){
+            this.idSindicatoUser =this.userId;
 
-        const result = Object.keys(this.countMap)
-        .filter((title) => this.countMap[title] > 1)
-        .map((cargo) => {
-          return { cargo, repeat: this.countMap[cargo] };
-        });
-
-        for (let i = 0; i < result.length; i++) {
-          this.nombreCargos.push(result[i].cargo);
-        }
-        this.nombreCargos = this.nombreCargos.sort();
-        console.log('A: ', this.nombreCargos);
-
-        //Cortar el data por la mitad para el gráfico de caja
-        let halfwayThrough = Math.floor(this.nombreCargos.length / 2)
-
-    this.nombreCargos1Mitad = this.nombreCargos.slice(0, halfwayThrough);
-    this.nombreCargos2Mitad = this.nombreCargos.slice(halfwayThrough, this.nombreCargos.length);
-        console.log('Nombres 2 mitad: ',this.nombreCargos2Mitad)
-
-
-    console.log('nombre cargos primera mitad: ',this.nombreCargos1Mitad)
-
-        //Agrupar los datos por arrays de cargos
-
-       this.cargosAgrupados = snapshotChanges.data()['info'].reduce((grouping, item) => {
-        let cargo = item.cargo;
-        grouping[cargo] = grouping[cargo] || [];
-        grouping[cargo].push({
-          cargo: item.cargo,
-          sueldo: parseInt(item.sueldo),
-        });
-        return grouping;
-      }, {});
-
-      console.log('cargos agrupados: ',this.cargosAgrupados)
-
-      //Crear la matriz que va a tener todos los sueldos pero agrupados por cargo
-
-      var matrizSueldosPorCargo = [];
-    for(let i = 0; i < this.nombreCargos.length; i++) {
-        this.data[i] = [];
-        for(let j = 0; j < this.countMap[this.nombreCargos[i]]; j++) {
-            this.data[i][j] =this.cargosAgrupados[this.nombreCargos[i]][j].sueldo ;
-        }
-    }
-
-    //Version de la matriz de sueldos por cargo pero cortada a la mitad
-    for(let i = 0; i <this.nombreCargos1Mitad.length; i++) {
-      this.dataHalf[i] = [];
-      for(let j = 0; j < this.countMap[this.nombreCargos1Mitad[i]]; j++) {
-          this.dataHalf[i][j] =this.cargosAgrupados[this.nombreCargos1Mitad[i]][j].sueldo ;
-      }
-  }
-
-  //Version de la matriz de sueldos por cargo pero con la segunda mitad
-  for(let i = 0; i < this.nombreCargos2Mitad.length; i++) {
-    this.dataHalf2[i] = [];
-    for(let j = 0; j < this.countMap[this.nombreCargos2Mitad[i]]; j++) {
-        this.dataHalf2[i][j] =this.cargosAgrupados[this.nombreCargos2Mitad[i]][j].sueldo ;
-    }
-}
-
-console.log('Data half: ',this.dataHalf)
-//maximo sueldo por cargo
-    console.log('data: ',this.data)
-
-    var arraySueldosMaxPorCargo = []
-
-    for(let i =0;i<this.data.length;i++){
-      var maxAux=0;
-      for(let j=0;j<this.data[i].length;j++){
-
-          if(this.data[i][j]> maxAux){
-            maxAux=this.data[i][j]
           }
 
+          this.db.collection('InformacionInnominada').doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
+            //let e = this.estadoFinanciero = this.docSvc.returnEstadoFinanciero(snapshotChanges.data());
+            if (snapshotChanges.exists) {
+              /*for (let index = 0; index < snapshotChanges.data()['info'].length; index++) {
+                  console.log( snapshotChanges.data()['info'][index])
+      
+              }*/
+              //console.log(snapshotChanges.data()['info'].length);
+              this.countMap = snapshotChanges.data()['info'].reduce((result, element) => {
+                result[element.cargo] = (result[element.cargo] || 0) + 1;
+                return result;
+              }, {});
+      
+      
+              const result = Object.keys(this.countMap)
+              .filter((title) => this.countMap[title] > 1)
+              .map((cargo) => {
+                return { cargo, repeat: this.countMap[cargo] };
+              });
+      
+              for (let i = 0; i < result.length; i++) {
+                this.nombreCargos.push(result[i].cargo);
+              }
+              this.nombreCargos = this.nombreCargos.sort();
+              console.log('A: ', this.nombreCargos);
+      
+              //Cortar el data por la mitad para el gráfico de caja
+              let halfwayThrough = Math.floor(this.nombreCargos.length / 2)
+      
+          this.nombreCargos1Mitad = this.nombreCargos.slice(0, halfwayThrough);
+          this.nombreCargos2Mitad = this.nombreCargos.slice(halfwayThrough, this.nombreCargos.length);
+              console.log('Nombres 2 mitad: ',this.nombreCargos2Mitad)
+      
+      
+          console.log('nombre cargos primera mitad: ',this.nombreCargos1Mitad)
+      
+              //Agrupar los datos por arrays de cargos
+      
+             this.cargosAgrupados = snapshotChanges.data()['info'].reduce((grouping, item) => {
+              let cargo = item.cargo;
+              grouping[cargo] = grouping[cargo] || [];
+              grouping[cargo].push({
+                cargo: item.cargo,
+                sueldo: parseInt(item.sueldo),
+              });
+              return grouping;
+            }, {});
+      
+            console.log('cargos agrupados: ',this.cargosAgrupados)
+      
+            //Crear la matriz que va a tener todos los sueldos pero agrupados por cargo
+      
+            var matrizSueldosPorCargo = [];
+          for(let i = 0; i < this.nombreCargos.length; i++) {
+              this.data[i] = [];
+              for(let j = 0; j < this.countMap[this.nombreCargos[i]]; j++) {
+                  this.data[i][j] =this.cargosAgrupados[this.nombreCargos[i]][j].sueldo ;
+              }
+          }
+      
+          //Version de la matriz de sueldos por cargo pero cortada a la mitad
+          for(let i = 0; i <this.nombreCargos1Mitad.length; i++) {
+            this.dataHalf[i] = [];
+            for(let j = 0; j < this.countMap[this.nombreCargos1Mitad[i]]; j++) {
+                this.dataHalf[i][j] =this.cargosAgrupados[this.nombreCargos1Mitad[i]][j].sueldo ;
+            }
+        }
+      
+        //Version de la matriz de sueldos por cargo pero con la segunda mitad
+        for(let i = 0; i < this.nombreCargos2Mitad.length; i++) {
+          this.dataHalf2[i] = [];
+          for(let j = 0; j < this.countMap[this.nombreCargos2Mitad[i]]; j++) {
+              this.dataHalf2[i][j] =this.cargosAgrupados[this.nombreCargos2Mitad[i]][j].sueldo ;
+          }
       }
-      arraySueldosMaxPorCargo.push(maxAux);
-
-    }
-    console.log('Sueldos maximos por cargo: ',arraySueldosMaxPorCargo)
-    this.barChartData[0]={data: arraySueldosMaxPorCargo,label: 'Mayor sueldo por cargo'}
-
-    //Aquí encontramos el sueldo minimo por cada cargo
-var arraySueldosMinPorCargo = [];
-for(let i = 0; i<this.data.length;i++){
-  var minAux = this.data[i][0]
-  for(let j = 0;j<this.data[i].length;j++){
-
-    if(this.data[i][j]< minAux)
-    {
-      minAux = this.data[i][j];
-    }
-
-  }
-  arraySueldosMinPorCargo.push(minAux);
-}
-console.log('Sueldos mínimos por cargo: ',arraySueldosMinPorCargo)
-this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por cargo'}
-
-     //Encontrar el valor maximo de sueldos
-     var aux = 0;
-     for (let index = 0; index < this.data.length; index++) {
-       for (let j = 0; j < this.data[index].length; j++) {
-         //console.log(this.data[index][j])
-         if (this.data[index][j] > aux) {
-           aux = this.data[index][j];
-         }
-       }
-     }
-     this.maxVal = aux +100000;
-
-     //Encontrar el valor minimo de sueldos
-
-
-     var aux:number = this.data[0][0];
-     for (let index = 0; index < this.data.length; index++) {
-       for (let j = 0; j < this.data[index].length; j++) {
-         //console.log(this.data[index][j])
-         if (this.data[index][j] < aux) {
-           aux = this.data[index][j];
-         }
-       }
-     }
-     this.minVal =aux;
-     console.log('minval: ',this.minVal)
-
-
-
-     var JSONResult = JSON.stringify(result);
-     console.log('Result: ', JSONResult[''])
-
-     //var arrayCargos = Array.of(cargosAgrupados);
-     //console.log('Cargos arreglo: ',JSON.stringify(cargosAgrupados));
-
-     //ar cargosAgrupadosJSON = JSON.stringify(cargosAgrupados);
-     //console.log('Cargos json: ', cargosAgrupadosJSON);
-
-
-     //Tratar de generar un json con los sueldos sumados de cada cargo
-
-     var r = snapshotChanges.data()['info'].reduce(function (pv, cv) {
-
-       if (pv[cv.cargo]) {
-         pv[cv.cargo] += parseInt(cv.sueldo);
-       } else {
-         pv[cv.cargo] = parseInt(cv.sueldo);
-       }
-       return pv;
-     }, {});
-
-     // mostrar los valores de plata de todos los cargos sin saber cuales hay
-     for (let i = 0; i < this.nombreCargos.length; i++) {
-
-       this.sueldos.push(r[this.nombreCargos[i]]);
-     }
-     console.log('sueldos: ',this.sueldos)
-     console.log(this.nombreCargos);
-     //this.doughnutChartData= this.sueldos;
-     //console.log('AA: ',this.doughnutChartData)
-
-     //Sacar el promedio de los sueldos de cada cargo
-     this.barChartPromData[0].data = this.promSueldos;
-
-
-     for (let i =0; i<this.nombreCargos.length;i++){
-
-       this.promSueldos.push(Math.trunc(this.sueldos[i]/(this.countMap[this.nombreCargos[i]])));
-
-     }
-     console.log(this.promSueldos)
-
-        this.noData = false;
-        this.isLoading = false;
+      
+      console.log('Data half: ',this.dataHalf)
+      //maximo sueldo por cargo
+          console.log('data: ',this.data)
+      
+          var arraySueldosMaxPorCargo = []
+      
+          for(let i =0;i<this.data.length;i++){
+            var maxAux=0;
+            for(let j=0;j<this.data[i].length;j++){
+      
+                if(this.data[i][j]> maxAux){
+                  maxAux=this.data[i][j]
+                }
+      
+            }
+            arraySueldosMaxPorCargo.push(maxAux);
+      
+          }
+          console.log('Sueldos maximos por cargo: ',arraySueldosMaxPorCargo)
+          this.barChartData[0]={data: arraySueldosMaxPorCargo,label: 'Mayor sueldo por cargo'}
+      
+          //Aquí encontramos el sueldo minimo por cada cargo
+      var arraySueldosMinPorCargo = [];
+      for(let i = 0; i<this.data.length;i++){
+        var minAux = this.data[i][0]
+        for(let j = 0;j<this.data[i].length;j++){
+      
+          if(this.data[i][j]< minAux)
+          {
+            minAux = this.data[i][j];
+          }
+      
+        }
+        arraySueldosMinPorCargo.push(minAux);
       }
-      else{
-        console.log('no hay data:')
-        this.noDataMessage = true;
-        this.noData=true;
-        this.isLoading= false;
+      console.log('Sueldos mínimos por cargo: ',arraySueldosMinPorCargo)
+      this.barChartData[1] ={data: arraySueldosMinPorCargo, label:'Menor sueldo por cargo'}
+      
+           //Encontrar el valor maximo de sueldos
+           var aux = 0;
+           for (let index = 0; index < this.data.length; index++) {
+             for (let j = 0; j < this.data[index].length; j++) {
+               //console.log(this.data[index][j])
+               if (this.data[index][j] > aux) {
+                 aux = this.data[index][j];
+               }
+             }
+           }
+           this.maxVal = aux +100000;
+      
+           //Encontrar el valor minimo de sueldos
+      
+      
+           var aux:number = this.data[0][0];
+           for (let index = 0; index < this.data.length; index++) {
+             for (let j = 0; j < this.data[index].length; j++) {
+               //console.log(this.data[index][j])
+               if (this.data[index][j] < aux) {
+                 aux = this.data[index][j];
+               }
+             }
+           }
+           this.minVal =aux;
+           console.log('minval: ',this.minVal)
+      
+      
+      
+           var JSONResult = JSON.stringify(result);
+           console.log('Result: ', JSONResult[''])
+      
+           //var arrayCargos = Array.of(cargosAgrupados);
+           //console.log('Cargos arreglo: ',JSON.stringify(cargosAgrupados));
+      
+           //ar cargosAgrupadosJSON = JSON.stringify(cargosAgrupados);
+           //console.log('Cargos json: ', cargosAgrupadosJSON);
+      
+      
+           //Tratar de generar un json con los sueldos sumados de cada cargo
+      
+           var r = snapshotChanges.data()['info'].reduce(function (pv, cv) {
+      
+             if (pv[cv.cargo]) {
+               pv[cv.cargo] += parseInt(cv.sueldo);
+             } else {
+               pv[cv.cargo] = parseInt(cv.sueldo);
+             }
+             return pv;
+           }, {});
+      
+           // mostrar los valores de plata de todos los cargos sin saber cuales hay
+           for (let i = 0; i < this.nombreCargos.length; i++) {
+      
+             this.sueldos.push(r[this.nombreCargos[i]]);
+           }
+           console.log('sueldos: ',this.sueldos)
+           console.log(this.nombreCargos);
+           //this.doughnutChartData= this.sueldos;
+           //console.log('AA: ',this.doughnutChartData)
+      
+           //Sacar el promedio de los sueldos de cada cargo
+           this.barChartPromData[0].data = this.promSueldos;
+      
+      
+           for (let i =0; i<this.nombreCargos.length;i++){
+      
+             this.promSueldos.push(Math.trunc(this.sueldos[i]/(this.countMap[this.nombreCargos[i]])));
+      
+           }
+           console.log(this.promSueldos)
+      
+              this.noData = false;
+              this.isLoading = false;
+            }
+            else{
+              console.log('no hay data:')
+              this.noDataMessage = true;
+              this.noData=true;
+              this.isLoading= false;
+      
+            }
+      
+          });
+        }
 
       }
+    })
 
-    });
+   
 
 
 

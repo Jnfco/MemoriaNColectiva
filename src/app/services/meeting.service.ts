@@ -22,7 +22,8 @@ export class MeetingService {
         fecha: reunion.fecha,
         horaInicio:reunion.horaInicio,
         horaTermino:reunion.horaTermino,
-        email:reunion.email
+        email:reunion.email,
+        idSindicato:reunion.idSindicato
       }
 
       const reunionRef: AngularFirestoreDocument<any> = this.db.doc(`Reunion/${id}`);

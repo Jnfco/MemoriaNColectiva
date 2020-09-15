@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import { DataService } from '../services/data.service';
 import { postData, respData } from '../shared/Interfaces/postDataObj';
 import { HttpClient } from '@angular/common/http';
+import { snapshotChanges } from '@angular/fire/database';
 /*import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -55,6 +56,8 @@ export class ReunionComponent implements OnInit {
    dataEmail:string;
    posData:postData;
    resultData: respData;
+
+  public idSindicatoUser:string;
 
    postData = {
     test: 'my content',
@@ -146,26 +149,41 @@ openInfoReunion (reunion:Reunion): void {
      fecha: fecha,
      horaInicio: horaInicio,
      horaTermino: horaTermino,
-     email:this.userEmail
+     email:this.userEmail,
+     idSindicato:this.idSindicatoUser
    }
     this.openInfoReunion(reunion);
   }
 
 
-
+//obtener las reuniones buscandolas todas primero y luego comparar con la reunion
+//reunion que tenga la misma id del administrador perteneciente al mismo sindicato
   getMeeting(){
 
     this.listaTest = [];
+
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
+              
+      var usuario = snapshotChanges.data();
+      console.log('aqui')
+      this.idSindicatoUser = usuario.idSindicato;
+      console.log('id sindicato encontrada: ',this.idSindicatoUser)
+      console.log('es admin o no ?',usuario.isAdmin)
+      if(usuario.isAdmin == true){
+        this.idSindicatoUser =this.userId;
+
+      }
+      
+    
+    })
 
       this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
 
         querySnapshot.forEach((doc)=> {
 
 
-          if(doc.data().idCreador == this.userId )
+          if(doc.data().idSindicato == this.idSindicatoUser )
           {
-
-
             var reunion:Reunion = {
               idReunion: doc.data().idReunion,
               idCreador: doc.data().idCreador,
@@ -174,7 +192,8 @@ openInfoReunion (reunion:Reunion): void {
               fecha: doc.data().fecha,
               horaInicio: doc.data().horaInicio,
               horaTermino: doc.data().horaTermino,
-              email: this.userEmail
+              email: this.userEmail,
+              idSindicato:this.idSindicatoUser
             }
             this.reuniones.push(reunion);
 
@@ -188,6 +207,11 @@ openInfoReunion (reunion:Reunion): void {
             }
               console.log('let array: ',array)
               this.listaTest.push (array)
+
+           
+          
+
+            
           }
         })
 
