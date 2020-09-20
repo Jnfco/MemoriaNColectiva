@@ -11,10 +11,9 @@ export class SindicatoService {
     public fireservices: AngularFirestore,
     public db: AngularFirestore,) { }
 
-  createSindicato (usuarios:UsuarioSindicato [],nombreSindicato:string,userId:any){
-      
+  createSindicato (nombreSindicato:string,userId:any){
+      console.log("creando sindicato");
     const sindicato ={
-      usuarios: usuarios,
       nombreSindicato: nombreSindicato,
       idAdmin:userId
     }
@@ -27,7 +26,5 @@ export class SindicatoService {
 
   }
 
-  getSindicato(){
-
-  }
+ 
 }

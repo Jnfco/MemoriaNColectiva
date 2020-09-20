@@ -1,0 +1,26 @@
+
+
+<body class ="body">
+    <app-spinner *ngIf="isLoading"></app-spinner>
+          <mat-card class="my-5" *ngIf="!isLoading">
+  
+            <mat-card-content  class="cardContent" >
+              <div class="logo-container">
+                <img id="logo" src="../../../assets/logo.png">
+              </div>
+              <form class="register" >
+                <mat-form-field class="form-register">
+                  <mat-label>Email</mat-label>
+                  <input matInput  [formControl]="emailFormControl" placeholder="Email" name="email" required [errorStateMatcher] ="matcher" >
+  
+                </mat-form-field>
+                <mat-form-field class="form-register">
+                  <mat-label>Contraseña</mat-label>
+                  <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña (mínimo 7 carácteres)" name="contraseña" type="password" required minlength="7">
+                </mat-form-field>
+              </form>
+              <mat-card-actions class="botonSection">
+                <button [disabled]=" !emailFormControl.valid || !passwordFormControl.valid" mat-raised-button class="boton"  color="primary" type="submit" (click) ="onActivate()">Activar Cuenta</button>
+              </mat-card-actions>
+            </mat-card-content>
+          </mat-card>

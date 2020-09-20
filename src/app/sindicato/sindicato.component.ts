@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SindicatoService } from '../services/sindicato.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { AgregarUsuarioSindicatoComponent } from '../agregar-usuario-sindicato/agregar-usuario-sindicato.component';
 @Component({
   selector: 'app-sindicato',
   templateUrl: './sindicato.component.html',
@@ -21,10 +22,14 @@ export class SindicatoComponent implements OnInit {
   usuariosSindicato: UsuarioSindicato [];
   userId: any;
   displayedColumns: string[] = [
-    'Nombre','Correo','Contraseña','columndelete'
+    'Nombre','Correo'
   ];
   dataSource: any;
+  dataSourceNewUsers: any;
+
   usuarioSindicato: UsuarioSindicato[];
+  nuevosUsuariosSindicato: UsuarioSindicato[];
+
   password = new FormControl('', [
     Validators.required,
     Validators.min(7),
@@ -50,12 +55,15 @@ export class SindicatoComponent implements OnInit {
   tieneSindicato = false;
   hide = true;
   nombreSindicato = "";
+
+  existingEmails: string [];
   @ViewChild(MatTable,{static:true}) table: MatTable<any>;
   constructor(public router: Router,public db: AngularFirestore,private authSvc:AuthService,private snackbar: MatSnackBar,private sinSvc:SindicatoService,private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
     this.usuariosSindicato = [];
+    this.nuevosUsuariosSindicato = [];
     
     this.getSindicato(this.userId);
     
@@ -66,13 +74,19 @@ export class SindicatoComponent implements OnInit {
     
   }
 onModificarSindicato(){
+
+  //Para agregar a los nuevos usuarios al sistema
   this.usuariosSindicato.forEach(element => {
     const user = this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato",false);
 
   });
   
+//Para modificar el sindicato actual
+//Primero cambia el nombre del sindicato
+  this.sinSvc.createSindicato(this.group.get('nameControl').value,this.userId);
+  //Luego se agregan las cuentas nuevas sin activar de usuarios nuevos agregados al sindicato
 
-  this.sinSvc.createSindicato(this.usuariosSindicato,this.group.get('nameControl').value,this.userId);
+
   this.snackbar.open("Datos guardados exitosamente!",'',{
     duration: 3000,
     verticalPosition:'bottom'
@@ -96,7 +110,7 @@ onModificarSindicato(){
             nombre: sindicato[i].nombre,
             correo: sindicato[i].correo,
             pass: sindicato[i].pass,
-            uid: sindicato[i].uid
+            idSindicato: sindicato[i].uid
           }
           this.usuariosSindicato.push(usuario);
          
@@ -118,7 +132,7 @@ onModificarSindicato(){
       nombre: "",
       correo: "",
       pass: "",
-      uid:""
+      idSindicato:this.userId
     }
     this.usuariosSindicato.push(usuario);
     console.log('usuarios nuevos: ',this.usuariosSindicato)
@@ -163,5 +177,61 @@ onModificarSindicato(){
     });
 
     
+  }
+
+  validateEmailList() {
+
+    this.existingEmails = [];
+    
+    this.db.collection("users").get().subscribe((querySnapshot) => {
+
+      for(let i = 0; i< this.usuarioSindicato.length;i++){
+
+        querySnapshot.forEach((doc) => {
+          console.log("docs: ", doc.data().email)
+          if (doc.data().email == this.usuarioSindicato[i].correo) {
+            this.existingEmails.push(this.usuarioSindicato[i].correo)
+            
+  
+          }
+        })
+      }
+      
+
+      console.log('email encontrados: ',this.existingEmails)
+      if(this.existingEmails.length >0){
+        this.snackbar.open("No se pudo crear sindicato, algunos correos ingresados pertenecen a una cuenta existente!: " + this.existingEmails, '', {
+          duration: 3000,
+          verticalPosition: 'bottom'
+        });
+      }
+      else {
+        for (let i = 0; i < this.usuarioSindicato.length; i++) {
+          ///this.authSvc.registerWithSindicate(this.usuarioSindicato[i].correo, this.usuarioSindicato[i].pass, this.usuarioSindicato[i].nombre, "Sindicato", false, this.userId);
+          
+        }
+        this.sinSvc.createSindicato(this.group.get('nameControl').value, this.userId);
+      }
+    })
+
+  }
+
+
+  openDialog(): void {
+
+    const dialogRef = this.dialog.open(AgregarUsuarioSindicatoComponent, {
+      width: '800px'
+    });
+
+    /*
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      const nowDate = new Date();
+    const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
+*/
+
+
+      //this.getMeeting();
+   // });
   }
 }

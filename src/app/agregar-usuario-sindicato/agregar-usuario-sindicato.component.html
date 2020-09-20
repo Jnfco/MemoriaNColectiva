@@ -1,0 +1,28 @@
+
+
+
+    
+          <mat-card >
+  
+            <mat-card-content  class="cardContent" >
+              
+              <form class="register" >
+                <mat-form-field class="form-register">
+                  <mat-label>Nombre</mat-label>
+                  <input matInput  [formControl]="nameFormControl" placeholder="Nombre" name="nombre" required maxlength="100">
+                </mat-form-field>
+                <mat-form-field class="form-register">
+                  <mat-label>Correo</mat-label>
+                  <input matInput  [formControl]="emailFormControl" placeholder="Email" name="email" required [errorStateMatcher] ="matcher" >
+  
+                </mat-form-field>
+                <mat-form-field class="form-register">
+                  <mat-label>Contraseña</mat-label>
+                  <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña (mínimo 7 carácteres)" name="contraseña" type="password" required minlength="7">
+                </mat-form-field>
+              </form>
+              <mat-card-actions class="botonSection">
+                <button [disabled]=" !emailFormControl.valid || !passwordFormControl.valid || !nameFormControl.valid" mat-raised-button class="boton"  color="primary" type="submit" (click) ="onAddUser()">Agregar usuario</button>
+              </mat-card-actions>
+            </mat-card-content>
+          </mat-card>

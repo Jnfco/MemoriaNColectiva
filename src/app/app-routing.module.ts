@@ -15,6 +15,8 @@ import { InnominadaComponent } from './innominada/innominada.component';
 import { ReunionComponent } from './reunion/reunion.component';
 import { CrearSindicatoComponent } from './crear-sindicato/crear-sindicato.component';
 import { SindicatoComponent } from './sindicato/sindicato.component';
+import { ActivarCuentaComponent } from './activar-cuenta/activar-cuenta.component';
+import { AgregarUsuarioSindicatoComponent } from './agregar-usuario-sindicato/agregar-usuario-sindicato.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -64,7 +66,9 @@ const routes: Routes = [
 ]
   },
   {path: 'login', component: LoginComponent},
-  {path: 'reset',component: RecuperarPassComponent}
+  {path: 'reset',component: RecuperarPassComponent},
+  {path: 'activate',component:ActivarCuentaComponent},
+  {path: 'registerUserSindicato',component:AgregarUsuarioSindicatoComponent}
 
 ];
 

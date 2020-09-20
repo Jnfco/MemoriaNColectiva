@@ -12,12 +12,7 @@
     <ng-container matColumnDef="Nombre">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre</th>
         <td mat-cell *matCellDef="let element">
-            <mat-form-field >
-                <input matInput  #nombre="ngModel" [value]="element.nombre" [(ngModel)]="element.nombre" required>
-                <mat-error *ngIf="nombre?.invalid">
-                    <div *ngIf="nombre.errors.required">El campo no puede estar vacío</div>
-                </mat-error>
-            </mat-form-field>
+            {{element.nombre}}
             
         </td>
 
@@ -25,23 +20,17 @@
     <ng-container matColumnDef="Correo">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Correo</th>
         <td mat-cell *matCellDef="let element">
-            <mat-form-field >
-                <input matInput   [value]="element.correo"   [(ngModel)]="element.correo"   required >
-                <mat-error *ngIf="emailFormControl.invalid">
-                    <div *ngIf="emailFormControl.errors.required">El campo no puede estar vacío</div>
-                    <div *ngIf="emailFormControl.errors.email">Formato de correo incorrecto</div>
-                </mat-error>
-            </mat-form-field>
+          {{element.correo}}
         </td>
 
     </ng-container>
-
+<!---->
     <ng-container matColumnDef="Contraseña">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Contraseña</th>
         <td mat-cell *matCellDef="let element">
             <mat-form-field>
                 <input matInput   [type]="hide ? 'password' : 'text'" 
-                    [value]="element.pass" [(ngModel)]="element.pass" required>
+                    [value]="element.pass" [(ngModel)]="element.pass" required disabled>
                 <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 <mat-error *ngIf="password.invalid">
                     <div *ngIf="password.errors.required">El campo no puede estar vacío</div>
@@ -64,7 +53,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-    <button mat-flat-button color="primary" (click)="onAddUser()">+</button>
+    <button mat-flat-button color="primary" (click)="openDialog()">Agregar nuevo usuario</button>
     
 </div>
 </div>
