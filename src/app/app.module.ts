@@ -77,6 +77,7 @@ import { SindicatoComponent } from './sindicato/sindicato.component';
 import { ConfirmationDialogComponent } from './shared/confirmation-dialog/confirmation-dialog.component';
 import { ActivarCuentaComponent } from './activar-cuenta/activar-cuenta.component';
 import { AgregarUsuarioSindicatoComponent } from './agregar-usuario-sindicato/agregar-usuario-sindicato.component';
+import { DetalleReunionComponent } from './detalle-reunion/detalle-reunion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -111,7 +112,8 @@ FullCalendarModule.registerPlugins([
     SindicatoComponent,
     ConfirmationDialogComponent,
     ActivarCuentaComponent,
-    AgregarUsuarioSindicatoComponent
+    AgregarUsuarioSindicatoComponent,
+    DetalleReunionComponent
 
 
   ],

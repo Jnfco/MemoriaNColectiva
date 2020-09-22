@@ -1,0 +1,24 @@
+<div style="display: flex;flex-direction: column;">
+
+    <h1 mat-dialog-title>
+        Detalles de la reunión
+        </h1>
+        <div mat-dialog-content>
+        <mat-form-field style="width:200px !important;">
+        <input placeholder="Titulo" matInput [(ngModel)]="this.titulo" readonly>
+        </mat-form-field><br>
+        <mat-form-field style="width:200px !important;"> 
+        <input placeholder="Descripción" matInput [(ngModel)]="this.descripcion" readonly>
+        </mat-form-field>
+       
+        </div>
+        <mat-form-field style="width:200px !important;">
+            <input placeholder="Fecha" matInput [(ngModel)]="this.fecha" readonly >
+        </mat-form-field>
+        
+        <mat-card-actions style="text-align: center;">
+            <button mat-flat-button color="primary" >Ver Documento</button>
+        </mat-card-actions>
+
+        
+</div>
