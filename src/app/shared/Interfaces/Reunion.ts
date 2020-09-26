@@ -8,4 +8,5 @@ export interface Reunion {
   idReunion: string;
   email: string;
   idSindicato: string;
+  started:boolean;
 }

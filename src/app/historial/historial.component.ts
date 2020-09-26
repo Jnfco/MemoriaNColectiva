@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalReunionComponent } from '../reunion/modal-reunion/modal-reunion.component';
 import { DetalleReunionComponent } from '../detalle-reunion/detalle-reunion.component';
+import * as firebase from 'firebase';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-historial',
@@ -18,44 +20,86 @@ export class HistorialComponent implements OnInit {
   dataSource: any;
   reuniones: Reunion[];
   tieneReuniones = false;
-  constructor(public dialog: MatDialog) {
+  isLoading = true;
+  constructor(public dialog: MatDialog,public db: AngularFirestore) {
 
-    this.tieneReuniones = true;
-
-  }
-
-  ngOnInit(): void {
+    this.tieneReuniones = false;
+    this.userId = firebase.auth().currentUser.uid;
+    this.userEmail = firebase.auth().currentUser.email;
 
     this.reuniones = [];
-    var reunion: Reunion = {
-      titulo: "Reunión 1",
-      descripcion: "descripción",
-      email: "email@email.com",
-      fecha: "19/10/2020",
-      horaInicio: "16:00",
-      horaTermino: "17:00",
-      idCreador: "id",
-      idReunion: "id1",
-      idSindicato: "id"
-    }
-    var reunion2: Reunion = {
-      titulo: "Reunión 2",
-      descripcion: "Descripcion 2",
-      email: "email@no.com",
-      fecha: "27/10/2020",
-      horaInicio: "17:00",
-      horaTermino: "20:00",
-      idCreador: "id",
-      idReunion: "id2",
-      idSindicato: "id"
-    }
-
-    this.reuniones.push(reunion);
-    this.reuniones.push(reunion2);
-    this.dataSource = new MatTableDataSource<Reunion>(this.reuniones);
+    this.getMeeting();
+  }
+  userId: any;
+  idSindicatoUser:any;
+  userEmail:any;
+  ngOnInit(): void {
+    
+    console.log("reuniones agregar: ",this.reuniones)
+    
     console.log("data: ", this.dataSource)
   }
+  getMeeting(){
 
+    
+
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
+              
+      var usuario = snapshotChanges.data();
+      console.log('aqui')
+      this.idSindicatoUser = usuario.idSindicato;
+      console.log('id sindicato encontrada: ',this.idSindicatoUser)
+      console.log('es admin o no ?',usuario.isAdmin)
+      if(usuario.isAdmin == true){
+        this.idSindicatoUser =this.userId;
+
+      }
+      
+    
+    })
+
+      this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
+
+        querySnapshot.forEach((doc)=> {
+
+
+          if(doc.data().idSindicato == this.idSindicatoUser && doc.data().started == true)
+          {
+            var reunion:Reunion = {
+              idReunion: doc.data().idReunion,
+              idCreador: doc.data().idCreador,
+              titulo: doc.data().titulo,
+              descripcion: doc.data().descripcion,
+              fecha: doc.data().fecha,
+              horaInicio: doc.data().horaInicio,
+              horaTermino: doc.data().horaTermino,
+              email: this.userEmail,
+              idSindicato:this.idSindicatoUser,
+              started:doc.data().started
+            }
+            this.reuniones.push(reunion);
+
+            
+              console.log('Reuniones ',this.reuniones)
+              this.dataSource = new MatTableDataSource<Reunion>(this.reuniones);
+              this.tieneReuniones = true;
+           
+          }
+        })
+
+
+        this.isLoading = false;
+
+      })
+
+      
+
+
+
+
+
+
+  }
   verDetalle(elm) {
 
     

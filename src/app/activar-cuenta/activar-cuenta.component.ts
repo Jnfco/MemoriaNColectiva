@@ -50,7 +50,7 @@ export class ActivarCuentaComponent implements OnInit {
     this.isLoading = true;
     try{
 
-      console.log("tratando de activar el usuario qlo!!!ª!ª!")
+      
      this.authSvc.activateAccount(email,password);
       
       

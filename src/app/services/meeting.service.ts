@@ -23,7 +23,8 @@ export class MeetingService {
         horaInicio:reunion.horaInicio,
         horaTermino:reunion.horaTermino,
         email:reunion.email,
-        idSindicato:reunion.idSindicato
+        idSindicato:reunion.idSindicato,
+        started:reunion.started
       }
 
       const reunionRef: AngularFirestoreDocument<any> = this.db.doc(`Reunion/${id}`);
@@ -56,6 +57,15 @@ export class MeetingService {
       return this.fireservices.collection("Reunion").doc(reunionId).set(reunionCreada,{merge:true});
 
 
+    }
+
+    startMeeting (reunion:Reunion){
+
+      this.snackbar.open("Reunión iniciada!",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+      return this.fireservices.collection("Reunion").doc(reunion.idReunion).set(reunion,{merge:true});
     }
 
     deleteMeeting (userId:any, reunionId:string){

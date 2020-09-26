@@ -300,14 +300,16 @@ export class AuthService implements CanActivate {
 
       var usuarioSindicatoList:UsuarioSindicato[] = [];
       if(snapshotChanges.exists){
+        console.log("Existe sindicato!!")
         var user = snapshotChanges.data();
-
+        console.log("var user= ",user);
         var usuario ={
           nombre:usuarioSindicato.nombre,
           correo:usuarioSindicato.correo,
           pass:usuarioSindicato.pass,
           idSindicato:usuarioSindicato.idSindicato
         }
+        console.log("var usuario = ",usuario);
         usuarioSindicatoList = snapshotChanges.data().usuarios;
         console.log("lista de usuarios antes de agregar: ",usuarioSindicatoList);
         usuarioSindicatoList.push(usuario);
@@ -317,7 +319,7 @@ export class AuthService implements CanActivate {
           idAdmin:user.idAdmin,
           usuarios:usuarioSindicatoList
         }
-       console.log("usuariiooooo: ",sindicato)
+       console.log("var sindicato",sindicato)
         return userRef.set(sindicato,{
           merge:true,
         })
@@ -325,6 +327,8 @@ export class AuthService implements CanActivate {
     })
 
   }
+
+  
   deleteInactiveUser (idInactive:string){
 
     

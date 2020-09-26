@@ -23,6 +23,7 @@ import * as moment from 'moment';
 import { DataService } from "../../services/data.service"
 import { postData, respData} from "../../shared/Interfaces/postDataObj";
 import { AngularFirestore } from '@angular/fire/firestore';
+import { snapshotChanges } from '@angular/fire/database';
 
 @Component({
   selector: 'modal-info-reunion',
@@ -57,7 +58,8 @@ export class ModalInfoReunionComponent {
   listaEventos: any[];
   idReunion: string;
   public idSindicatoUser:string;
-
+  public started:boolean;
+  public
 
   constructor(
     public dialogRef: MatDialogRef<ModalInfoReunionComponent>,
@@ -66,7 +68,8 @@ export class ModalInfoReunionComponent {
     public snackbar: MatSnackBar,
     public db:AngularFirestore
   ) {
-
+    this.started = this.data.reunion.started;
+    this.userId = firebase.auth().currentUser.uid;
     this.userEmail = firebase.auth().currentUser.email;
     console.log('Reunion: ', this.data.reunion);
     this.idReunion = this.data.reunion.idReunion;
@@ -84,13 +87,19 @@ export class ModalInfoReunionComponent {
 
 
     console.log('formatedd date:',formattedDate)
-
+    console.log("id de la reunion: ",this.data.reunion.idReunion)
+    console.log("started desde afuera: ",this.data.reunion.started)
+    this.getIdSindicato();
+    
+    
     //this.fechaFormControl.setValue(momentDate.toUTCString())
   }
 
   onNoClick(): void {
     this.dialogRef.close({});
+    
   }
+  
 
   onEliminar(){
     this.meetingSvc.deleteMeeting(this.userId,this.idReunion);
@@ -98,11 +107,26 @@ export class ModalInfoReunionComponent {
   }
 
   getIdSindicato(){
+    console.log("User id:",this.userId)
     this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
       if(snapshotChanges.exists){
         var usuario =snapshotChanges.data();
         if (usuario.uid == this.userId){
-          this.idSindicatoUser = usuario.idSindicato;
+  
+          //this.data.reunion.started = usuario.started;
+          console.log("Started ? : ",this.data.reunion)
+          console.log("es admin?: ",usuario.isAdmin)
+          if(usuario.isAdmin == true){
+  
+            this.idSindicatoUser = this.userId;
+          }
+          else{
+  
+            this.idSindicatoUser = usuario.idSindicato;
+          }
+  
+         
+          console.log("id sindicato: ",this.idSindicatoUser)
         }
       }
     })
@@ -189,7 +213,8 @@ export class ModalInfoReunionComponent {
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId,
         email: this.userEmail,
-        idSindicato: this.idSindicatoUser
+        idSindicato: this.idSindicatoUser,
+        started:false
       };
       if (this.reunion.horaInicio.length == 0) {
         this.horaInicioVacia = true;
@@ -207,6 +232,7 @@ export class ModalInfoReunionComponent {
         this.horaCorrecta = false;
       }
 
+    
       if (this.reunion.titulo.length <= 0) {
         this.tituloVacío = true;
       } else {
@@ -227,5 +253,24 @@ export class ModalInfoReunionComponent {
 
   onCerrar(): void {
     this.dialogRef.close({});
+  }
+
+  onIniciarReunion(){
+
+    var reunion:Reunion = {
+      titulo:this.data.reunion.titulo,
+      descripcion:this.data.reunion.descripcion,
+      email:this.data.reunion.email,
+      fecha:this.data.reunion.fecha,
+      horaInicio:this.data.reunion.horaInicio,
+      horaTermino:this.data.reunion.horaTermino,
+      idCreador:this.data.reunion.idCreador,
+      idReunion:this.data.reunion.idReunion,
+      idSindicato:this.data.reunion.idSindicato,
+      started:true
+    }
+    this.meetingSvc.startMeeting(reunion);
+    this.dialogRef.close({});
+
   }
 }

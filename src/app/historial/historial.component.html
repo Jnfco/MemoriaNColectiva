@@ -2,6 +2,7 @@
 <div *ngIf="this.tieneReuniones == false" style="text-align: center;" > 
     <h1>No hay reuniones recientes</h1>
 </div>
+<mat-progress-bar mode="indeterminate" *ngIf="isLoading == true"></mat-progress-bar>
 <div *ngIf="this.tieneReuniones== true">
 <h1 style="text-align: center;">Historial de reuniones</h1>
 <table mat-table #mytable [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">

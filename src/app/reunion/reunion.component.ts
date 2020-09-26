@@ -131,7 +131,8 @@ openInfoReunion (reunion:Reunion): void {
     });
   }
   handleEventClick(arg) {
-    const momentHoraInicio = new Date(arg.event.start);
+    this.db.collection("Reunion").doc(arg.event.id).get().subscribe((snapshotChanges)=>{
+      const momentHoraInicio = new Date(arg.event.start);
     const momentHoraTermino = new Date(arg.event.end);
     const horaInicio = moment(momentHoraInicio).format("HH:mm");
     const horaTermino = moment(momentHoraTermino).format("HH:mm");
@@ -150,9 +151,13 @@ openInfoReunion (reunion:Reunion): void {
      horaInicio: horaInicio,
      horaTermino: horaTermino,
      email:this.userEmail,
-     idSindicato:this.idSindicatoUser
+     idSindicato:this.idSindicatoUser,
+     started: snapshotChanges.data().started
    }
+   console.log("Reunion eventclick: ",reunion)
     this.openInfoReunion(reunion);
+    })
+    
   }
 
 
@@ -193,7 +198,8 @@ openInfoReunion (reunion:Reunion): void {
               horaInicio: doc.data().horaInicio,
               horaTermino: doc.data().horaTermino,
               email: this.userEmail,
-              idSindicato:this.idSindicatoUser
+              idSindicato:this.idSindicatoUser,
+              started:doc.data().started
             }
             this.reuniones.push(reunion);
 
@@ -202,16 +208,14 @@ openInfoReunion (reunion:Reunion): void {
               start: doc.data().fecha +"T"+doc.data().horaInicio,
               end: doc.data().fecha + "T"+doc.data().horaTermino,
               description: doc.data().descripcion,
-              id: doc.data().idReunion
+              id: doc.data().idReunion,
+
 
             }
-              console.log('let array: ',array)
+              console.log('Reuniones ',this.reuniones)
               this.listaTest.push (array)
 
            
-          
-
-            
           }
         })
 

@@ -66,7 +66,9 @@ export class ModalReunionComponent {
         this.userEmail = firebase.auth().currentUser.email;
         var actualDate = moment();
         var formattedFecha =actualDate.format("YYYY-MM-DD")
-
+        console.log("data: ",data)
+      this.userId = firebase.auth().currentUser.uid;
+      console.log("user id !!: ",this.userId);
         console.log('Fecha actual: ',formattedFecha);
         this.getIdSindicato();
 
@@ -78,11 +80,24 @@ export class ModalReunionComponent {
   }
 
 getIdSindicato(){
+  console.log("User id:",this.userId)
   this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
     if(snapshotChanges.exists){
       var usuario =snapshotChanges.data();
       if (usuario.uid == this.userId){
-        this.idSindicatoUser = usuario.idSindicato;
+
+        console.log("es admin?: ",usuario.isAdmin)
+        if(usuario.isAdmin == true){
+
+          this.idSindicatoUser = this.userId;
+        }
+        else{
+
+          this.idSindicatoUser = usuario.idSindicato;
+        }
+
+       
+        console.log("id sindicato: ",this.idSindicatoUser)
       }
     }
   })
@@ -90,6 +105,8 @@ getIdSindicato(){
 
   onAgendar ():void {
 
+
+    console.log("id de ahora: ",this.userId)
     const momentDate = new Date(this.fechaFormControl.value);
     momentDate.setHours (parseInt(this.horaInicioFormControl.value))
     const formattedDate = moment(momentDate).format("YYYY-MM-DD");
@@ -171,7 +188,8 @@ getIdSindicato(){
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId,
         email: this.userEmail,
-        idSindicato: this.idSindicatoUser
+        idSindicato: this.idSindicatoUser,
+        started:false
       }
       if(this.reunion.horaInicio.length ==0){
         this.horaInicioVacia =true;

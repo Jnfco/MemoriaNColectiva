@@ -61,10 +61,13 @@ export class CrearSindicatoComponent implements OnInit {
 
   existingEmails: string[];
   validated  = false;
+  hasMember:boolean;
 
+  userpass:any;
   ngOnInit(): void {
     this.usuarioSindicato = [];
     this.userId = firebase.auth().currentUser.uid;
+
     /*var usuario = {
       nombre: " ",
       correo: " ",
@@ -96,6 +99,7 @@ export class CrearSindicatoComponent implements OnInit {
         console.log('datasource', this.dataSource)
 
       }
+      this.hasMember =true;
     }
     else if (this.usuarioSindicato.length == 0) {
       this.isUser = true;
@@ -109,6 +113,7 @@ export class CrearSindicatoComponent implements OnInit {
       }
       this.usuarioSindicato.push(usuario);
       this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
+      this.hasMember = false;
     }
 
   }
@@ -188,6 +193,29 @@ export class CrearSindicatoComponent implements OnInit {
     else if (this.usuarioSindicato.length > 1) {
     this.validateEmailList();
     }
+    if(this.usuarioSindicato.length == 0){
+
+      console.log("tamaño es 0: ",this.usuarioSindicato.length)
+      this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
+
+        if(snapshotChanges.exists){
+
+          console.log("ID del usuario antes de crear: ",this.userId)
+          var admin:UsuarioSindicato = {
+            nombre: snapshotChanges.data().name,
+            correo: snapshotChanges.data().email,
+            idSindicato: this.userId,
+            pass: ""
+          }
+          console.log("admin antes de service: ",admin)
+
+          this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value,this.userId,admin);
+
+        }
+      })
+
+      
+    }
 
   }
 
@@ -255,7 +283,7 @@ export class CrearSindicatoComponent implements OnInit {
           this.authSvc.addNewInactiveUser(this.usuarioSindicato[i].nombre,this.usuarioSindicato[i].correo,this.usuarioSindicato[i].pass,this.userId);
           
         }
-        this.router.navigate(['/home']);
+        
       }
     })
 

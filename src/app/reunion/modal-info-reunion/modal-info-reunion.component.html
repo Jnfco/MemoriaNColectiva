@@ -2,8 +2,9 @@
   <mat-card-header class="header" style="display: flex;flex-direction: row; justify-content: space-between;">
     <mat-card-title  >Detalles de la reunión</mat-card-title>
     <div class="buttons" style="display: flex;flex-direction: row;">
-      <button mat-flat-button color="primary" style="margin-bottom: 1%;margin-right: 5%;" (click)="this.onModificar()" >Modificar reunión</button>
-      <button mat-flat-button color="warn" style="margin-bottom: 1%;" (click)="this.onEliminar()">Eliminar reunión</button>
+      <button mat-flat-button color="primary" style="margin-bottom: 1%;margin-right: 5%;" (click)="this.onModificar()" [disabled] = "this.started" >Modificar reunión</button>
+      
+      <button mat-flat-button color="warn" style="margin-bottom: 1%;" (click)="this.onEliminar()" [disabled] = "this.started">Eliminar reunión</button>
 
   </div>
 </mat-card-header>
@@ -14,16 +15,16 @@
       <mat-form-field>
         <mat-label>Título reunión</mat-label>
         <mat-error *ngIf="tituloFormControl.hasError('required')">Some error message!</mat-error>
-        <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl" >
+        <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl"[readonly] = "this.started" >
     </mat-form-field>
     <mat-form-field>
       <mat-label>Descripción</mat-label>
-      <textarea  matInput [formControl]="descripcionFormControl"></textarea>
+      <textarea  matInput [formControl]="descripcionFormControl" [readonly] = "this.started"></textarea>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Fecha</mat-label>
     <mat-error >La fecha es requerida</mat-error>
-    <input  matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl">
+    <input  matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl" [disabled] = "this.started">
     <mat-datepicker-toggle  matSuffix [for]="myPicker"></mat-datepicker-toggle>
     <mat-datepicker #myPicker></mat-datepicker>
 </mat-form-field>
@@ -32,7 +33,7 @@
 <mat-label>Hora inicio</mat-label>
 <div class="timepicker-overlay" style="display: flex;flex-direction: row;">
 
-  <input [ngxTimepicker]="horaInicio" [disableClick]="true" [format]=24 readonly required [formControl]="horaInicioFormControl">
+  <input [ngxTimepicker]="horaInicio" [disableClick]="true" [format]=24 readonly required [formControl]="horaInicioFormControl" [disabled] = "this.started">
   <ngx-material-timepicker-toggle [for]="horaInicio"></ngx-material-timepicker-toggle>
   <ngx-material-timepicker #horaInicio  ></ngx-material-timepicker>
 </div>
@@ -40,7 +41,7 @@
 
 <div class="timepicker-overlay" style="display: flex;flex-direction: row;">
 
-  <input [ngxTimepicker]="horaTermino" [disableClick]="true" [format]=24 readonly required [formControl]="horaTerminoFormControl">
+  <input [ngxTimepicker]="horaTermino" [disableClick]="true" [format]=24 readonly required [formControl]="horaTerminoFormControl" [disabled] = "this.started">
   <ngx-material-timepicker-toggle [for]="horaTermino"></ngx-material-timepicker-toggle>
   <ngx-material-timepicker #horaTermino></ngx-material-timepicker>
 </div>
@@ -51,7 +52,8 @@
 
     </form>
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions style="text-align: center;" *ngIf="this.started == false">
     <!-- put buttons here -->
+    <button mat-flat-button  style="margin-bottom: 1%;margin-right: 5%;background-color: #0ABF16;color: white;" (click)="this.onIniciarReunion()">Iniciar reunión</button>
     </mat-card-actions>
 
