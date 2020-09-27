@@ -133,6 +133,7 @@ export class CrearSindicatoComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
+        console.log("elemento a borrar: ",elm)
         this.dataSource.data = this.dataSource.data
           .filter(i => i !== elm)
           .map((i, idx) => (i.position = (idx + 1), i));
@@ -172,30 +173,8 @@ export class CrearSindicatoComponent implements OnInit {
           });
 
 
-          this.sinSvc.createSindicato( this.group.get('nameControl').value, this.userId);
 
-          this.snackbar.open("Datos guardados exitosamente!", '', {
-            duration: 3000,
-            verticalPosition: 'bottom'
-          });
-          //this.router.navigate(['/home']);
-        }
-        else {
-          this.snackbar.open("No se pudo crear sindicato, el correo ingresado " + this.emailSaved + " ya se encuentra en otro sindicato", '', {
-            duration: 3000,
-            verticalPosition: 'bottom'
-          });
-        }
-
-      }, 500);
-
-    }
-    else if (this.usuarioSindicato.length > 1) {
-    this.validateEmailList();
-    }
-    if(this.usuarioSindicato.length == 0){
-
-      console.log("tamaño es 0: ",this.usuarioSindicato.length)
+          //Aqui se crea el sindicato con el administrador como usuario por defecto
       this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
 
         if(snapshotChanges.exists){
@@ -213,9 +192,32 @@ export class CrearSindicatoComponent implements OnInit {
 
         }
       })
+          /*this.sinSvc.createSindicato( this.group.get('nameControl').value, this.userId);
+          
+          this.snackbar.open("Datos guardados exitosamente!", '', {
+            duration: 3000,
+            verticalPosition: 'bottom'
+          });*/
+          //this.router.navigate(['/home']);
+        }
+        else {
+          this.snackbar.open("No se pudo crear sindicato, el correo ingresado " + this.emailSaved + " ya se encuentra en otro sindicato", '', {
+            duration: 3000,
+            verticalPosition: 'bottom'
+          });
+        }
+
+      }, 500);
+
+    }
+    else if (this.usuarioSindicato.length > 1) {
+    this.validateEmailList();
+    }
+
+    
 
       
-    }
+    
 
   }
 
@@ -283,6 +285,24 @@ export class CrearSindicatoComponent implements OnInit {
           this.authSvc.addNewInactiveUser(this.usuarioSindicato[i].nombre,this.usuarioSindicato[i].correo,this.usuarioSindicato[i].pass,this.userId);
           
         }
+        //Aqui se crea el sindicato con el administrador como usuario por defecto
+      this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
+
+        if(snapshotChanges.exists){
+
+          console.log("ID del usuario antes de crear: ",this.userId)
+          var admin:UsuarioSindicato = {
+            nombre: snapshotChanges.data().name,
+            correo: snapshotChanges.data().email,
+            idSindicato: this.userId,
+            pass: ""
+          }
+          console.log("admin antes de service: ",admin)
+
+          this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value,this.userId,admin);
+
+        }
+      })
         
       }
     })
@@ -290,5 +310,8 @@ export class CrearSindicatoComponent implements OnInit {
   }
 
 
+  createSindicato(){
+
+  }
 
 }
