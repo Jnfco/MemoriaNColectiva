@@ -60,10 +60,12 @@ export class CrearSindicatoComponent implements OnInit {
   emailSaved: string;
 
   existingEmails: string[];
-  validated  = false;
-  hasMember:boolean;
+  validated = false;
+  hasMember: boolean;
 
-  userpass:any;
+  validEmail: boolean;
+
+  userpass: any;
   ngOnInit(): void {
     this.usuarioSindicato = [];
     this.userId = firebase.auth().currentUser.uid;
@@ -90,26 +92,26 @@ export class CrearSindicatoComponent implements OnInit {
           nombre: "",
           correo: "",
           pass: "",
-          organization:"Sindicato",
+          organization: "Sindicato",
           idSindicato: this.userId,
-          isAdmin:false
+          isAdmin: false
         }
         this.usuarioSindicato.push(usuario);
         this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
         console.log('datasource', this.dataSource)
 
       }
-      this.hasMember =true;
+      this.hasMember = true;
     }
     else if (this.usuarioSindicato.length == 0) {
       this.isUser = true;
       var usuario = {
-          nombre: "",
-          correo: "",
-          pass: "",
-          organization:"Sindicato",
-          idSindicato: this.userId,
-          isAdmin:false
+        nombre: "",
+        correo: "",
+        pass: "",
+        organization: "Sindicato",
+        idSindicato: this.userId,
+        isAdmin: false
       }
       this.usuarioSindicato.push(usuario);
       this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
@@ -133,7 +135,7 @@ export class CrearSindicatoComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
-        console.log("elemento a borrar: ",elm)
+        console.log("elemento a borrar: ", elm)
         this.dataSource.data = this.dataSource.data
           .filter(i => i !== elm)
           .map((i, idx) => (i.position = (idx + 1), i));
@@ -145,79 +147,147 @@ export class CrearSindicatoComponent implements OnInit {
 
 
   }
+  evaluateEmailRegex(expresion: string): void {
+    var regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+
+    if (!regex.test(expresion)) {
+      console.log(expresion);
+      console.log('Email invalido !', regex.test(expresion));
+      this.validEmail = false;
+    }
+
+
+  }
+
+  evaluatePassRegex(expresion: string): void {
+    var regex = /^.{7,}$/;
+
+
+    if (!regex.test(expresion)) {
+      console.log(expresion);
+      console.log('Password muy corta!', regex.test(expresion));
+      this.validEmail = false;
+    }
+
+  }
 
   onCrearSindicato() {
 
+    this.validEmail = true;
+
     console.log('lista de correos: ', this.usuarioSindicato)
-    if (this.usuarioSindicato.length == 1) {
+    this.usuarioSindicato.forEach(element => {
 
-      var correo = this.usuarioSindicato[0].correo;
-      this.searchEmail(correo);
-      this.emailSaved = correo;
-      console.log("existe el correo ya ?: ", this.emailExist);
-      console.log("correo ingresado: ", this.emailSaved);
+      this.evaluateEmailRegex(element.correo);
+      this.evaluatePassRegex(element.pass);
+    })
 
+    if (this.validEmail == true) {
+      if (this.usuarioSindicato.length == 1) {
 
-
-
-
-
-      setTimeout(() => {
-        if (this.emailExist == false) {
-          this.usuarioSindicato.forEach(element => {
-            //this.authSvc.registerWithSindicate(element.correo, element.pass, element.nombre, "Sindicato", false, this.userId);
-            //A continuación se va a agregar el usuario a una tabla de usuarios con cuentas inactivas, no se agregará al sindicato inmediatamente
-            this.authSvc.addNewInactiveUser(element.nombre,element.correo,element.pass,this.userId);
-            console.log('element: ', element);
-          });
+        var correo = this.usuarioSindicato[0].correo;
+        this.searchEmail(correo);
+        this.emailSaved = correo;
+        console.log("existe el correo ya ?: ", this.emailExist);
+        console.log("correo ingresado: ", this.emailSaved);
 
 
 
-          //Aqui se crea el sindicato con el administrador como usuario por defecto
-      this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
 
-        if(snapshotChanges.exists){
 
-          console.log("ID del usuario antes de crear: ",this.userId)
-          var admin:UsuarioSindicato = {
-            nombre: snapshotChanges.data().name,
-            correo: snapshotChanges.data().email,
-            idSindicato: this.userId,
-            pass: ""
+
+        setTimeout(() => {
+          if (this.emailExist == false) {
+            this.usuarioSindicato.forEach(element => {
+              //this.authSvc.registerWithSindicate(element.correo, element.pass, element.nombre, "Sindicato", false, this.userId);
+              //A continuación se va a agregar el usuario a una tabla de usuarios con cuentas inactivas, no se agregará al sindicato inmediatamente
+              this.authSvc.addNewInactiveUser(element.nombre, element.correo, element.pass, this.userId);
+              console.log('element: ', element);
+            });
+
+
+
+            //Aqui se crea el sindicato con el administrador como usuario por defecto
+            this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
+
+              if (snapshotChanges.exists) {
+
+                console.log("ID del usuario antes de crear: ", this.userId)
+                var admin: UsuarioSindicato = {
+                  nombre: snapshotChanges.data().name,
+                  correo: snapshotChanges.data().email,
+                  idSindicato: this.userId,
+                  pass: ""
+                }
+                console.log("admin antes de service: ", admin)
+
+                this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value, this.userId, admin);
+                this.snackbar.open("Sindicato creado con éxito ", '', {
+                  duration: 3000,
+                  verticalPosition: 'bottom'
+                });
+
+              }
+            })
+            /*this.sinSvc.createSindicato( this.group.get('nameControl').value, this.userId);
+            
+            this.snackbar.open("Datos guardados exitosamente!", '', {
+              duration: 3000,
+              verticalPosition: 'bottom'
+            });*/
+            //this.router.navigate(['/home']);
           }
-          console.log("admin antes de service: ",admin)
+          else {
+            this.snackbar.open("No se pudo crear sindicato, el correo ingresado " + this.emailSaved + " ya se encuentra en otro sindicato", '', {
+              duration: 3000,
+              verticalPosition: 'bottom'
+            });
+          }
 
-          this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value,this.userId,admin);
+        }, 500);
 
-        }
-      })
-          /*this.sinSvc.createSindicato( this.group.get('nameControl').value, this.userId);
-          
-          this.snackbar.open("Datos guardados exitosamente!", '', {
-            duration: 3000,
-            verticalPosition: 'bottom'
-          });*/
-          //this.router.navigate(['/home']);
-        }
-        else {
-          this.snackbar.open("No se pudo crear sindicato, el correo ingresado " + this.emailSaved + " ya se encuentra en otro sindicato", '', {
-            duration: 3000,
-            verticalPosition: 'bottom'
-          });
-        }
+      }
+      if (this.usuarioSindicato.length > 1) {
+        this.validateEmailList();
+      }
 
-      }, 500);
+      if (this.usuarioSindicato.length == 0) {
+
+        this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
+
+          if (snapshotChanges.exists) {
+
+            console.log("ID del usuario antes de crear: ", this.userId)
+            var admin: UsuarioSindicato = {
+              nombre: snapshotChanges.data().name,
+              correo: snapshotChanges.data().email,
+              idSindicato: this.userId,
+              pass: ""
+            }
+            console.log("admin antes de service: ", admin)
+
+            this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value, this.userId, admin);
+            this.snackbar.open("Sindicato creado con éxito ", '', {
+              duration: 3000,
+              verticalPosition: 'bottom'
+            });
+
+          }
+        })
+      }
+
+
 
     }
-    else if (this.usuarioSindicato.length > 1) {
-    this.validateEmailList();
+    else {
+      console.log("algunos campos inválidos, revise antes de crear sindicato")
+      this.snackbar.open("algunos campos inválidos, revise antes de crear sindicato ", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
     }
 
-    
-
-      
-    
 
   }
 
@@ -248,24 +318,24 @@ export class CrearSindicatoComponent implements OnInit {
   validateEmailList() {
 
     this.existingEmails = [];
-    
+
     this.db.collection("users").get().subscribe((querySnapshot) => {
 
-      for(let i = 0; i< this.usuarioSindicato.length;i++){
+      for (let i = 0; i < this.usuarioSindicato.length; i++) {
 
         querySnapshot.forEach((doc) => {
           console.log("docs: ", doc.data().email)
           if (doc.data().email == this.usuarioSindicato[i].correo) {
             this.existingEmails.push(this.usuarioSindicato[i].correo)
-            
-  
+
+
           }
         })
       }
-      
 
-      console.log('email encontrados: ',this.existingEmails)
-      if(this.existingEmails.length >0){
+
+      console.log('email encontrados: ', this.existingEmails)
+      if (this.existingEmails.length > 0) {
         this.snackbar.open("No se pudo crear sindicato, algunos correos ingresados pertenecen a una cuenta existente!: " + this.existingEmails, '', {
           duration: 3000,
           verticalPosition: 'bottom'
@@ -280,37 +350,41 @@ export class CrearSindicatoComponent implements OnInit {
         //this.sinSvc.createSindicato(this.usuarioSindicato, this.group.get('nameControl').value, this.userId);
         //A continuación se agregan los usuarios válidos a la tabla de usuarios con cuenta inactiva
 
-        for (let i = 0; i <this.usuarioSindicato.length ; i++) {
-          
-          this.authSvc.addNewInactiveUser(this.usuarioSindicato[i].nombre,this.usuarioSindicato[i].correo,this.usuarioSindicato[i].pass,this.userId);
-          
+        for (let i = 0; i < this.usuarioSindicato.length; i++) {
+
+          this.authSvc.addNewInactiveUser(this.usuarioSindicato[i].nombre, this.usuarioSindicato[i].correo, this.usuarioSindicato[i].pass, this.userId);
+
         }
         //Aqui se crea el sindicato con el administrador como usuario por defecto
-      this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
+        this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
 
-        if(snapshotChanges.exists){
+          if (snapshotChanges.exists) {
 
-          console.log("ID del usuario antes de crear: ",this.userId)
-          var admin:UsuarioSindicato = {
-            nombre: snapshotChanges.data().name,
-            correo: snapshotChanges.data().email,
-            idSindicato: this.userId,
-            pass: ""
+            console.log("ID del usuario antes de crear: ", this.userId)
+            var admin: UsuarioSindicato = {
+              nombre: snapshotChanges.data().name,
+              correo: snapshotChanges.data().email,
+              idSindicato: this.userId,
+              pass: ""
+            }
+            console.log("admin antes de service: ", admin)
+
+            this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value, this.userId, admin);
+            this.snackbar.open("Sindicato creado con éxito ", '', {
+              duration: 3000,
+              verticalPosition: 'bottom'
+            });
+
           }
-          console.log("admin antes de service: ",admin)
+        })
 
-          this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value,this.userId,admin);
-
-        }
-      })
-        
       }
     })
 
   }
 
 
-  createSindicato(){
+  createSindicato() {
 
   }
 

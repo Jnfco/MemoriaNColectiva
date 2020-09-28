@@ -33,10 +33,10 @@
         <th class="w-a" mat-header-cell *matHeaderCellDef>Correo</th>
         <td mat-cell *matCellDef="let element">
             <mat-form-field >
-                <input matInput   [value]="element.correo"   [(ngModel)]="element.correo"   required>
-                <mat-error *ngIf="emailFormControl.invalid">
-                    <div *ngIf="emailFormControl.errors.required">El campo no puede estar vacío</div>
-                    <div *ngIf="emailFormControl.errors.email">Formato de correo incorrecto</div>
+                <input matInput #email="ngModel"  [value]="element.correo"   [(ngModel)]="element.correo" pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"  required>
+                <mat-error *ngIf="email?.invalid">
+                    <div *ngIf="email.errors.required">El campo no puede estar vacío</div>
+                    <div *ngIf="email.errors.pattern">Formato de correo incorrecto</div>
                 </mat-error>
             </mat-form-field>
         </td>
@@ -47,12 +47,12 @@
         <th class="w-a" mat-header-cell *matHeaderCellDef>Contraseña</th>
         <td mat-cell *matCellDef="let element">
             <mat-form-field>
-                <input matInput   [type]="hide ? 'password' : 'text'" 
-                    [value]="element.pass" [(ngModel)]="element.pass" required>
+                <input matInput #password="ngModel"  [type]="hide ? 'password' : 'text'" 
+                    [value]="element.pass" [(ngModel)]="element.pass" required pattern="^.{7,}$">
                 <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                <mat-error *ngIf="password.invalid">
+                <mat-error *ngIf="password?.invalid">
                     <div *ngIf="password.errors.required">El campo no puede estar vacío</div>
-                    <div *ngIf="password.errors.minLength">Largo mínimo 7 caracteres</div>
+                    <div *ngIf="password.errors.pattern">Largo mínimo 7 caracteres</div>
                 </mat-error>
                 
             </mat-form-field>

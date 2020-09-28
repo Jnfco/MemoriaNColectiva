@@ -26,6 +26,7 @@ export class SindicatoComponent implements OnInit {
   ];
   dataSource: any;
   dataSourceNewUsers: any;
+  dataSourcePendientes:any;
 
   usuarioSindicato: UsuarioSindicato[];
   nuevosUsuariosSindicato: UsuarioSindicato[];
@@ -55,17 +56,23 @@ export class SindicatoComponent implements OnInit {
   tieneSindicato = false;
   hide = true;
   nombreSindicato = "";
+  isLoading = true;
 
   existingEmails: string [];
+  usuariosPendientes:UsuarioSindicato[];
   @ViewChild(MatTable,{static:true}) table: MatTable<any>;
   constructor(public router: Router,public db: AngularFirestore,private authSvc:AuthService,private snackbar: MatSnackBar,private sinSvc:SindicatoService,private dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.userId = firebase.auth().currentUser.uid;
     this.usuariosSindicato = [];
     this.nuevosUsuariosSindicato = [];
+    this.usuariosPendientes = [];
     
     this.getSindicato(this.userId);
+    this.getPendientes();
+    
     
     console.log('cantidad de usuarios en sindicato: ',this.usuariosSindicato.length);
   }
@@ -73,11 +80,41 @@ export class SindicatoComponent implements OnInit {
     this.router.navigate(['/home/crearSindicato']);
     
   }
+
+  getPendientes(){
+    this.usuariosPendientes = [];
+
+    this.db.collection("InactiveUsers").get().subscribe((querySnapshot)=>{
+
+      querySnapshot.forEach((doc)=> {
+
+        var user = doc.data();
+        if(user.idSindicato == this.userId){
+
+          var usuario:UsuarioSindicato = {
+            nombre:user.nombre,
+            correo:user.correo,
+            idSindicato:user.idSindicato,
+            pass:user.pass
+          }
+
+          this.usuariosPendientes.push(usuario);
+
+        }
+
+      })
+
+      this.dataSourcePendientes = new MatTableDataSource<UsuarioSindicato>(this.usuariosPendientes);
+    });
+
+  }
+
+
 onModificarSindicato(){
 
   //Para agregar a los nuevos usuarios al sistema
   this.usuariosSindicato.forEach(element => {
-    const user = this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato",false);
+   this.authSvc.register(element.correo,element.pass,element.nombre,"Sindicato",false);
 
   });
   
@@ -119,7 +156,11 @@ onModificarSindicato(){
         this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuariosSindicato);
         console.log('usuarios: ',this.usuariosSindicato);
         console.log('datasource: ',this.dataSource.data)
+        this.isLoading = false;
         
+      }
+      else{
+        this.isLoading = false;
       }
     })
 
@@ -222,16 +263,11 @@ onModificarSindicato(){
     const dialogRef = this.dialog.open(AgregarUsuarioSindicatoComponent, {
       width: '800px'
     });
-
-    /*
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed', result);
-      const nowDate = new Date();
-    const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
-*/
-
-
-      //this.getMeeting();
-   // });
+      this.usuariosPendientes = [];
+      this.getPendientes();
+    });
+    
   }
 }

@@ -271,6 +271,6 @@ export class ModalInfoReunionComponent {
     }
     this.meetingSvc.startMeeting(reunion);
     this.dialogRef.close({});
-
+    
   }
 }

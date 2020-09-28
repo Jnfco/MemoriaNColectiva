@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
 
   authError: any;
   constructor(private authSvc: AuthService, private router: Router) {}
-
+  hide = true;
   ngOnInit(){
     this.authSvc.eventAuthError$.subscribe(data =>{
       this.authError = data;
