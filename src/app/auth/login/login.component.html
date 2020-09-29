@@ -28,7 +28,6 @@
           <mat-label>Contraseña</mat-label>
           <input matInput [formControl]="passwordFormControl" placeholder="Contraseña" name="contraseña" type="password"
             required minlength="7">
-            <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </mat-form-field>
         <div class="resetForm">
           <p> <a [routerLink]="['/reset']">¿Olvidó su contraseña?</a></p>

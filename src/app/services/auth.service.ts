@@ -69,7 +69,16 @@ export class AuthService implements CanActivate {
       })
       .then((userCredential) => {
         if (userCredential) {
-          this.router.navigate(['/home']);
+          console.log(userCredential.user.emailVerified)
+          if(userCredential.user.emailVerified == true){
+            this.router.navigate(['/home']);
+          }
+          else{
+            this.snackbar.open("No se ha activado esta cuenta, revise su correo para la activación",'',{
+              duration: 3000,
+              verticalPosition:'bottom'
+            });
+          }
         }
       });
 
@@ -99,8 +108,9 @@ export class AuthService implements CanActivate {
         /* Call the SendVerificaitonMail() function when new user sign
     up and returns promise */
 
+    this.sendEmailVerification();
         this.SetUserData(result.user, name, organization, isAdmin);
-        this.snackbar.open("Datos guardados exitosamente!", '', {
+        this.snackbar.open("Se ha enviado un correo de verificación para la cuenta registrada", '', {
           duration: 3000,
           verticalPosition: 'bottom'
         });
@@ -112,6 +122,9 @@ export class AuthService implements CanActivate {
       });
   }
 
+   async sendEmailVerification() {
+    return (await this.afAuth.currentUser).sendEmailVerification();
+}
   /**
    * Método para activar una cuenta de usuario buscando por correo, y luego verificando la contraseña
    * @param correo 
