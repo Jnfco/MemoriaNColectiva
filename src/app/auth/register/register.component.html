@@ -24,15 +24,20 @@
               </mat-form-field>
               <mat-form-field>
                 <mat-label >Seleccionar organización</mat-label>
-                <mat-select class="select" [(value)]="selectedOrganization">
-                  <mat-option *ngFor="let o of organizations" [value]="o">
-                    {{ o.org }}
-                  </mat-option>
+                <mat-select class="select" [(value)]="org">
+                  <mat-option value="Sindicato">Sindicato</mat-option>
+    <mat-option value="Fundación">Fundación</mat-option>
                 </mat-select>
+                
+              </mat-form-field>
+              <mat-form-field *ngIf="org == fundacion" class="form-register">
+                <mat-label>Nombre Fundación</mat-label>
+                <input matInput  [formControl]="fundacionFormControl" placeholder="Nombre fundación" name="nombreFundacion" required maxlength="100">
               </mat-form-field>
             </form>
             <mat-card-actions class="botonSection">
               <button [disabled]=" !emailFormControl.valid || !passwordFormControl.valid || !nameFormControl.valid" mat-raised-button class="boton"  color="primary" type="submit" (click) ="onRegister()">Registrarse</button>
+              
             </mat-card-actions>
           </mat-card-content>
         </mat-card>

@@ -16,7 +16,9 @@ import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { snapshotChanges } from '@angular/fire/database';
 import { UsuarioSindicato } from '../shared/Interfaces/UsuarioSindicato';
+import {UsuarioFundacion} from '../shared/Interfaces/UsuarioFundacion';
 import { InactiveUser } from '../shared/Interfaces/InactiveUser';
+import { FundacionService } from './fundacion.service';
 
 @Injectable()
 export class AuthService implements CanActivate {
@@ -32,7 +34,8 @@ export class AuthService implements CanActivate {
     public router: Router,
     public dialog: MatDialog,
     private snackbar: MatSnackBar,
-    public fireservices: AngularFirestore
+    public fireservices: AngularFirestore,
+    private fundSvc:FundacionService
   ) {
     this.afAuth.authState.subscribe((user) => {
       if (user) {
@@ -101,6 +104,37 @@ export class AuthService implements CanActivate {
     return result;*/
   }
 
+  registerWithFundationAdmin(email: string, password: string, name: string, organization: string, isAdmin: boolean,nombreFundacion:string){
+
+    return this.afAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then((result) => {
+        /* Call the SendVerificaitonMail() function when new user sign
+    up and returns promise */
+
+    this.sendEmailVerification();
+        this.SetUserData(result.user, name, organization, isAdmin);
+        var adminFundacion = {
+          nombre:name,
+          correo:email,
+          pass:password,
+          idFundacion:result.user.uid
+        }
+        console.log("Hola")
+        this.fundSvc.crearFundacion(nombreFundacion,result.user,adminFundacion);
+        this.snackbar.open("Se ha enviado un correo de verificación para la cuenta registrada", '', {
+          duration: 3000,
+          verticalPosition: 'bottom'
+        });
+      })
+      .catch((error) => {
+        if (error.code == 'auth/email-already-in-use') {
+          window.alert("Este correo está asociado a una cuenta ya existente!");
+        }
+      });
+  }
+
+  
   register(email: string, password: string, name: string, organization: string, isAdmin: boolean) {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
@@ -171,12 +205,75 @@ export class AuthService implements CanActivate {
           
 
             }
+            if(user.organization == "Fundación"){
+
+              var usuarioF:UsuarioFundacion = {
+                nombre:user.nombre,
+                correo:user.correo,
+                idFundacion:user.idSindicato,
+                pass:user.pass
+              }
+
+              this.agregarUsuarioAFundacion(user.idSindicato,usuarioF);
+              //this.deleteInactiveUser(user.correo);
+
+              //Buscar la id del usuario en inactivos para elminarlo de esa tabla
+              this.db.collection("InactiveUsers").get().subscribe((querySnapshot) => {
+
+      
+
+                querySnapshot.forEach((doc) => {
+          
+                  if(doc.data().correo == correo){
+          
+                    this.idInactive = doc.data().id;
+                    this.deleteInactiveUser(this.idInactive);
+          
+                  }
+                });
+              });
+            }
 
           }
         }
       })
 
     });
+  }
+
+  agregarUsuarioAFundacion(idFundacion:string,usuarioFundacion:any){
+
+    const userRef: AngularFirestoreDocument<any> = this.db.doc( `Fundacion/${idFundacion}`)
+    this.db.collection("Fundacion").doc(idFundacion).get().subscribe((snapshotChanges)=>{
+
+      var usuarioFundacionList:UsuarioSindicato[] = [];
+      if(snapshotChanges.exists){
+        console.log("Existe fundacion!!")
+        var user = snapshotChanges.data();
+        console.log("var user= ",user);
+        var usuario ={
+          nombre:usuarioFundacion.nombre,
+          correo:usuarioFundacion.correo,
+          pass:usuarioFundacion.pass,
+          idSindicato:usuarioFundacion.idSindicato
+        }
+        console.log("var usuario = ",usuario);
+        usuarioFundacionList = snapshotChanges.data().usuarios;
+        console.log("lista de usuarios antes de agregar: ",usuarioFundacionList);
+        usuarioFundacionList.push(usuario);
+        console.log("lista de usuarios despues de agregar: ",usuarioFundacionList)
+        var fundacion ={
+          nombreFundacion:user.nombreFundacion,
+          idAdmin:user.idAdmin,
+          usuarios:usuarioFundacionList
+        }
+       console.log("var fundacion",fundacion)
+        return userRef.set(fundacion,{
+          merge:true,
+        })
+      }
+    })
+
   }
 
   logout() {
@@ -303,6 +400,29 @@ export class AuthService implements CanActivate {
       merge: true,
     });
 
+  }
+
+  addInactiveAdmin (nombre: string, correo: string, pass: string,idFundacion:any){
+    var uuid = require("uuid");
+    var id = uuid.v4();
+
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(
+      `InactiveUsersFundacion/${id}`
+    );
+
+    var user = {
+      nombre: nombre,
+      correo: correo,
+      pass: pass,
+      organization: "Fundación",
+      idFundacion:idFundacion,
+      isAdmin: true,
+      id:id
+    }
+
+    return userRef.set(user, {
+      merge: true,
+    });
   }
 
   agregarUsuarioASindicato(idSindicato:string,usuarioSindicato:UsuarioSindicato){
