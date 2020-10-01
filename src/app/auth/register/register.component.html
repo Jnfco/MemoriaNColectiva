@@ -30,10 +30,6 @@
                 </mat-select>
                 
               </mat-form-field>
-              <mat-form-field *ngIf="org == fundacion" class="form-register">
-                <mat-label>Nombre Fundación</mat-label>
-                <input matInput  [formControl]="fundacionFormControl" placeholder="Nombre fundación" name="nombreFundacion" required maxlength="100">
-              </mat-form-field>
             </form>
             <mat-card-actions class="botonSection">
               <button [disabled]=" !emailFormControl.valid || !passwordFormControl.valid || !nameFormControl.valid" mat-raised-button class="boton"  color="primary" type="submit" (click) ="onRegister()">Registrarse</button>

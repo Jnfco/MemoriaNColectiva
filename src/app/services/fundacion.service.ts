@@ -1,52 +1,71 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { UsuarioFundacion } from '../shared/Interfaces/UsuarioFundacion';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FundacionService {
 
-  
 
-  constructor(public db:AngularFirestore,private snackbar: MatSnackBar) { 
 
-    
+  constructor(public db: AngularFirestore, private snackbar: MatSnackBar, public fireservices: AngularFirestore, public router: Router) {
+
+
 
   }
 
 
-  crearFundacion(nombreFundacion:string,user:any,adminFundacion:any){
+  /**
+   * Crar fundacion de abogados
+   * @param nombreFundacion 
+   * @param userId 
+   */
+  crearFundacion(nombreFundacion: string, userId: string) {
 
-    console.log("alguien acá ?")
-    var admin = {
-      nombre:adminFundacion.nombre,
-      correo:adminFundacion.correo,
-      pass:adminFundacion.pass,
-      idFundacion:adminFundacion.idFundacion
-    }
+    console.log("creando fundacion");
 
-    var userList:any [];
-    userList.push(admin);
 
-    var fundacion = {
-      nombre:nombreFundacion,
-      id:user.uid
+    const fundacion = {
+      nombreFundacion: nombreFundacion,
+      idAdmin: userId
     }
 
     const fundacionRef: AngularFirestoreDocument<any> = this.db.doc(
-      `Fundacion/${user.uid}`
+      `Fundacion/${userId}`
     );
-    
-    this.snackbar.open("Se ha creado la fundación: "+ nombreFundacion +" correctamente",'',{
-      duration: 3000,
-      verticalPosition:'bottom'
-    });
+    this.router.navigate(['/home']);
     return fundacionRef.set(fundacion, { merge: true });
 
-  };
-  
+
+  }
+
+  /**
+   * Crear fundacion de abogados con el admin de usuario por defecto
+   * @param nombreFundacion 
+   * @param userId 
+   * @param admin 
+   */
+  createFundacionWithAdmin (nombreFundacion:string,userId:any,admin:UsuarioFundacion){
+    console.log("creando fundacion");
+    console.log("admin en service: ",admin)
+    var listaFundacionAdmin:UsuarioFundacion[];
+    listaFundacionAdmin = [];
+    listaFundacionAdmin.push(admin);
+    const fundacion ={
+      nombreFundacion: nombreFundacion,
+      idAdmin:userId,
+      usuarios:listaFundacionAdmin
+    }
+
+    const fundacionRef:AngularFirestoreDocument<any> = this.db.doc(
+      `Fundacion/${userId}`
+    );
+    this.router.navigate(['/home']);
+    return fundacionRef.set(fundacion, { merge: true });
+  }
+
+
 }
-
-  
-

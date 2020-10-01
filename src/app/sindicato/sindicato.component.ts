@@ -94,7 +94,7 @@ export class SindicatoComponent implements OnInit {
           var usuario:UsuarioSindicato = {
             nombre:user.nombre,
             correo:user.correo,
-            idSindicato:user.idSindicato,
+            idSindicato:user.idOrg,
             pass:user.pass
           }
 
@@ -226,12 +226,12 @@ onModificarSindicato(){
     
     this.db.collection("users").get().subscribe((querySnapshot) => {
 
-      for(let i = 0; i< this.usuarioSindicato.length;i++){
+      for(let i = 0; i< this.usuariosSindicato.length;i++){
 
         querySnapshot.forEach((doc) => {
           console.log("docs: ", doc.data().email)
-          if (doc.data().email == this.usuarioSindicato[i].correo) {
-            this.existingEmails.push(this.usuarioSindicato[i].correo)
+          if (doc.data().email == this.usuariosSindicato[i].correo) {
+            this.existingEmails.push(this.usuariosSindicato[i].correo)
             
   
           }
@@ -247,7 +247,7 @@ onModificarSindicato(){
         });
       }
       else {
-        for (let i = 0; i < this.usuarioSindicato.length; i++) {
+        for (let i = 0; i < this.usuariosSindicato.length; i++) {
           ///this.authSvc.registerWithSindicate(this.usuarioSindicato[i].correo, this.usuarioSindicato[i].pass, this.usuarioSindicato[i].nombre, "Sindicato", false, this.userId);
           
         }

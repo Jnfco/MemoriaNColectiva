@@ -17,6 +17,8 @@ import { CrearSindicatoComponent } from './crear-sindicato/crear-sindicato.compo
 import { SindicatoComponent } from './sindicato/sindicato.component';
 import { ActivarCuentaComponent } from './activar-cuenta/activar-cuenta.component';
 import { AgregarUsuarioSindicatoComponent } from './agregar-usuario-sindicato/agregar-usuario-sindicato.component';
+import { FundacionComponent } from './fundacion/fundacion.component';
+import { CrearFundacionComponent } from './crear-fundacion/crear-fundacion.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -61,6 +63,14 @@ const routes: Routes = [
   {
     path: 'crearSindicato',
     component: CrearSindicatoComponent
+  },
+  {
+    path: 'fundacion',
+    component:FundacionComponent
+  },
+  {
+    path: 'crearFundacion',
+    component:CrearFundacionComponent
   }
 
 ]
@@ -69,6 +79,7 @@ const routes: Routes = [
   {path: 'reset',component: RecuperarPassComponent},
   {path: 'activate',component:ActivarCuentaComponent},
   {path: 'registerUserSindicato',component:AgregarUsuarioSindicatoComponent}
+  
 
 ];
 

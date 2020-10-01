@@ -78,6 +78,9 @@ import { ConfirmationDialogComponent } from './shared/confirmation-dialog/confir
 import { ActivarCuentaComponent } from './activar-cuenta/activar-cuenta.component';
 import { AgregarUsuarioSindicatoComponent } from './agregar-usuario-sindicato/agregar-usuario-sindicato.component';
 import { DetalleReunionComponent } from './detalle-reunion/detalle-reunion.component';
+import { FundacionComponent } from './fundacion/fundacion.component';
+import { CrearFundacionComponent } from './crear-fundacion/crear-fundacion.component';
+import { AgregarUsuarioFundacionComponent } from './agregar-usuario-fundacion/agregar-usuario-fundacion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -113,7 +116,10 @@ FullCalendarModule.registerPlugins([
     ConfirmationDialogComponent,
     ActivarCuentaComponent,
     AgregarUsuarioSindicatoComponent,
-    DetalleReunionComponent
+    DetalleReunionComponent,
+    FundacionComponent,
+    CrearFundacionComponent,
+    AgregarUsuarioFundacionComponent
 
 
   ],

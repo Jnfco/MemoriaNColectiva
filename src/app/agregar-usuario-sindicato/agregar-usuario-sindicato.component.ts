@@ -82,7 +82,7 @@ setTimeout(()=>{
     console.log("existe el email?: ",this.emailExists)
       
     if (this.emailExists == false) {
-      this.authSvc.addNewInactiveUser(this.nameFormControl.value, this.emailFormControl.value, this.passwordFormControl.value, this.userId);
+      this.authSvc.addNewInactiveUser(this.nameFormControl.value, this.emailFormControl.value, this.passwordFormControl.value, this.userId,"Sindicato");
       this.snackbar.open("Usuario pendiente agregado exitosamente, esperando la activación de la cuenta", '', {
         duration: 3000,
         verticalPosition: 'bottom'

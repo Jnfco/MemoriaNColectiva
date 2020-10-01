@@ -16,7 +16,7 @@ import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { snapshotChanges } from '@angular/fire/database';
 import { UsuarioSindicato } from '../shared/Interfaces/UsuarioSindicato';
-import {UsuarioFundacion} from '../shared/Interfaces/UsuarioFundacion';
+import { UsuarioFundacion } from '../shared/Interfaces/UsuarioFundacion';
 import { InactiveUser } from '../shared/Interfaces/InactiveUser';
 import { FundacionService } from './fundacion.service';
 
@@ -27,7 +27,7 @@ export class AuthService implements CanActivate {
   private userID: any;
   eventAuthError$ = this.eventAuthError.asObservable();
   userData: any;
-  idInactive:string;
+  idInactive: string;
   constructor(
     public afAuth: AngularFireAuth,
     public db: AngularFirestore,
@@ -35,7 +35,7 @@ export class AuthService implements CanActivate {
     public dialog: MatDialog,
     private snackbar: MatSnackBar,
     public fireservices: AngularFirestore,
-    private fundSvc:FundacionService
+    private fundSvc: FundacionService
   ) {
     this.afAuth.authState.subscribe((user) => {
       if (user) {
@@ -73,13 +73,13 @@ export class AuthService implements CanActivate {
       .then((userCredential) => {
         if (userCredential) {
           console.log(userCredential.user.emailVerified)
-          if(userCredential.user.emailVerified == true){
+          if (userCredential.user.emailVerified == true) {
             this.router.navigate(['/home']);
           }
-          else{
-            this.snackbar.open("No se ha activado esta cuenta, revise su correo para la activación",'',{
+          else {
+            this.snackbar.open("No se ha activado esta cuenta, revise su correo para la activación", '', {
               duration: 3000,
-              verticalPosition:'bottom'
+              verticalPosition: 'bottom'
             });
           }
         }
@@ -104,7 +104,7 @@ export class AuthService implements CanActivate {
     return result;*/
   }
 
-  registerWithFundationAdmin(email: string, password: string, name: string, organization: string, isAdmin: boolean,nombreFundacion:string){
+  registerWithFundationAdmin(email: string, password: string, name: string, organization: string, isAdmin: boolean, nombreFundacion: string) {
 
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
@@ -112,16 +112,16 @@ export class AuthService implements CanActivate {
         /* Call the SendVerificaitonMail() function when new user sign
     up and returns promise */
 
-    this.sendEmailVerification();
+        this.sendEmailVerification();
         this.SetUserData(result.user, name, organization, isAdmin);
         var adminFundacion = {
-          nombre:name,
-          correo:email,
-          pass:password,
-          idFundacion:result.user.uid
+          nombre: name,
+          correo: email,
+          pass: password,
+          idFundacion: result.user.uid
         }
         console.log("Hola")
-        this.fundSvc.crearFundacion(nombreFundacion,result.user,adminFundacion);
+        //this.fundSvc.crearFundacion(nombreFundacion,result.user,adminFundacion);
         this.snackbar.open("Se ha enviado un correo de verificación para la cuenta registrada", '', {
           duration: 3000,
           verticalPosition: 'bottom'
@@ -134,7 +134,7 @@ export class AuthService implements CanActivate {
       });
   }
 
-  
+
   register(email: string, password: string, name: string, organization: string, isAdmin: boolean) {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
@@ -142,7 +142,7 @@ export class AuthService implements CanActivate {
         /* Call the SendVerificaitonMail() function when new user sign
     up and returns promise */
 
-    this.sendEmailVerification();
+        this.sendEmailVerification();
         this.SetUserData(result.user, name, organization, isAdmin);
         this.snackbar.open("Se ha enviado un correo de verificación para la cuenta registrada", '', {
           duration: 3000,
@@ -156,9 +156,55 @@ export class AuthService implements CanActivate {
       });
   }
 
-   async sendEmailVerification() {
+  async sendEmailVerification() {
     return (await this.afAuth.currentUser).sendEmailVerification();
-}
+  }
+
+  /**
+   * Método para activar una cuenta del tipo fundacion de abogados, usando el email y luego verificando la contraseña, luego se manda
+   * el enlace al correo para la otra activación.
+   * @param correo 
+   * @param pass 
+   */
+  activateFundacionAccount(correo: string, pass: string) {
+
+    this.db.collection("InactiveUsersFundacion").get().subscribe((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (correo == doc.data().correo) {
+          if (doc.data().pass == pass) {
+            var user = doc.data();
+            var usuarioF: UsuarioFundacion = {
+              nombre: user.nombre,
+              correo: user.correo,
+              idFundacion: user.idFundacion,
+              pass: user.pass
+            }
+            this.registerWithSindicate(user.correo, user.pass, user.nombre, user.organization, user.isAdmin, user.idSindicato);
+            this.agregarUsuarioAFundacion(user.idSindicato, usuarioF);
+            //this.deleteInactiveUser(user.correo);
+
+            //Buscar la id del usuario en inactivos para elminarlo de esa tabla
+            this.db.collection("InactiveUsersFundacion").get().subscribe((querySnapshot) => {
+
+
+
+              querySnapshot.forEach((doc) => {
+
+                if (doc.data().correo == correo) {
+
+                  this.idInactive = doc.data().id;
+                  this.deleteInactiveUser(this.idInactive);
+
+                }
+              });
+            });
+
+          }
+        }
+      })
+    })
+
+  }
   /**
    * Método para activar una cuenta de usuario buscando por correo, y luego verificando la contraseña
    * @param correo 
@@ -174,65 +220,67 @@ export class AuthService implements CanActivate {
           if (doc.data().pass == pass) {
             var user = doc.data();
 
-            this.registerWithSindicate(user.correo,user.pass,user.nombre,user.organization,user.isAdmin,user.idSindicato);
 
-            if(user.organization == "Sindicato"){
 
-              var usuario:UsuarioSindicato = {
-                nombre:user.nombre,
-                correo:user.correo,
-                pass:user.pass,
-                idSindicato:user.idSindicato
+            if (user.organization == "Sindicato") {
+              this.registerWithSindicate(user.correo, user.pass, user.nombre, user.organization, user.isAdmin, user.idOrg);
+              var usuario: UsuarioSindicato = {
+                nombre: user.nombre,
+                correo: user.correo,
+                pass: user.pass,
+                idSindicato: user.idOrg
               }
-              this.agregarUsuarioASindicato(user.idSindicato,usuario);
+              this.agregarUsuarioASindicato(user.idOrg, usuario);
               //this.deleteInactiveUser(user.correo);
 
               //Buscar la id del usuario en inactivos para elminarlo de esa tabla
               this.db.collection("InactiveUsers").get().subscribe((querySnapshot) => {
 
-      
+
 
                 querySnapshot.forEach((doc) => {
-          
-                  if(doc.data().correo == correo){
-          
+
+                  if (doc.data().correo == correo) {
+
                     this.idInactive = doc.data().id;
                     this.deleteInactiveUser(this.idInactive);
-          
+
                   }
                 });
               });
-          
+
 
             }
-            if(user.organization == "Fundación"){
-
-              var usuarioF:UsuarioFundacion = {
-                nombre:user.nombre,
-                correo:user.correo,
-                idFundacion:user.idSindicato,
-                pass:user.pass
+            if (user.organization == "Fundación") {
+              this.registerWithSindicate(user.correo, user.pass, user.nombre, user.organization, user.isAdmin, user.idOrg);
+              var usuarioFund: UsuarioFundacion = {
+                nombre: user.nombre,
+                correo: user.correo,
+                pass: user.pass,
+                idFundacion: user.idOrg
               }
-
-              this.agregarUsuarioAFundacion(user.idSindicato,usuarioF);
+              this.agregarUsuarioAFundacion(user.idOrg, usuarioFund);
               //this.deleteInactiveUser(user.correo);
 
               //Buscar la id del usuario en inactivos para elminarlo de esa tabla
               this.db.collection("InactiveUsers").get().subscribe((querySnapshot) => {
 
-      
+
 
                 querySnapshot.forEach((doc) => {
-          
-                  if(doc.data().correo == correo){
-          
+
+                  if (doc.data().correo == correo) {
+
                     this.idInactive = doc.data().id;
                     this.deleteInactiveUser(this.idInactive);
-          
+
                   }
                 });
               });
+
+
             }
+            
 
           }
         }
@@ -241,35 +289,35 @@ export class AuthService implements CanActivate {
     });
   }
 
-  agregarUsuarioAFundacion(idFundacion:string,usuarioFundacion:any){
+  agregarUsuarioAFundacion(idFundacion: string, usuarioFundacion: any) {
 
-    const userRef: AngularFirestoreDocument<any> = this.db.doc( `Fundacion/${idFundacion}`)
-    this.db.collection("Fundacion").doc(idFundacion).get().subscribe((snapshotChanges)=>{
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(`Fundacion/${idFundacion}`)
+    this.db.collection("Fundacion").doc(idFundacion).get().subscribe((snapshotChanges) => {
 
-      var usuarioFundacionList:UsuarioSindicato[] = [];
-      if(snapshotChanges.exists){
+      var usuarioFundacionList: UsuarioSindicato[] = [];
+      if (snapshotChanges.exists) {
         console.log("Existe fundacion!!")
         var user = snapshotChanges.data();
-        console.log("var user= ",user);
-        var usuario ={
-          nombre:usuarioFundacion.nombre,
-          correo:usuarioFundacion.correo,
-          pass:usuarioFundacion.pass,
-          idSindicato:usuarioFundacion.idSindicato
+        console.log("var user= ", user);
+        var usuario = {
+          nombre: usuarioFundacion.nombre,
+          correo: usuarioFundacion.correo,
+          pass: usuarioFundacion.pass,
+          idSindicato: usuarioFundacion.idSindicato
         }
-        console.log("var usuario = ",usuario);
+        console.log("var usuario = ", usuario);
         usuarioFundacionList = snapshotChanges.data().usuarios;
-        console.log("lista de usuarios antes de agregar: ",usuarioFundacionList);
+        console.log("lista de usuarios antes de agregar: ", usuarioFundacionList);
         usuarioFundacionList.push(usuario);
-        console.log("lista de usuarios despues de agregar: ",usuarioFundacionList)
-        var fundacion ={
-          nombreFundacion:user.nombreFundacion,
-          idAdmin:user.idAdmin,
-          usuarios:usuarioFundacionList
+        console.log("lista de usuarios despues de agregar: ", usuarioFundacionList)
+        var fundacion = {
+          nombreFundacion: user.nombreFundacion,
+          idAdmin: user.idAdmin,
+          usuarios: usuarioFundacionList
         }
-       console.log("var fundacion",fundacion)
-        return userRef.set(fundacion,{
-          merge:true,
+        console.log("var fundacion", fundacion)
+        return userRef.set(fundacion, {
+          merge: true,
         })
       }
     })
@@ -350,6 +398,15 @@ export class AuthService implements CanActivate {
   }
 
 
+  /**
+   * Método para poder registrar un usuario que pertenece a un sindicato al sistema
+   * @param email 
+   * @param password 
+   * @param name 
+   * @param organization 
+   * @param isAdmin 
+   * @param idSindicato 
+   */
   registerWithSindicate(email: string, password: string, name: string, organization: string, isAdmin: boolean, idSindicato: string) {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
@@ -372,13 +429,43 @@ export class AuthService implements CanActivate {
   }
 
   /**
+   * Método para poder registrar un usuario que pertenece a una fundacion al sistema.
+   * @param email 
+   * @param password 
+   * @param name 
+   * @param organization 
+   * @param isAdmin 
+   * @param idFundacion 
+   */
+  registerWithFundacion(email: string, password: string, name: string, organization: string, isAdmin: boolean, idFundacion: string) {
+    return this.afAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then((result) => {
+        /* Call the SendVerificaitonMail() function when new user sign
+    up and returns promise */
+
+        this.SetUserDataSindicato(result.user, name, organization, isAdmin, idFundacion);
+        this.snackbar.open("Datos guardados exitosamente!", '', {
+          duration: 3000,
+          verticalPosition: 'bottom'
+        });
+
+      })
+      .catch((error) => {
+        if (error.code == 'auth/email-already-in-use') {
+          window.alert("Este correo está asociado a una cuenta ya existente!");
+        }
+      });
+  }
+
+  /**
    * En este método se agrega un usario con una cuenta inactiva esperando por su activación
    * @param nombre 
    * @param correo 
    * @param pass 
    * @param adminId 
    */
-  addNewInactiveUser(nombre: string, correo: string, pass: string, adminId: string) {
+  addNewInactiveUser(nombre: string, correo: string, pass: string, adminId: string,org:string) {
     var uuid = require("uuid");
     var id = uuid.v4();
 
@@ -390,10 +477,10 @@ export class AuthService implements CanActivate {
       nombre: nombre,
       correo: correo,
       pass: pass,
-      idSindicato: adminId,
-      organization: "Sindicato",
+      idOrg: adminId,
+      organization: org,
       isAdmin: false,
-      id:id
+      id: id
     }
 
     return userRef.set(user, {
@@ -402,7 +489,31 @@ export class AuthService implements CanActivate {
 
   }
 
-  addInactiveAdmin (nombre: string, correo: string, pass: string,idFundacion:any){
+  addNewInactiveUserFundacion(nombre: string, correo: string, pass: string, adminId: string) {
+    var uuid = require("uuid");
+    var id = uuid.v4();
+
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(
+      `InactiveUsersFundacion/${id}`
+    );
+
+    var user = {
+      nombre: nombre,
+      correo: correo,
+      pass: pass,
+      idFundacion: adminId,
+      organization: "Fundación",
+      isAdmin: false,
+      id: id
+    }
+
+    return userRef.set(user, {
+      merge: true,
+    });
+
+  }
+
+  addInactiveAdmin(nombre: string, correo: string, pass: string, idFundacion: any) {
     var uuid = require("uuid");
     var id = uuid.v4();
 
@@ -415,9 +526,9 @@ export class AuthService implements CanActivate {
       correo: correo,
       pass: pass,
       organization: "Fundación",
-      idFundacion:idFundacion,
+      idFundacion: idFundacion,
       isAdmin: true,
-      id:id
+      id: id
     }
 
     return userRef.set(user, {
@@ -425,50 +536,50 @@ export class AuthService implements CanActivate {
     });
   }
 
-  agregarUsuarioASindicato(idSindicato:string,usuarioSindicato:UsuarioSindicato){
-    
+  agregarUsuarioASindicato(idSindicato: string, usuarioSindicato: UsuarioSindicato) {
 
-    const userRef: AngularFirestoreDocument<any> = this.db.doc( `Sindicato/${idSindicato}`)
-    this.db.collection("Sindicato").doc(idSindicato).get().subscribe((snapshotChanges)=>{
 
-      var usuarioSindicatoList:UsuarioSindicato[] = [];
-      if(snapshotChanges.exists){
+    const userRef: AngularFirestoreDocument<any> = this.db.doc(`Sindicato/${idSindicato}`)
+    this.db.collection("Sindicato").doc(idSindicato).get().subscribe((snapshotChanges) => {
+
+      var usuarioSindicatoList: UsuarioSindicato[] = [];
+      if (snapshotChanges.exists) {
         console.log("Existe sindicato!!")
         var user = snapshotChanges.data();
-        console.log("var user= ",user);
-        var usuario ={
-          nombre:usuarioSindicato.nombre,
-          correo:usuarioSindicato.correo,
-          pass:usuarioSindicato.pass,
-          idSindicato:usuarioSindicato.idSindicato
+        console.log("var user= ", user);
+        var usuario = {
+          nombre: usuarioSindicato.nombre,
+          correo: usuarioSindicato.correo,
+          pass: usuarioSindicato.pass,
+          idSindicato: usuarioSindicato.idSindicato
         }
-        console.log("var usuario = ",usuario);
+        console.log("var usuario = ", usuario);
         usuarioSindicatoList = snapshotChanges.data().usuarios;
-        console.log("lista de usuarios antes de agregar: ",usuarioSindicatoList);
+        console.log("lista de usuarios antes de agregar: ", usuarioSindicatoList);
         usuarioSindicatoList.push(usuario);
-        console.log("lista de usuarios despues de agregar: ",usuarioSindicatoList)
-        var sindicato ={
-          nombreSindicato:user.nombreSindicato,
-          idAdmin:user.idAdmin,
-          usuarios:usuarioSindicatoList
+        console.log("lista de usuarios despues de agregar: ", usuarioSindicatoList)
+        var sindicato = {
+          nombreSindicato: user.nombreSindicato,
+          idAdmin: user.idAdmin,
+          usuarios: usuarioSindicatoList
         }
-       console.log("var sindicato",sindicato)
-        return userRef.set(sindicato,{
-          merge:true,
+        console.log("var sindicato", sindicato)
+        return userRef.set(sindicato, {
+          merge: true,
         })
       }
     })
 
   }
 
-  
-  deleteInactiveUser (idInactive:string){
 
-    
-   
-    this.snackbar.open("Activación exitosa!",'',{
+  deleteInactiveUser(idInactive: string) {
+
+
+
+    this.snackbar.open("Activación exitosa!", '', {
       duration: 3000,
-      verticalPosition:'bottom'
+      verticalPosition: 'bottom'
     });
     return this.fireservices.collection("InactiveUsers").doc(idInactive).delete();
 

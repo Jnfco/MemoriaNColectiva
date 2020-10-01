@@ -21,9 +21,13 @@
 
           </button>
           <mat-menu #menu="matMenu" >
-            <button *ngIf ="this.isAdmin == true" mat-menu-item  routerLink="sindicato">
+            <button *ngIf ="this.isAdmin == true && this.organization == 'Sindicato' " mat-menu-item  routerLink="sindicato">
               <mat-icon>supervised_user_circle</mat-icon>
                 Sindicato
+            </button>
+            <button *ngIf ="this.isAdmin == true && this.organization == 'Fundación' " mat-menu-item  routerLink="fundacion">
+              <mat-icon>supervised_user_circle</mat-icon>
+                Fundación
             </button>
               <button mat-menu-item (click)="onLogout()" routerLink="/login">
                   <mat-icon>exit_to_app</mat-icon>

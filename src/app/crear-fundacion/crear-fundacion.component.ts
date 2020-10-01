@@ -1,34 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { UsuarioSindicato } from '../shared/Interfaces/UsuarioSindicato';
-import { MatTableDataSource } from '@angular/material/table';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase';
-import { SindicatoService } from '../services/sindicato.service';
+import { FundacionService } from '../services/fundacion.service';
 import { AuthService } from '../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { snapshotChanges } from '@angular/fire/database';
-import { element } from 'protractor';
-import { async } from '@angular/core/testing';
-import { InactiveUser } from '../shared/Interfaces/InactiveUser';
+import { InactiveUserFundacion } from '../shared/Interfaces/InactiveUserFundacion';
+import { UsuarioFundacion } from '../shared/Interfaces/UsuarioFundacion';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
+import * as firebase from 'firebase';
+import { MatTableDataSource } from '@angular/material/table';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
-  selector: 'app-crear-sindicato',
-  templateUrl: './crear-sindicato.component.html',
-  styleUrls: ['./crear-sindicato.component.css']
+  selector: 'app-crear-fundacion',
+  templateUrl: './crear-fundacion.component.html',
+  styleUrls: ['./crear-fundacion.component.css']
 })
-export class CrearSindicatoComponent implements OnInit {
+export class CrearFundacionComponent implements OnInit {
 
-  constructor(public router: Router, private sinSvc: SindicatoService, private authSvc: AuthService, private snackbar: MatSnackBar, private dialog: MatDialog, public db: AngularFirestore) { }
+  constructor(public router: Router, private fundSvc: FundacionService, private authSvc: AuthService, private snackbar: MatSnackBar, private dialog: MatDialog, public db: AngularFirestore) { }
   displayedColumns: string[] = [
     'Nombre', 'Correo', 'Contraseña', 'columndelete'
   ];
   dataSource: any;
-  usuarioSindicato: InactiveUser[];
-  sinUusuarios: UsuarioSindicato[];
+  usuarioFundacion: InactiveUserFundacion[];
+  sinUusuarios: UsuarioFundacion[];
   password = new FormControl('', [
     Validators.required,
     Validators.min(7),
@@ -42,7 +39,7 @@ export class CrearSindicatoComponent implements OnInit {
     Validators.required
   ]);
 
-  nombreSindicatoFormControl = new FormControl('', [
+  nombreFundacionFormControl = new FormControl('', [
     Validators.required
   ]);
 
@@ -67,23 +64,14 @@ export class CrearSindicatoComponent implements OnInit {
 
   userpass: any;
   ngOnInit(): void {
-    this.usuarioSindicato = [];
+    this.usuarioFundacion = [];
     this.userId = firebase.auth().currentUser.uid;
-
-    /*var usuario = {
-      nombre: " ",
-      correo: " ",
-      pass: " "
-    }
-    this.usuarioSindicato.push(usuario);
-    this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);*/
-
   }
   get passwordInput() { return this.password }
   onAddUser() {
-    console.log("length: ", this.usuarioSindicato.length)
-    if (this.usuarioSindicato.length > 0) {
-      if (this.usuarioSindicato[this.usuarioSindicato.length - 1].correo != "") {
+    console.log("length: ", this.usuarioFundacion.length)
+    if (this.usuarioFundacion.length > 0) {
+      if (this.usuarioFundacion[this.usuarioFundacion.length - 1].correo != "") {
 
 
         //this.usuarioSindicato = [];
@@ -92,29 +80,29 @@ export class CrearSindicatoComponent implements OnInit {
           nombre: "",
           correo: "",
           pass: "",
-          organization: "Sindicato",
-          idSindicato: this.userId,
+          organization: "Fundacion",
+          idFundacion: this.userId,
           isAdmin: false
         }
-        this.usuarioSindicato.push(usuario);
-        this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
+        this.usuarioFundacion.push(usuario);
+        this.dataSource = new MatTableDataSource<UsuarioFundacion>(this.usuarioFundacion);
         console.log('datasource', this.dataSource)
 
       }
       this.hasMember = true;
     }
-    else if (this.usuarioSindicato.length == 0) {
+    else if (this.usuarioFundacion.length == 0) {
       this.isUser = true;
       var usuario = {
         nombre: "",
         correo: "",
         pass: "",
-        organization: "Sindicato",
-        idSindicato: this.userId,
+        organization: "Fundacion",
+        idFundacion: this.userId,
         isAdmin: false
       }
-      this.usuarioSindicato.push(usuario);
-      this.dataSource = new MatTableDataSource<UsuarioSindicato>(this.usuarioSindicato);
+      this.usuarioFundacion.push(usuario);
+      this.dataSource = new MatTableDataSource<UsuarioFundacion>(this.usuarioFundacion);
       this.hasMember = false;
     }
 
@@ -139,8 +127,8 @@ export class CrearSindicatoComponent implements OnInit {
         this.dataSource.data = this.dataSource.data
           .filter(i => i !== elm)
           .map((i, idx) => (i.position = (idx + 1), i));
-        const index: number = this.usuarioSindicato.indexOf(elm);
-        this.usuarioSindicato.splice(index, 1);
+        const index: number = this.usuarioFundacion.indexOf(elm);
+        this.usuarioFundacion.splice(index, 1);
 
       }
     });
@@ -172,21 +160,21 @@ export class CrearSindicatoComponent implements OnInit {
 
   }
 
-  onCrearSindicato() {
+  onCrearFundacion() {
 
     this.validEmail = true;
 
-    console.log('lista de correos: ', this.usuarioSindicato)
-    this.usuarioSindicato.forEach(element => {
+    console.log('lista de correos: ', this.usuarioFundacion)
+    this.usuarioFundacion.forEach(element => {
 
       this.evaluateEmailRegex(element.correo);
       this.evaluatePassRegex(element.pass);
     })
 
     if (this.validEmail == true) {
-      if (this.usuarioSindicato.length == 1) {
+      if (this.usuarioFundacion.length == 1) {
 
-        var correo = this.usuarioSindicato[0].correo;
+        var correo = this.usuarioFundacion[0].correo;
         this.searchEmail(correo);
         this.emailSaved = correo;
         console.log("existe el correo ya ?: ", this.emailExist);
@@ -199,47 +187,40 @@ export class CrearSindicatoComponent implements OnInit {
 
         setTimeout(() => {
           if (this.emailExist == false) {
-            this.usuarioSindicato.forEach(element => {
+            this.usuarioFundacion.forEach(element => {
               //this.authSvc.registerWithSindicate(element.correo, element.pass, element.nombre, "Sindicato", false, this.userId);
               //A continuación se va a agregar el usuario a una tabla de usuarios con cuentas inactivas, no se agregará al sindicato inmediatamente
-              this.authSvc.addNewInactiveUser(element.nombre, element.correo, element.pass, this.userId,"Sindicato");
+              this.authSvc.addNewInactiveUser(element.nombre, element.correo, element.pass, this.userId,"Fundación");
               console.log('element: ', element);
             });
 
 
 
-            //Aqui se crea el sindicato con el administrador como usuario por defecto
+            //Aqui se crea la fundacion con el administrador como usuario por defecto
             this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
 
               if (snapshotChanges.exists) {
 
                 console.log("ID del usuario antes de crear: ", this.userId)
-                var admin: UsuarioSindicato = {
+                var admin: UsuarioFundacion = {
                   nombre: snapshotChanges.data().name,
                   correo: snapshotChanges.data().email,
-                  idSindicato: this.userId,
+                  idFundacion: this.userId,
                   pass: ""
                 }
                 console.log("admin antes de service: ", admin)
 
-                this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value, this.userId, admin);
-                this.snackbar.open("Sindicato creado con éxito ", '', {
+                this.fundSvc.createFundacionWithAdmin(this.group.get('nameControl').value, this.userId, admin);
+                this.snackbar.open("Fundación creada con éxito ", '', {
                   duration: 3000,
                   verticalPosition: 'bottom'
                 });
 
               }
             })
-            /*this.sinSvc.createSindicato( this.group.get('nameControl').value, this.userId);
-            
-            this.snackbar.open("Datos guardados exitosamente!", '', {
-              duration: 3000,
-              verticalPosition: 'bottom'
-            });*/
-            //this.router.navigate(['/home']);
           }
           else {
-            this.snackbar.open("No se pudo crear sindicato, el correo ingresado " + this.emailSaved + " ya se encuentra en otro sindicato", '', {
+            this.snackbar.open("No se pudo crear la fundación, el correo ingresado " + this.emailSaved + " ya se encuentra en otra fundación", '', {
               duration: 3000,
               verticalPosition: 'bottom'
             });
@@ -248,27 +229,27 @@ export class CrearSindicatoComponent implements OnInit {
         }, 500);
 
       }
-      if (this.usuarioSindicato.length > 1) {
+      if (this.usuarioFundacion.length > 1) {
         this.validateEmailList();
       }
 
-      if (this.usuarioSindicato.length == 0) {
+      if (this.usuarioFundacion.length == 0) {
 
         this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
 
           if (snapshotChanges.exists) {
 
             console.log("ID del usuario antes de crear: ", this.userId)
-            var admin: UsuarioSindicato = {
+            var admin: UsuarioFundacion = {
               nombre: snapshotChanges.data().name,
               correo: snapshotChanges.data().email,
-              idSindicato: this.userId,
+              idFundacion: this.userId,
               pass: ""
             }
             console.log("admin antes de service: ", admin)
 
-            this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value, this.userId, admin);
-            this.snackbar.open("Sindicato creado con éxito ", '', {
+            this.fundSvc.createFundacionWithAdmin(this.group.get('nameControl').value, this.userId, admin);
+            this.snackbar.open("Fundación creada con éxito ", '', {
               duration: 3000,
               verticalPosition: 'bottom'
             });
@@ -281,8 +262,8 @@ export class CrearSindicatoComponent implements OnInit {
 
     }
     else {
-      console.log("algunos campos inválidos, revise antes de crear sindicato")
-      this.snackbar.open("algunos campos inválidos, revise antes de crear sindicato ", '', {
+      console.log("algunos campos inválidos, revise antes de crear la fundación")
+      this.snackbar.open("algunos campos inválidos, revise antes de crear la fundación ", '', {
         duration: 3000,
         verticalPosition: 'bottom'
       });
@@ -321,12 +302,12 @@ export class CrearSindicatoComponent implements OnInit {
 
     this.db.collection("users").get().subscribe((querySnapshot) => {
 
-      for (let i = 0; i < this.usuarioSindicato.length; i++) {
+      for (let i = 0; i < this.usuarioFundacion.length; i++) {
 
         querySnapshot.forEach((doc) => {
           console.log("docs: ", doc.data().email)
-          if (doc.data().email == this.usuarioSindicato[i].correo) {
-            this.existingEmails.push(this.usuarioSindicato[i].correo)
+          if (doc.data().email == this.usuarioFundacion[i].correo) {
+            this.existingEmails.push(this.usuarioFundacion[i].correo)
 
 
           }
@@ -336,7 +317,7 @@ export class CrearSindicatoComponent implements OnInit {
 
       console.log('email encontrados: ', this.existingEmails)
       if (this.existingEmails.length > 0) {
-        this.snackbar.open("No se pudo crear sindicato, algunos correos ingresados pertenecen a una cuenta existente!: " + this.existingEmails, '', {
+        this.snackbar.open("No se pudo crear la fundación, algunos correos ingresados pertenecen a una cuenta existente!: " + this.existingEmails, '', {
           duration: 3000,
           verticalPosition: 'bottom'
         });
@@ -350,9 +331,9 @@ export class CrearSindicatoComponent implements OnInit {
         //this.sinSvc.createSindicato(this.usuarioSindicato, this.group.get('nameControl').value, this.userId);
         //A continuación se agregan los usuarios válidos a la tabla de usuarios con cuenta inactiva
 
-        for (let i = 0; i < this.usuarioSindicato.length; i++) {
+        for (let i = 0; i < this.usuarioFundacion.length; i++) {
 
-          this.authSvc.addNewInactiveUser(this.usuarioSindicato[i].nombre, this.usuarioSindicato[i].correo, this.usuarioSindicato[i].pass, this.userId,"Sindicato");
+          this.authSvc.addNewInactiveUser(this.usuarioFundacion[i].nombre, this.usuarioFundacion[i].correo, this.usuarioFundacion[i].pass, this.userId,"Fundación");
 
         }
         //Aqui se crea el sindicato con el administrador como usuario por defecto
@@ -361,16 +342,16 @@ export class CrearSindicatoComponent implements OnInit {
           if (snapshotChanges.exists) {
 
             console.log("ID del usuario antes de crear: ", this.userId)
-            var admin: UsuarioSindicato = {
+            var admin: UsuarioFundacion = {
               nombre: snapshotChanges.data().name,
               correo: snapshotChanges.data().email,
-              idSindicato: this.userId,
+              idFundacion: this.userId,
               pass: ""
             }
             console.log("admin antes de service: ", admin)
 
-            this.sinSvc.createSindicatoWithAdmin(this.group.get('nameControl').value, this.userId, admin);
-            this.snackbar.open("Sindicato creado con éxito ", '', {
+            this.fundSvc.createFundacionWithAdmin(this.group.get('nameControl').value, this.userId, admin);
+            this.snackbar.open("Fundación creada con éxito ", '', {
               duration: 3000,
               verticalPosition: 'bottom'
             });
@@ -384,8 +365,5 @@ export class CrearSindicatoComponent implements OnInit {
   }
 
 
-  createSindicato() {
-
-  }
 
 }

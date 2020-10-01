@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit {
   public user$: Observable <any>= this.authSvc.afAuth.user;
   userId: any;
   isAdmin = false;
+  organization:any;
   constructor(private authSvc:AuthService,private router:Router,public db: AngularFirestore) { }
 
 
@@ -27,9 +28,12 @@ export class HeaderComponent implements OnInit {
         console.log('existe')
         var doc = snapshotChanges.data();
         var isAdmin = doc.isAdmin;
+        var organization = doc.organization;
         console.log('var isadmin= ',isAdmin)
+       console.log("organization: ",organization)
         if(isAdmin == true){
           this.isAdmin =true;
+          this.organization = organization;
         }
         else if(isAdmin == false){
           this.isAdmin =false;

@@ -1,0 +1,97 @@
+<div *ngIf="this.tieneFundacion == false && this.isLoading == false" style="text-align: center;" > 
+    <h1>No tiene asociada una fundacion</h1>
+    <button mat-flat-button color="primary" routerLink="contrato" (click) ="onCrearFundacion()" >Crear Fundacion</button>
+</div>
+<mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
+<div *ngIf="this.tieneFundacion == true && this.isLoading == false">
+<h1 style="text-align: center;">{{this.nombreFundacion}}</h1>
+<div style="display: flex;flex-direction: row;justify-content: space-between; margin-bottom: 2%;">
+    <h2>Miembros</h2>
+    
+</div>
+<table mat-table #mytable [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">
+    <ng-container matColumnDef="Nombre">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let element">
+            {{element.nombre}}
+            
+        </td>
+
+    </ng-container>
+    <ng-container matColumnDef="Correo">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Correo</th>
+        <td mat-cell *matCellDef="let element">
+          {{element.correo}}
+        </td>
+
+    </ng-container>
+<!---->
+    <ng-container matColumnDef="Contraseña">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Contraseña</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input matInput   [type]="hide ? 'password' : 'text'" 
+                    [value]="element.pass" [(ngModel)]="element.pass" required disabled>
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-error *ngIf="password.invalid">
+                    <div *ngIf="password.errors.required">El campo no puede estar vacío</div>
+                    <div *ngIf="password.errors.minLength">Largo mínimo 7 caracteres</div>
+                </mat-error>
+                
+            </mat-form-field>
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="columndelete">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let element">
+            <mat-icon (click)="delete(element)">delete</mat-icon>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+    <button mat-flat-button color="primary" (click)="openDialog()">Agregar nuevo usuario</button>
+    
+</div>
+<div style="display: flex;flex-direction: column;justify-content: space-between; margin-bottom: 2%;">
+
+    <!-- Aqui se muestra la tabla de los miembros pendientes de activar su cuenta en el sindicato-->
+    <h2>Miembros pendientes</h2>
+    <!--
+    <button mat-flat-button color="primary"  (click)="onModificarSindicato()">Modificar</button>
+    -->
+
+    <table mat-table #mytable [dataSource]="this.dataSourcePendientes" class="mat-elevation-z8" style="width: 100%">
+        <ng-container matColumnDef="Nombre">
+            <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let element">
+                {{element.nombre}}
+                
+            </td>
+    
+        </ng-container>
+        <ng-container matColumnDef="Correo">
+            <th class="w-a" mat-header-cell *matHeaderCellDef>Correo</th>
+            <td mat-cell *matCellDef="let element">
+              {{element.correo}}
+            </td>
+    
+        </ng-container>
+    <!---->
+    
+    
+        <ng-container matColumnDef="columndelete">
+            <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-icon (click)="delete(element)">delete</mat-icon>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>
+</div>

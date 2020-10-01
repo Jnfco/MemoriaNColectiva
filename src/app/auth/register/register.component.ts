@@ -64,7 +64,7 @@ export class RegisterComponent implements OnInit {
     const email = this.emailFormControl.value;
     const password = this.passwordFormControl.value;
     const name = this.nameFormControl.value;
-    const organization = this.selectedOrganization.org;
+    const organization = this.org;
     const isAdmin = true;
     this.isLoading = true;
     //const idFundacion = this.userId;
@@ -73,25 +73,25 @@ export class RegisterComponent implements OnInit {
       //const user =  this.authSvc.register(email,password,name,organization,isAdmin);
 
       
-      if (this.org == "Fundación"){
-        console.log("org: ",this.org)
-        var adminFundacion = {
-          nombre:name,
-          correo:email,
-          pass:password
-        }
+      //if (this.org == "Fundación"){
+        //console.log("org: ",this.org)
+        //var adminFundacion = {
+          //nombre:name,
+          //correo:email,
+          //pass:password
+        //}
 
 
-    var uuid = require("uuid");
-    var id = uuid.v4();
+    //var uuid = require("uuid");
+    //var id = uuid.v4();
       //this.user = this.authSvc.registerWithFundationAdmin(email,password,name,organization,true,this.fundacionFormControl.value)
-      this.authSvc.addInactiveAdmin(name, email, password,id);
+      //this.authSvc.addInactiveAdmin(name, email, password,id);
 
-      }
-      else{
-       this.user =  this.authSvc.register(email,password,name,organization,isAdmin);
-      }
-      
+      //}
+      //else{
+       //this.user =  this.authSvc.register(email,password,name,organization,isAdmin);
+      //}
+      this.user =  this.authSvc.register(email,password,name,organization,isAdmin);
       if(this.user){
         console.log("email control form:  ",this.authSvc.eventAuthError$);
         //this.router.navigate(["/home"]);
