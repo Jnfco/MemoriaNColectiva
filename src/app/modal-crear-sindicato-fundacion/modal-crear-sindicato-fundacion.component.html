@@ -1,0 +1,23 @@
+<mat-card-title style="text-align: center;"> Crear Sindicato</mat-card-title>
+    
+          <mat-card >
+            
+            <mat-card-content  class="cardContent" >
+              
+              <form class="register" >
+                <mat-form-field class="form-register">
+                  <mat-label>Nombre</mat-label>
+                  <input matInput  [formControl]="nameFormControl" placeholder="Nombre" name="nombre" required maxlength="100">
+                </mat-form-field>
+                <mat-form-field class="form-register">
+                  <mat-label>Asociar miembro admin a sindicato</mat-label>
+                  <input matInput  [formControl]="emailFormControl" placeholder="Email" name="email" required [errorStateMatcher] ="matcher" >
+  
+                </mat-form-field>
+                <button  mat-raised-button class="boton"  color="primary" type="submit" (click) ="asignarAbogado()">Asignar abogado</button>
+              </form>
+              <mat-card-actions class="botonSection">
+                <button [disabled]=" !emailFormControl.valid ||  !nameFormControl.valid" mat-raised-button class="boton"  color="primary" type="submit" (click) ="onAddSindicato()">Aceptar</button>
+              </mat-card-actions>
+            </mat-card-content>
+          </mat-card>

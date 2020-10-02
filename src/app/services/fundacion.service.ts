@@ -3,6 +3,7 @@ import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firest
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UsuarioFundacion } from '../shared/Interfaces/UsuarioFundacion';
+import { SindicatoService } from './sindicato.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class FundacionService {
 
 
 
-  constructor(public db: AngularFirestore, private snackbar: MatSnackBar, public fireservices: AngularFirestore, public router: Router) {
+  constructor(public db: AngularFirestore, private snackbar: MatSnackBar, public fireservices: AngularFirestore, public router: Router,private sindSvc:SindicatoService) {
 
 
 
@@ -65,6 +66,14 @@ export class FundacionService {
     );
     this.router.navigate(['/home']);
     return fundacionRef.set(fundacion, { merge: true });
+  }
+
+
+  createSindicatoFundacion (nombre:string,admin:any){
+
+    this.sindSvc.createSindicatoWithAdmin(nombre,admin.id,admin);
+    
+
   }
 
 

@@ -19,6 +19,8 @@ import { ActivarCuentaComponent } from './activar-cuenta/activar-cuenta.componen
 import { AgregarUsuarioSindicatoComponent } from './agregar-usuario-sindicato/agregar-usuario-sindicato.component';
 import { FundacionComponent } from './fundacion/fundacion.component';
 import { CrearFundacionComponent } from './crear-fundacion/crear-fundacion.component';
+import { SindicatosFundacionComponent } from './sindicatos-fundacion/sindicatos-fundacion.component';
+import { ModalDetalleSindicatoFundacionComponent } from './modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -71,6 +73,10 @@ const routes: Routes = [
   {
     path: 'crearFundacion',
     component:CrearFundacionComponent
+  },
+  {
+    path: 'sindicatos-fundacion',
+    component:SindicatosFundacionComponent
   }
 
 ]
@@ -78,9 +84,9 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'reset',component: RecuperarPassComponent},
   {path: 'activate',component:ActivarCuentaComponent},
-  {path: 'registerUserSindicato',component:AgregarUsuarioSindicatoComponent}
-  
-
+  {path: 'registerUserSindicato',component:AgregarUsuarioSindicatoComponent},
+  {path: 'detalleSindicatoFundacion',component:ModalDetalleSindicatoFundacionComponent},
+  {path: 'crearSindicatoFundacion',component:CrearSindicatoComponent}
 ];
 
 @NgModule({

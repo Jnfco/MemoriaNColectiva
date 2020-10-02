@@ -81,6 +81,9 @@ import { DetalleReunionComponent } from './detalle-reunion/detalle-reunion.compo
 import { FundacionComponent } from './fundacion/fundacion.component';
 import { CrearFundacionComponent } from './crear-fundacion/crear-fundacion.component';
 import { AgregarUsuarioFundacionComponent } from './agregar-usuario-fundacion/agregar-usuario-fundacion.component';
+import { SindicatosFundacionComponent } from './sindicatos-fundacion/sindicatos-fundacion.component';
+import { ModalCrearSindicatoFundacionComponent } from './modal-crear-sindicato-fundacion/modal-crear-sindicato-fundacion.component';
+import { ModalDetalleSindicatoFundacionComponent } from './modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -119,7 +122,10 @@ FullCalendarModule.registerPlugins([
     DetalleReunionComponent,
     FundacionComponent,
     CrearFundacionComponent,
-    AgregarUsuarioFundacionComponent
+    AgregarUsuarioFundacionComponent,
+    SindicatosFundacionComponent,
+    ModalCrearSindicatoFundacionComponent,
+    ModalDetalleSindicatoFundacionComponent
 
 
   ],
