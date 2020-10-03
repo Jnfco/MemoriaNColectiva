@@ -18,7 +18,7 @@ export class SindicatosFundacionComponent implements OnInit {
   constructor(public db: AngularFirestore,private dialog: MatDialog) { }
   dataSource: any;
   displayedColumns: string[] = [
-    'Nombre', 'Admin', 'Miembros','Detalles'
+    'Nombre', 'Admin','Correo_admin', 'Miembros','Detalles'
   ];
   userId:any;
   cantidadMiembros:any;
@@ -31,7 +31,7 @@ export class SindicatosFundacionComponent implements OnInit {
   }
 
 
-  verDetalle(){
+  verDetalle(elm){
 
     this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
 
@@ -64,16 +64,29 @@ export class SindicatosFundacionComponent implements OnInit {
         if(doc.data().idFundacion == this.userId){
 
           var sindicatoData = doc.data();
-          var sindicato:Sindicato = {
+          var nombreAdmin:string;
+          var correoAdmin:string;
+          for(let i =0;i< sindicatoData.usuarios.length;i++){
+
+            if (sindicatoData.usuarios[i].id == sindicatoData.idAdmin){
+
+              nombreAdmin = sindicatoData.usuarios[i].nombre;
+              correoAdmin = sindicatoData.usuarios[i].correo;
+            }
+
+          }
+          console.log("Nombre del admin: ",nombreAdmin)
+          var sindicato = {
             nombre:sindicatoData.nombreSindicato,
-            idAdmin:sindicatoData.idAdmin,
+            admin:nombreAdmin,
             usuarios:sindicatoData.usuarios,
+            correoAdmin:correoAdmin,
             idFundacion:sindicatoData.idFundacion,
             cantidadMiembros:sindicatoData.usuarios.length
           }
 
          this.sindicatos.push(sindicato);
-         this.dataSource = new MatTableDataSource<Sindicato>(this.sindicatos);
+         this.dataSource = new MatTableDataSource<any>(this.sindicatos);
 
 
 

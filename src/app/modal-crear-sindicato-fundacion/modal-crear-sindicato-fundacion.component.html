@@ -12,9 +12,10 @@
                 <mat-form-field class="form-register">
                   <mat-label>Asociar miembro admin a sindicato</mat-label>
                   <input matInput  [formControl]="emailFormControl" placeholder="Email" name="email" required [errorStateMatcher] ="matcher" >
-  
+                  <mat-error *ngIf="!emailFormControl.valid" style="text-align: center;margin-top: 10px;">Formato de correo incorrecto</mat-error>
+
                 </mat-form-field>
-                <button  mat-raised-button class="boton"  color="primary" type="submit" (click) ="asignarAbogado()">Asignar abogado</button>
+                <!--<button  mat-raised-button class="boton"  color="primary" type="submit" (click) ="asignarAbogado()">Asignar abogado</button>-->
               </form>
               <mat-card-actions class="botonSection">
                 <button [disabled]=" !emailFormControl.valid ||  !nameFormControl.valid" mat-raised-button class="boton"  color="primary" type="submit" (click) ="onAddSindicato()">Aceptar</button>

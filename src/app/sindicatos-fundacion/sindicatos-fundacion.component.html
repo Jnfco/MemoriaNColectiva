@@ -2,7 +2,7 @@
 
 <table mat-table #mytable *ngIf="this.sindicatosExists == true" [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">
     <ng-container matColumnDef="Nombre">
-        <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre</th>
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre del sindicato</th>
         <td mat-cell *matCellDef="let element">
             {{element.nombre}}
             
@@ -13,6 +13,13 @@
         <th class="w-a" mat-header-cell *matHeaderCellDef>Admin</th>
         <td mat-cell *matCellDef="let element">
           {{element.admin}}
+        </td>
+
+    </ng-container>
+    <ng-container matColumnDef="Correo_admin">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Correo admin</th>
+        <td mat-cell *matCellDef="let element">
+          {{element.correoAdmin}}
         </td>
 
     </ng-container>

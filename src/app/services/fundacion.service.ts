@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UsuarioFundacion } from '../shared/Interfaces/UsuarioFundacion';
 import { SindicatoService } from './sindicato.service';
+import { UsuarioSindicato } from '../shared/Interfaces/UsuarioSindicato';
 
 @Injectable({
   providedIn: 'root'
@@ -69,12 +70,30 @@ export class FundacionService {
   }
 
 
-  createSindicatoFundacion (nombre:string,admin:any){
+  createSindicatoFundacion (nombreSindicato:string,admin:any,idFundacion:string){
 
-    this.sindSvc.createSindicatoWithAdmin(nombre,admin.id,admin);
+    console.log("creando sindicato");
+    console.log("admin en service: ",admin)
+    var listaSindicatoAdmin:any[];
+    listaSindicatoAdmin = [];
+    listaSindicatoAdmin.push(admin);
+    const sindicato ={
+      nombreSindicato: nombreSindicato,
+      idAdmin:admin.id,
+      usuarios:listaSindicatoAdmin,
+      idFundacion:idFundacion
+    }
+
+    const sindicatoRef:AngularFirestoreDocument<any> = this.db.doc(
+      `Sindicato/${admin.id}`
+    );
+    //this.router.navigate(['/home']);
+    return sindicatoRef.set(sindicato, { merge: true });
     
 
   }
+
+  
 
 
 }
