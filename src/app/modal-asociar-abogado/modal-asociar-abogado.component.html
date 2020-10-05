@@ -1,0 +1,55 @@
+<div>
+  <mat-card-title  style="text-align: center;">Asociar abogado</mat-card-title>
+  <h3 *ngIf="this.lawyersExists == true">Lista de abogados disponibles</h3>
+
+  <div>
+    <!-- <mat-selection-list #abogados [multiple]="false" (selectionChange)="onLawyerChange()">
+      <mat-list-option *ngFor="let abogado of listaAbogados" [value]="abogado">
+        {{abogado}}
+      </mat-list-option>
+    </mat-selection-list>
+  -->
+  <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
+    <div class="table-responsive" *ngIf="this.lawyersExists == true">
+      <table mat-table [dataSource]="abogadosSource" class="mat-elevation-z8">
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+              [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+
+        <!-- Columna nombre -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombre </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="correo">
+          <th mat-header-cell *matHeaderCellDef> Correo</th>
+          <td mat-cell *matCellDef="let element"> {{element.correo}} </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)">
+        </tr>
+      </table>
+    </div>
+    <h2 *ngIf="this.lawyersExists == false" style="text-align: center;">No hay abogados para asociar a este sindicato</h2>
+  </div>
+  <div style="display: flex;flex-direction: row;justify-content: space-evenly;margin-top: 5%;">
+    <button mat-flat-button color="primary" (click)="onAsociarAbogado()" [disabled]="!this.lawyersExists">Aceptar</button>
+    <button mat-flat-button color="warn">Cancelar</button>
+  </div>
+</div>

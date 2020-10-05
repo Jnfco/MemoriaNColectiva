@@ -7,6 +7,8 @@ import { Reunion } from '../shared/Interfaces/Reunion';
 import { CrearFundacionComponent } from '../crear-fundacion/crear-fundacion.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalCrearSindicatoFundacionComponent } from '../modal-crear-sindicato-fundacion/modal-crear-sindicato-fundacion.component';
+import { ModalAsociarAbogadoComponent } from '../modal-asociar-abogado/modal-asociar-abogado.component';
+import { VerAbogadosSindicatoComponent } from '../ver-abogados-sindicato/ver-abogados-sindicato.component';
 
 @Component({
   selector: 'app-sindicatos-fundacion',
@@ -18,18 +20,32 @@ export class SindicatosFundacionComponent implements OnInit {
   constructor(public db: AngularFirestore,private dialog: MatDialog) { }
   dataSource: any;
   displayedColumns: string[] = [
-    'Nombre', 'Admin','Correo_admin', 'Miembros','Detalles'
+    'Nombre', 'Admin','Correo_admin', 'Miembros','Detalles','Abogado','verAbogado'
   ];
   userId:any;
   cantidadMiembros:any;
   sindicatos: any [];
   sindicatosExists:boolean;
+  isLoading=true;
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
     this.getSindicatos();
     
   }
 
+  addLawyer(element){
+    
+    var idSindicato = element.idSindicato;
+    console.log("id sindicato: ",idSindicato)
+
+    const dialogRef = this.dialog.open(ModalAsociarAbogadoComponent, {
+      width: '800px',
+      data:idSindicato
+    });
+    dialogRef.afterClosed().subscribe(result => {
+     
+    });
+  }
 
   verDetalle(elm){
 
@@ -82,13 +98,15 @@ export class SindicatosFundacionComponent implements OnInit {
             usuarios:sindicatoData.usuarios,
             correoAdmin:correoAdmin,
             idFundacion:sindicatoData.idFundacion,
-            cantidadMiembros:sindicatoData.usuarios.length
+            cantidadMiembros:sindicatoData.usuarios.length,
+            idSindicato:sindicatoData.idAdmin
           }
 
          this.sindicatos.push(sindicato);
+         this.isLoading=false;
          this.dataSource = new MatTableDataSource<any>(this.sindicatos);
 
-
+         
 
         }
        
@@ -97,6 +115,7 @@ export class SindicatosFundacionComponent implements OnInit {
       });
     });
 
+    
     setTimeout(()=>{
       
       if(this.sindicatos.length >0){
@@ -108,4 +127,18 @@ export class SindicatosFundacionComponent implements OnInit {
       }
     },1000)
   }
+
+
+  verAbogados(element){
+    const dialogRef = this.dialog.open(VerAbogadosSindicatoComponent, {
+      width: '800px',
+      data:element.idSindicato
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      this.sindicatos = [];
+      this.getSindicatos();
+    });
+  }
+
 }

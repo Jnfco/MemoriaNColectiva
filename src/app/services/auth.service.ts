@@ -74,7 +74,32 @@ export class AuthService implements CanActivate {
         if (userCredential) {
           console.log(userCredential.user.emailVerified)
           if (userCredential.user.emailVerified == true) {
-            this.router.navigate(['/home']);
+
+
+            this.db.collection("users").get().subscribe((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+
+                if(doc.data().email == email){
+
+                  if(doc.data().organization == "Sindicato"){
+
+                    this.router.navigate(['/home']);
+
+                  }
+                  else{
+                    this.router.navigate(['/home/sindicatos-fundacion']);
+                    //this.router.navigate(['/home/sindicato-fundacion/']);
+                  }
+
+                }
+
+              });
+            });
+
+
+
+
+            
           }
           else {
             this.snackbar.open("No se ha activado esta cuenta, revise su correo para la activación", '', {

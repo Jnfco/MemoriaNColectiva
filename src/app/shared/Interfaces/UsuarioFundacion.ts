@@ -4,3 +4,9 @@ export interface UsuarioFundacion {
     pass: string;
     idFundacion:string;
   }
+
+  export interface Abogado {
+    nombre:string;
+    correo:string;
+    posicion:number;
+  }
