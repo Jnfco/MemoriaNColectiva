@@ -96,6 +96,10 @@ export class ModalCrearSindicatoFundacionComponent implements OnInit {
                 }
 
                 console.log("Admin a agregar a la fundacion")
+                this.snackbar.open("Sindicato creado exitosamente!",'',{
+                  duration: 3000,
+                  verticalPosition:'bottom'
+                });
                 this.fundSvc.createSindicatoFundacion(this.nameFormControl.value, admin, this.userId);
 
                 this.dialogRef.close({

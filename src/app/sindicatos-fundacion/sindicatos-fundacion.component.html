@@ -1,5 +1,9 @@
+<div *ngIf="this.haveFundacion == true">
+
+    <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
 <h1 *ngIf="this.sindicatosExists == true" style="text-align: center;">Sindicatos asociados</h1>
 <!--<mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>-->
+
 <table mat-table #mytable *ngIf="this.sindicatosExists == true" [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">
     <ng-container matColumnDef="Nombre">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre del sindicato</th>
@@ -33,7 +37,7 @@
     <ng-container matColumnDef="Detalles">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td mat-cell *matCellDef="let element" style="display: flex;flex-direction: row;justify-content: space-between;margin-top: 2%;">
-            <button mat-flat-button color="primary" (click)="verDetalle(element)">Ver detalle</button>
+            <button mat-flat-button color="primary" (click)="verDetalle(element)">Ver miembros</button>
         </td>
     </ng-container>
 
@@ -63,4 +67,8 @@
 <div style="display:flex ;flex-direction: row;justify-content: center;margin-top: 2%;margin-bottom: 2%;">
     <button mat-flat-button color="primary" (click)="crearSindicato()">Crear Sindicato</button>
     
+</div>
+</div>
+<div *ngIf="haveFundacion == false">
+    <h1>Usted no tiene asociada una fundación a su cuenta, por favor cree una fundación para comenzar</h1>
 </div>

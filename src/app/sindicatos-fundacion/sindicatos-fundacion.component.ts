@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalCrearSindicatoFundacionComponent } from '../modal-crear-sindicato-fundacion/modal-crear-sindicato-fundacion.component';
 import { ModalAsociarAbogadoComponent } from '../modal-asociar-abogado/modal-asociar-abogado.component';
 import { VerAbogadosSindicatoComponent } from '../ver-abogados-sindicato/ver-abogados-sindicato.component';
+import { snapshotChanges } from '@angular/fire/database';
+import { ModalDetalleSindicatoFundacionComponent } from '../modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
 
 @Component({
   selector: 'app-sindicatos-fundacion',
@@ -27,10 +29,29 @@ export class SindicatosFundacionComponent implements OnInit {
   sindicatos: any [];
   sindicatosExists:boolean;
   isLoading=true;
+  haveFundacion:boolean;
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
+    
+    this.tieneFundacion();
     this.getSindicatos();
     
+  }
+
+  tieneFundacion(){
+
+    this.db.collection("Fundacion").doc(this.userId).get().subscribe((snapshotChanges)=>{
+      if(snapshotChanges.exists)
+      {
+        this.haveFundacion = true;
+      }
+      else{
+        this.haveFundacion =false;
+      }
+
+      console.log("tiene fundacion?: ",this.haveFundacion)
+    })
+
   }
 
   addLawyer(element){
@@ -49,13 +70,13 @@ export class SindicatosFundacionComponent implements OnInit {
 
   verDetalle(elm){
 
-    this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
-
-      querySnapshot.forEach((doc)=> {
-
-
-
-      });
+    const dialogRef = this.dialog.open(ModalDetalleSindicatoFundacionComponent, {
+      width: '800px',
+      data:elm.idSindicato
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+   
     });
   }
 
@@ -71,7 +92,7 @@ export class SindicatosFundacionComponent implements OnInit {
   }
 
   getSindicatos(){
-
+    this.isLoading =true;
     this.sindicatos = [];
     this.db.collection("Sindicato").get().subscribe((querySnapshot)=>{
 
@@ -103,14 +124,14 @@ export class SindicatosFundacionComponent implements OnInit {
           }
 
          this.sindicatos.push(sindicato);
-         this.isLoading=false;
+        
          this.dataSource = new MatTableDataSource<any>(this.sindicatos);
 
          
 
         }
        
-
+        
 
       });
     });
@@ -120,11 +141,13 @@ export class SindicatosFundacionComponent implements OnInit {
       
       if(this.sindicatos.length >0){
         this.sindicatosExists =true;
+       
       }
       else{
         this.sindicatosExists = false;
         console.log("existe sindicato?: ",this.sindicatosExists)
       }
+      this.isLoading=false;
     },1000)
   }
 

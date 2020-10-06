@@ -8,6 +8,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FundacionService } from '../services/fundacion.service';
 import { ModalInfoReunionComponent } from '../reunion/modal-info-reunion/modal-info-reunion.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-modal-asociar-abogado',
@@ -31,7 +32,8 @@ export class ModalAsociarAbogadoComponent implements OnInit {
     'select','nombre', 'correo'
   ];
   selection= new SelectionModel<Abogado>(true,[]);
-  constructor(public db: AngularFirestore,@Inject(MAT_DIALOG_DATA) public idSindicato: any,private fundSvc:FundacionService,public dialogRef: MatDialogRef<ModalInfoReunionComponent>) {
+  constructor(public db: AngularFirestore,@Inject(MAT_DIALOG_DATA) public idSindicato: any,private fundSvc:FundacionService,public dialogRef: MatDialogRef<ModalInfoReunionComponent>
+  ,private snackbar: MatSnackBar) {
 
     this.selection.changed.asObservable().subscribe(selectionChange =>{
       this.selectedLawyers =[...this.selection.selected];
@@ -157,11 +159,17 @@ export class ModalAsociarAbogadoComponent implements OnInit {
       }*/
 
       this.fundSvc.addLawyerToSyndicate(this.idSindicato,this.selectedLawyers);
+      this.snackbar.open("Abogado asociado exitosamente",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
       this.dialogRef.close();
 
     }
   }
 
-
+onCancelar(){
+  this.dialogRef.close();
+}
 
 }

@@ -87,6 +87,7 @@ export class FundacionService {
       abogados: listaAbogados
     }
 
+
     const sindicatoRef: AngularFirestoreDocument<any> = this.db.doc(
       `Sindicato/${admin.id}`
     );
@@ -135,6 +136,64 @@ export class FundacionService {
 
   }
 
+  eliminarAbogado(correoAbogado: string, idSindicato: string) {
+
+    this.db.collection("Sindicato").doc(idSindicato).get().subscribe((snapshotChanges) => {
+      if (snapshotChanges.exists) {
+        console.log("sindicato existe")
+
+        var listaAbogados: any[] = [];
+        snapshotChanges.data().abogados.forEach(element => {
+
+          var abo = {
+            nombre: element.nombre,
+            correo: element.correo,
+            posicion: element.posicion
+          }
+          console.log("abogadopasdasdas: ", abo)
+          listaAbogados.push(abo);
+        });
+
+
+        //var listaAbogados = snapshotChanges.data().abogados;
+        console.log("lista recien obtenida: ", listaAbogados)
+
+        var sind = snapshotChanges.data();
+
+        for (let i = 0; i < listaAbogados.length; i++) {
+
+          if (correoAbogado == listaAbogados[i].correo) {
+
+            console.log("correo encontrado: ", listaAbogados[i].correo);
+            listaAbogados.splice(i, 1);
+
+          }
+        }
+        if (listaAbogados.length == 0) {
+
+          console.log("0");
+        }
+        
+
+
+
+        var sindicato = {
+          nombreSindicato: sind.nombreSindicato,
+          idAdmin: sind.idAdmin,
+          idFundacion: sind.idFundacion,
+          usuarios: sind.usuarios,
+          abogados: listaAbogados
+        }
+
+        console.log ("Sindicato nuevo: ",sindicato)
+        const sindicatoRef: AngularFirestoreDocument<any> = this.db.doc(
+          `Sindicato/${idSindicato}`);
+        console.log("lista nueva: ", listaAbogados[0])
+        return sindicatoRef.set(sindicato, { merge: true });
+      }
+    })
+
+  }
 
 
 

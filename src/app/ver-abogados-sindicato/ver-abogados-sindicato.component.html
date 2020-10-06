@@ -17,11 +17,10 @@
 
     </ng-container>
     <ng-container matColumnDef="eliminar">
-        <th class="w-a" mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-            <mat-icon  class="eliminar">delete</mat-icon>
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+            <mat-icon (click)="delete(element)">delete</mat-icon>
         </td>
-
     </ng-container>
     
     
