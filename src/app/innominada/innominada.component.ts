@@ -122,7 +122,7 @@ export class InnominadaComponent implements OnInit {
     this.promSueldos = [];
     this.informacionInominada =[];
     this.cargosAgrupados=[];
-    this.nombreCargos2Mitad = [];
+   // this.nombreCargos2Mitad = [];
     this.sueldos = [];
     this.nombreCargos = [];
     this.promSueldos = [];
@@ -185,7 +185,8 @@ console.log('Result: ',result)
 
       let halfwayThrough = Math.floor(this.nombreCargos.length / 2)
 
-      let arrayFirstHalf = this.nombreCargos.slice(0, halfwayThrough);
+      //let arrayFirstHalf = this.nombreCargos.slice(0, halfwayThrough);
+      this.nombreCargos1Mitad = this.nombreCargos.slice(0,halfwayThrough);
       this.nombreCargos2Mitad = this.nombreCargos.slice(halfwayThrough, this.nombreCargos.length);
 
 
@@ -217,10 +218,10 @@ console.log('Result: ',result)
     }
 
      //Version de la matriz de sueldos por cargo pero cortada a la mitad
-     for(let i = 0; i < arrayFirstHalf.length; i++) {
+     for(let i = 0; i < this.nombreCargos1Mitad.length; i++) {
       this.dataHalf[i] = [];
-      for(let j = 0; j < this.countMap[arrayFirstHalf[i]]; j++) {
-          this.dataHalf[i][j] =this.cargosAgrupados[arrayFirstHalf[i]][j].sueldo ;
+      for(let j = 0; j < this.countMap[this.nombreCargos1Mitad[i]]; j++) {
+          this.dataHalf[i][j] =this.cargosAgrupados[this.nombreCargos1Mitad[i]][j].sueldo ;
       }
   }
 
