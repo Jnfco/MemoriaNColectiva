@@ -51,8 +51,8 @@ export class ActivarCuentaComponent implements OnInit {
     try{
 
       
-     this.authSvc.activateAccount(email,password);
-      
+     //this.authSvc.activateAccount(email,password);
+      this.authSvc.activation(email,password);
       
       this.router.navigate(['/login']);
     }

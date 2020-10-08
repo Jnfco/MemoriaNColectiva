@@ -89,7 +89,9 @@ export class SindicatoComponent implements OnInit {
       querySnapshot.forEach((doc)=> {
 
         var user = doc.data();
-        if(user.idSindicato == this.userId){
+        console.log("user data: ",user)
+        console.log("user id: ",this.userId)
+        if(user.idOrg == this.userId){
 
           var usuario:UsuarioSindicato = {
             nombre:user.nombre,
@@ -98,7 +100,9 @@ export class SindicatoComponent implements OnInit {
             pass:user.pass
           }
 
+          console.log("usuario a agregar: ",usuario)
           this.usuariosPendientes.push(usuario);
+          console.log("Miembros pendientes: ",this.usuariosPendientes)
 
         }
 

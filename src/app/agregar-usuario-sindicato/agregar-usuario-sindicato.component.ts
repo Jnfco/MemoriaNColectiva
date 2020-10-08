@@ -31,26 +31,26 @@ export class AgregarUsuarioSindicatoComponent implements OnInit {
   hide
   userId: any;
   emailExists: boolean;
-  inactiveExists:boolean;
-  constructor(private authSvc: AuthService, public dialogRef: MatDialogRef<AgregarUsuarioSindicatoComponent>, public db: AngularFirestore,private snackbar: MatSnackBar) { }
+  inactiveExists: boolean;
+  constructor(private authSvc: AuthService, public dialogRef: MatDialogRef<AgregarUsuarioSindicatoComponent>, public db: AngularFirestore, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
 
     this.db.collection('InactiveUsers').valueChanges()
-.subscribe( result => {
-console.log(result.length);
+      .subscribe(result => {
+        console.log(result.length);
 
-if(result.length == 0){
-  this.inactiveExists = false;
-}
-else{
-  this.inactiveExists = true;
-}
-})
-setTimeout(()=>{
-  console.log("hay inactivos?: ",this.inactiveExists)
-},1500)
+        if (result.length == 0) {
+          this.inactiveExists = false;
+        }
+        else {
+          this.inactiveExists = true;
+        }
+      })
+    setTimeout(() => {
+      console.log("hay inactivos?: ", this.inactiveExists)
+    }, 1500)
 
   }
 
@@ -63,10 +63,10 @@ setTimeout(()=>{
       querySnapshot.forEach((doc) => {
 
         var user = doc.data();
-        console.log("emailform ",this.emailFormControl.value)
+        console.log("emailform ", this.emailFormControl.value)
         console.log("email firebase:", user.email)
         if (user.email == this.emailFormControl.value) {
-          
+
           this.emailExists = true;
         }
         else {
@@ -74,29 +74,31 @@ setTimeout(()=>{
         }
 
       })
-     
+
 
 
     })
 
-    console.log("existe el email?: ",this.emailExists)
-      
-    if (this.emailExists == false) {
-      this.authSvc.addNewInactiveUser(this.nameFormControl.value, this.emailFormControl.value, this.passwordFormControl.value, this.userId,"Sindicato");
-      this.snackbar.open("Usuario pendiente agregado exitosamente, esperando la activación de la cuenta", '', {
-        duration: 3000,
-        verticalPosition: 'bottom'
-      });
-      this.dialogRef.close({
-      });
-    }
-    else{
+    console.log("existe el email?: ", this.emailExists)
+    setTimeout(() => {
+      if (this.emailExists == false) {
+        this.authSvc.addNewInactiveUser(this.nameFormControl.value, this.emailFormControl.value, this.passwordFormControl.value, this.userId, "Sindicato");
+        this.snackbar.open("Usuario pendiente agregado exitosamente, esperando la activación de la cuenta", '', {
+          duration: 3000,
+          verticalPosition: 'bottom'
+        });
+        this.dialogRef.close({
+        });
+      }
+      else {
 
-      this.snackbar.open("No se pudo crear sindicato, el correo ingresado ya se encuentra registrado", '', {
-        duration: 3000,
-        verticalPosition: 'bottom'
-      });
-    }
+        this.snackbar.open("No se pudo crear sindicato, el correo ingresado ya se encuentra registrado", '', {
+          duration: 3000,
+          verticalPosition: 'bottom'
+        });
+      }
+    },1000)
+
 
   }
 

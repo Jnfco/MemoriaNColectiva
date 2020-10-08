@@ -66,7 +66,7 @@ export class FundacionService {
     const fundacionRef: AngularFirestoreDocument<any> = this.db.doc(
       `Fundacion/${userId}`
     );
-    this.router.navigate(['/home/sindicatos-fundacion']);
+    this.router.navigate(['/home/fundacion']);
     return fundacionRef.set(fundacion, { merge: true });
   }
 
