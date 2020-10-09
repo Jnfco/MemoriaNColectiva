@@ -89,7 +89,14 @@ export class AuthService implements CanActivate {
 
                   }
                   else {
-                    this.router.navigate(['/home/fundacion']);
+                    if(doc.data().isAdmin == false){
+                      this.router.navigate(['/home/estado-financiero-fundacion']);
+
+                    }
+                    else{
+                      this.router.navigate(['/home/fundacion']);
+
+                    }
                     //this.router.navigate(['/home/sindicato-fundacion/']);
                   }
 

@@ -1,0 +1,21 @@
+.table-title{
+    margin-top: 5%;
+  }
+  
+  mat-form-field{
+    width: 50%;
+  }
+  
+  .table {
+    width: 100vw;
+    max-width: 100%;
+    overflow: auto;
+    margin-bottom: 10px;
+    display: table;
+    border-collapse: collapse;
+    margin: 0px;
+    background-color: rgb(238, 238, 238);
+  }
+  .w-a{
+    width: 5%;
+  }
