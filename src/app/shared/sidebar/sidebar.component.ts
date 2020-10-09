@@ -16,6 +16,7 @@ export class SidebarComponent  {
   public userEmail:any;
   userId:any;
   sindicato :boolean;
+  isFundAdmin:boolean;
   constructor(private authSvc:AuthService,private router:Router,public db: AngularFirestore) { }
 
 
@@ -38,7 +39,16 @@ export class SidebarComponent  {
             }
             else{
 
+              
               this.sindicato = false;
+              if(doc.data().isAdmin == true){
+                this.isFundAdmin = true;
+
+              }
+              else{
+                this.isFundAdmin = false;
+              }
+              
             }
         }
 

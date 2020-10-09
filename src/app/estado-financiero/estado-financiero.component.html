@@ -28,7 +28,7 @@
 
 <!--Tabla Activos Corrientes-->
 <h2 *ngIf="noDataMessage == true">No se ha cargado el estado financiero</h2>
-<mat-progress-bar mode="indeterminate" *ngIf="noData && isLoading"></mat-progress-bar>
+<mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
 <mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="!noData">
   <mat-card-content>
 <h1 class ="table-title" style="text-align: center;">  Activos Corrientes</h1>

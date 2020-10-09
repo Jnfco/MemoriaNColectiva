@@ -86,6 +86,7 @@ import { ModalCrearSindicatoFundacionComponent } from './modal-crear-sindicato-f
 import { ModalDetalleSindicatoFundacionComponent } from './modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
 import { ModalAsociarAbogadoComponent } from './modal-asociar-abogado/modal-asociar-abogado.component';
 import { VerAbogadosSindicatoComponent } from './ver-abogados-sindicato/ver-abogados-sindicato.component';
+import { EstadoFinancieroFundacionComponent } from './estado-financiero-fundacion/estado-financiero-fundacion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -129,7 +130,8 @@ FullCalendarModule.registerPlugins([
     ModalCrearSindicatoFundacionComponent,
     ModalDetalleSindicatoFundacionComponent,
     ModalAsociarAbogadoComponent,
-    VerAbogadosSindicatoComponent
+    VerAbogadosSindicatoComponent,
+    EstadoFinancieroFundacionComponent
 
 
   ],

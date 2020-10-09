@@ -21,6 +21,7 @@ import { FundacionComponent } from './fundacion/fundacion.component';
 import { CrearFundacionComponent } from './crear-fundacion/crear-fundacion.component';
 import { SindicatosFundacionComponent } from './sindicatos-fundacion/sindicatos-fundacion.component';
 import { ModalDetalleSindicatoFundacionComponent } from './modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
+import { EstadoFinancieroFundacionComponent } from './estado-financiero-fundacion/estado-financiero-fundacion.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -77,6 +78,10 @@ const routes: Routes = [
   {
     path: 'sindicatos-fundacion',
     component:SindicatosFundacionComponent
+  },
+  {
+    path: 'estado-financiero-fundacion',
+    component:EstadoFinancieroFundacionComponent
   }
 
 ]
