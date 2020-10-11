@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {AngularFirestore,AngularFirestoreDocument} from '@angular/fire/firestore';
-import { Reunion } from '../shared/Interfaces/Reunion';
+import { Reunion, ReunionFundacion } from '../shared/Interfaces/Reunion';
 import { MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
@@ -33,6 +33,34 @@ export class MeetingService {
         verticalPosition:'bottom'
       });
       return reunionRef.set(reunionCreada,{merge: true});
+    }
+
+    addMeetingFoundation(reunion:ReunionFundacion){
+
+      var uuid = require("uuid");
+      var id = uuid.v4();
+      let reunionCreada = {
+        idReunion:id,
+        idCreador: reunion.idCreador,
+        titulo: reunion.titulo,
+        descripcion: reunion.descripcion,
+        fecha: reunion.fecha,
+        horaInicio:reunion.horaInicio,
+        horaTermino:reunion.horaTermino,
+        email:reunion.email,
+        idSindicato:reunion.idSindicato,
+        idAbogado:reunion.idAbogado,
+        idFundacion:reunion.idFundacion,
+        started:reunion.started
+      }
+
+      const reunionRef: AngularFirestoreDocument<any> = this.db.doc(`Reunion/${id}`);
+      this.snackbar.open("Reunión agendada exitosamente!",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+      return reunionRef.set(reunionCreada,{merge: true});
+
     }
 
 

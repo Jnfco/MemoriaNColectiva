@@ -88,6 +88,9 @@ import { ModalAsociarAbogadoComponent } from './modal-asociar-abogado/modal-asoc
 import { VerAbogadosSindicatoComponent } from './ver-abogados-sindicato/ver-abogados-sindicato.component';
 import { EstadoFinancieroFundacionComponent } from './estado-financiero-fundacion/estado-financiero-fundacion.component';
 import { InominadaFundacionComponent } from './inominada-fundacion/inominada-fundacion.component';
+import { ReunionFundacionComponent } from './reunion-fundacion/reunion-fundacion.component';
+import { ModalInfoReunionFundacionComponent } from './modal-info-reunion-fundacion/modal-info-reunion-fundacion.component';
+import { ModalReunionFundacionComponent } from './modal-reunion-fundacion/modal-reunion-fundacion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -133,7 +136,10 @@ FullCalendarModule.registerPlugins([
     ModalAsociarAbogadoComponent,
     VerAbogadosSindicatoComponent,
     EstadoFinancieroFundacionComponent,
-    InominadaFundacionComponent
+    InominadaFundacionComponent,
+    ReunionFundacionComponent,
+    ModalInfoReunionFundacionComponent,
+    ModalReunionFundacionComponent
 
 
   ],
