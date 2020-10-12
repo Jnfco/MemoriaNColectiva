@@ -122,7 +122,7 @@ export class ModalInfoReunionComponent {
           }
           else{
   
-            this.idSindicatoUser = usuario.idSindicato;
+            this.idSindicatoUser = usuario.idOrg;
           }
   
          

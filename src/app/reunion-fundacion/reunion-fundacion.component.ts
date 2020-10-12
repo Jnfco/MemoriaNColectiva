@@ -118,7 +118,9 @@ openInfoReunion (reunion:ReunionFundacion): void {
     });
   }
   handleEventClick(arg) {
+    console.log("arg: ", arg)
     this.db.collection("Reunion").doc(arg.event.id).get().subscribe((snapshotChanges)=>{
+
       const momentHoraInicio = new Date(arg.event.start);
     const momentHoraTermino = new Date(arg.event.end);
     const horaInicio = moment(momentHoraInicio).format("HH:mm");
@@ -138,9 +140,9 @@ openInfoReunion (reunion:ReunionFundacion): void {
      horaInicio: horaInicio,
      horaTermino: horaTermino,
      email:this.userEmail,
-     idSindicato:this.idSindicatoUser,
-     idAbogado:arg.event.idAbogado,
-     idFundacion:arg.evet.idFundacion,
+     idSindicato:snapshotChanges.data().idSindicato,
+     idAbogado:snapshotChanges.data().idAbogado,
+     idFundacion:snapshotChanges.data().idFundacion,
      started: snapshotChanges.data().started
    }
    console.log("Reunion eventclick: ",reunion)
@@ -156,96 +158,104 @@ openInfoReunion (reunion:ReunionFundacion): void {
 
     this.listaTest = [];
 
-    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
-              
-      var usuario = snapshotChanges.data();
-      console.log('aqui')
-      this.idSindicatoUser = usuario.idSindicato;
-      console.log('id sindicato encontrada: ',this.idSindicatoUser)
-      console.log('es admin o no ?',usuario.isAdmin)
-      if(usuario.isAdmin == true){
-        this.idSindicatoUser =this.userId;
+   //Primero se buscan los sindicatos asociados al abogado que inicia la sesión
 
-      }
-      
+   this.db.collection("Sindicato").get().subscribe((querySnapshot)=>{
+
+    querySnapshot.forEach((sindicato)=>{
+
+       sindicato.data().abogados.forEach(element => {
+
+        if(this.userEmail == element.correo){
+
+          this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
+
+            querySnapshot.forEach((doc)=> {
     
-    })
-
-      this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
-
-        querySnapshot.forEach((doc)=> {
-
-
-          if(doc.data().idSindicato == this.idSindicatoUser )
-          {
-            var reunion:ReunionFundacion = {
-              idReunion: doc.data().idReunion,
-              idCreador: doc.data().idCreador,
-              titulo: doc.data().titulo,
-              descripcion: doc.data().descripcion,
-              fecha: doc.data().fecha,
-              horaInicio: doc.data().horaInicio,
-              horaTermino: doc.data().horaTermino,
-              email: this.userEmail,
-              idSindicato:this.idSindicatoUser,
-              idAbogado: doc.data().idAbogado,
-              idFundacion:doc.data().idFundacion,
-              started:doc.data().started
+    
+              if(doc.data().idSindicato == sindicato.data().idAdmin)
+              {
+                var reunion:ReunionFundacion = {
+                  idReunion: doc.data().idReunion,
+                  idCreador: doc.data().idCreador,
+                  titulo: doc.data().titulo,
+                  descripcion: doc.data().descripcion,
+                  fecha: doc.data().fecha,
+                  horaInicio: doc.data().horaInicio,
+                  horaTermino: doc.data().horaTermino,
+                  email: doc.data().email,
+                  idSindicato:doc.data().idSindicato,
+                  idAbogado: doc.data().idAbogado,
+                  idFundacion:doc.data().idFundacion,
+                  started:doc.data().started
+                }
+                this.reuniones.push(reunion);
+    
+                let array = {
+                  title: doc.data().titulo,
+                  start: doc.data().fecha +"T"+doc.data().horaInicio,
+                  end: doc.data().fecha + "T"+doc.data().horaTermino,
+                  description: doc.data().descripcion,
+                  id: doc.data().idReunion,
+    
+    
+                }
+                  
+                  this.listaTest.push (array)
+    
+               
+              }
+            })
+    
+    
+            this.options = {
+              //plugins:[ dayGridPlugin, timeGridPlugin, interactionPlugin ],
+              locale: 'es',
+              headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth'//timeGridWeek,timeGridDay'
+              },
+              buttonText:{
+                today: 'Hoy',
+                month: 'Mes',
+                day: 'Día',
+                week: 'Semana',
+                list: 'Lista'
+              },
+              events : this.listaTest
+              ,
+              height: 500,
+             firstDay: 1,
+             initialDate: this.today,
+             dateClick: this.handleDateClick.bind(this),
+             eventClick: this.handleEventClick.bind(this)
+    
             }
-            this.reuniones.push(reunion);
-
-            let array = {
-              title: doc.data().titulo,
-              start: doc.data().fecha +"T"+doc.data().horaInicio,
-              end: doc.data().fecha + "T"+doc.data().horaTermino,
-              description: doc.data().descripcion,
-              id: doc.data().idReunion,
-
-
-            }
-              console.log('Reuniones ',this.reuniones)
-              this.listaTest.push (array)
-
-           
-          }
-        })
-
-
-        this.options = {
-          //plugins:[ dayGridPlugin, timeGridPlugin, interactionPlugin ],
-          locale: 'es',
-          headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth'//timeGridWeek,timeGridDay'
-          },
-          buttonText:{
-            today: 'Hoy',
-            month: 'Mes',
-            day: 'Día',
-            week: 'Semana',
-            list: 'Lista'
-          },
-          events : this.listaTest
-          ,
-          height: 500,
-         firstDay: 1,
-         initialDate: this.today,
-         dateClick: this.handleDateClick.bind(this),
-         eventClick: this.handleEventClick.bind(this)
+    
+    
+          })
+    
+          //console.log('reuniones simp: ',this.reunionesSimple)
+          //console.log ('Reuniones hardcode: ', this.listaTest)
+    
+    
+    
+    
+        //console.log ('opciones: ',this.options)
 
         }
-
-
-      })
-
-      console.log('reuniones simp: ',this.reunionesSimple)
-      console.log ('Reuniones hardcode: ', this.listaTest)
+         
+       });
 
 
 
 
-    console.log ('opciones: ',this.options)
+    })
+    console.log('Reuniones ',this.reuniones)
+   })
+
+     
 
 
 
