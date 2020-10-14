@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { ReunionFundacion } from '../shared/Interfaces/Reunion';
+import { Reunion } from '../shared/Interfaces/Reunion';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MeetingService } from '../services/meeting.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,7 +16,7 @@ import { UserInfo } from 'os';
   templateUrl: './modal-reunion-fundacion.component.html',
   styleUrls: ['./modal-reunion-fundacion.component.css']
 })
-export class ModalReunionFundacionComponent implements OnInit {
+export class ModalReunionFundacionComponent {
 
 
   //FormControls
@@ -39,7 +39,7 @@ export class ModalReunionFundacionComponent implements OnInit {
   ])
 
   //Interfaz Reunion
-  reunion: ReunionFundacion;
+  reunion: Reunion;
   userId: any;
   userEmail: any;
 
@@ -74,7 +74,7 @@ export class ModalReunionFundacionComponent implements OnInit {
 
   public sindicatoSelected = false;
 
-  public idFundacion:string;
+  public idFundacion: string;
 
   constructor(
     public dialogRef: MatDialogRef<ModalReunionFundacionComponent>,
@@ -87,12 +87,9 @@ export class ModalReunionFundacionComponent implements OnInit {
     this.userId = firebase.auth().currentUser.uid;
     console.log("user id !!: ", this.userId);
     console.log('Fecha actual: ', formattedFecha);
-     this.getIdFundacion();
+    this.getIdFundacion();
     this.cargarSindicatos();
-    
 
-  }
-  ngOnInit(): void {
 
   }
 
@@ -101,25 +98,47 @@ export class ModalReunionFundacionComponent implements OnInit {
     });
   }
 
-  getIdFundacion(){
-    this.db.collection("Fundacion").get().subscribe((querySnapshot) => {
+  getIdFundacion() {
 
-      querySnapshot.forEach((doc) => {
+    console.log("a");
+    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
 
-        doc.data().usuarios.forEach(element => {
-          console.log("correo del user; ",this.userEmail);
-          console.log("correo del sindicato: ",element.correo)
-          
-          if(this.userEmail == element.correo){
+      if (snapshotChanges.exists) {
 
-            this.idFundacion = element.idOrg;
-            console.log("id fundacion: ",this.idFundacion)
+        if (snapshotChanges.data().isAdmin == true) {
+          console.log("es admin !!");
 
-          }
-        });
+          this.idFundacion = this.userId;
+        }
+        else {
 
-      });
-    });
+          setTimeout(() => {
+            this.db.collection("Fundacion").get().subscribe((querySnapshot) => {
+
+              querySnapshot.forEach((doc) => {
+
+                doc.data().usuarios.forEach(element => {
+                  console.log("correo del user; ", this.userEmail);
+                  console.log("correo del sindicato: ", element.correo)
+
+                  if (this.userEmail == element.correo) {
+
+                    this.idFundacion = element.idOrg;
+                    console.log("id fundacion: ", this.idFundacion)
+
+                  }
+                });
+
+              });
+            });
+          }, 1000)
+
+        }
+
+      }
+    })
+
+
   }
 
   onAgendar(): void {
@@ -194,20 +213,20 @@ export class ModalReunionFundacionComponent implements OnInit {
     if (this.horaCorrecta == true && this.fechaCorrecta == true) {
 
       console.log('horacorrecta: ', this.horaCorrecta);
-       this.reunion = {
-       idReunion:"",
-       titulo: this.tituloFormControl.value,
-       descripcion: this.descripcionFormControl.value,
-       fecha: formattedDate,
-       horaInicio:this.horaInicioFormControl.value,
-       horaTermino: this.horaTerminoFormControl.value,
-       idCreador: this.userId,
-       email: this.userEmail,
-       idSindicato: this.idSindicatoUser,
-       idAbogado:this.idAbogado,
-       idFundacion:this.idFundacion,
-       started:false
-     }
+      this.reunion = {
+        idReunion: "",
+        titulo: this.tituloFormControl.value,
+        descripcion: this.descripcionFormControl.value,
+        fecha: formattedDate,
+        horaInicio: this.horaInicioFormControl.value,
+        horaTermino: this.horaTerminoFormControl.value,
+        idCreador: this.idSindicatoUser,
+        email: this.userEmail,
+        idSindicato: this.idSindicatoUser,
+        idAbogado: this.idAbogado,
+        idFundacion: this.idFundacion,
+        started: false
+      }
       if (this.reunion.horaInicio.length == 0) {
         this.horaInicioVacia = true;
       }
@@ -236,7 +255,7 @@ export class ModalReunionFundacionComponent implements OnInit {
 
       if (this.horaInicioVacia == false && this.horaTerminoVacia == false && this.tituloVacío == false) {
         console.log('Reunion: ', this.reunion)
-        this.meetingSvc.addMeetingFoundation(this.reunion);
+        this.meetingSvc.addMeeting(this.reunion);
         this.dialogRef.close({});
       }
 
@@ -317,6 +336,7 @@ export class ModalReunionFundacionComponent implements OnInit {
   }
 
   cargarAbogados() {
+    this.abogadoList = [];
 
     this.db.collection("Sindicato").doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
 
@@ -331,14 +351,14 @@ export class ModalReunionFundacionComponent implements OnInit {
 
               if (doc.data().email == element.correo) {
 
-                var abogado= {
+                var abogado = {
                   nombre: doc.data().name,
                   correo: doc.data().email,
                   uid: doc.data().uid
 
                 }
                 this.abogadoList.push(abogado);
-                console.log("abogado: ",abogado)
+                console.log("abogado: ", abogado)
               }
 
             })

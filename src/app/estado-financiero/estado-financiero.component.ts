@@ -553,12 +553,13 @@ export class EstadoFinancieroComponent implements OnInit {
     this.db.collection('users').doc(userId).get().subscribe((snapshotChanges) =>{
       if (snapshotChanges.exists){
 
+        console.log("user actual: ",userId)
         var usuario = snapshotChanges.data();
 
         if (usuario.uid == userId){
 
           console.log('aqui')
-          this.idSindicatoUser = usuario.idSindicato;
+          this.idSindicatoUser = usuario.idOrg;
           console.log('id sindicato encontrada: ',this.idSindicatoUser)
           console.log('es admin o no ?',usuario.isAdmin)
           if(usuario.isAdmin == true){

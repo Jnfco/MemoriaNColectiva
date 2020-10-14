@@ -103,7 +103,7 @@ openInfoReunion (reunion:Reunion): void {
 
 
 
-
+    this.reuniones = [];
     this.getMeeting();
   });
 
@@ -152,7 +152,9 @@ openInfoReunion (reunion:Reunion): void {
      horaTermino: horaTermino,
      email:this.userEmail,
      idSindicato:this.idSindicatoUser,
-     started: snapshotChanges.data().started
+     started: snapshotChanges.data().started,
+     idAbogado: snapshotChanges.data().idAbogado,
+     idFundacion:snapshotChanges.data().idFundacion
    }
    console.log("Reunion eventclick: ",reunion)
     this.openInfoReunion(reunion);
@@ -166,19 +168,20 @@ openInfoReunion (reunion:Reunion): void {
   getMeeting(){
 
     this.listaTest = [];
+    this.reuniones = [];
 
     this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
               
       var usuario = snapshotChanges.data();
       console.log('aqui')
-      this.idSindicatoUser = usuario.idSindicato;
+      this.idSindicatoUser = usuario.idOrg;
       console.log('id sindicato encontrada: ',this.idSindicatoUser)
       console.log('es admin o no ?',usuario.isAdmin)
       if(usuario.isAdmin == true){
         this.idSindicatoUser =this.userId;
 
       }
-      
+      console.log("id sindicato: ",this.idSindicatoUser)
     
     })
 
@@ -199,7 +202,9 @@ openInfoReunion (reunion:Reunion): void {
               horaTermino: doc.data().horaTermino,
               email: this.userEmail,
               idSindicato:this.idSindicatoUser,
-              started:doc.data().started
+              started:doc.data().started,
+              idAbogado:doc.data().idAbogado,
+              idFundacion:doc.data().idFundacion
             }
             this.reuniones.push(reunion);
 
@@ -212,7 +217,7 @@ openInfoReunion (reunion:Reunion): void {
 
 
             }
-              console.log('Reuniones ',this.reuniones)
+              //
               this.listaTest.push (array)
 
            
@@ -258,7 +263,7 @@ openInfoReunion (reunion:Reunion): void {
 
 
 
-
+    console.log('Reuniones ',this.reuniones)
 
 
 

@@ -73,9 +73,11 @@ export class HistorialComponent implements OnInit {
               fecha: doc.data().fecha,
               horaInicio: doc.data().horaInicio,
               horaTermino: doc.data().horaTermino,
-              email: this.userEmail,
-              idSindicato:this.idSindicatoUser,
-              started:doc.data().started
+              email: doc.data().email,
+              idSindicato:doc.data().idSindicato,
+              started:doc.data().started,
+              idAbogado:doc.data().idAbogado,
+              idFundacion:doc.data().idFundacion
             }
             this.reuniones.push(reunion);
 

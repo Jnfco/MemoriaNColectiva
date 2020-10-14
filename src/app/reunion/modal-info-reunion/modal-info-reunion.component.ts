@@ -100,6 +100,7 @@ export class ModalInfoReunionComponent {
     
   }
   
+  
 
   onEliminar(){
     this.meetingSvc.deleteMeeting(this.userId,this.idReunion);
@@ -214,7 +215,9 @@ export class ModalInfoReunionComponent {
         idCreador: this.userId,
         email: this.userEmail,
         idSindicato: this.idSindicatoUser,
-        started:false
+        started:false,
+        idAbogado:this.data.reunion.idAbogado,
+        idFundacion:this.data.reunion.idFundacion
       };
       if (this.reunion.horaInicio.length == 0) {
         this.horaInicioVacia = true;
@@ -245,7 +248,7 @@ export class ModalInfoReunionComponent {
         this.tituloVacío == false
       ) {
         console.log('Reunion: ', this.reunion);
-        this.meetingSvc.updateMeeting(this.reunion, this.userId,this.idReunion);
+        this.meetingSvc.updateMeeting(this.reunion,this.idReunion);
         this.dialogRef.close({});
       }
     }
@@ -267,7 +270,9 @@ export class ModalInfoReunionComponent {
       idCreador:this.data.reunion.idCreador,
       idReunion:this.data.reunion.idReunion,
       idSindicato:this.data.reunion.idSindicato,
-      started:true
+      started:true,
+      idAbogado: this.data.reunion.idAbogado,
+      idFundacion:this.data.reunion.idFundacion
     }
     this.meetingSvc.startMeeting(reunion);
     this.dialogRef.close({});

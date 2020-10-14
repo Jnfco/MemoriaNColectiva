@@ -59,6 +59,17 @@ export class ModalReunionComponent {
 
   public idSindicatoUser:string;
 
+  abogadoList:any[];
+  public selectedAbogado: string;
+
+  abogadosAsociados: string[] = [];
+
+  public idAbogado: any;
+
+  public sindicatoSelected = false;
+
+  public idFundacion:string;
+
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService,public snackbar: MatSnackBar,public db: AngularFirestore) {
@@ -70,7 +81,12 @@ export class ModalReunionComponent {
       this.userId = firebase.auth().currentUser.uid;
       console.log("user id !!: ",this.userId);
         console.log('Fecha actual: ',formattedFecha);
+       
         this.getIdSindicato();
+        setTimeout(()=>{
+          this.cargarAbogados();
+        },1000)
+        
 
      }
 
@@ -78,12 +94,86 @@ export class ModalReunionComponent {
     this.dialogRef.close({
     });
   }
+  cargarAbogados() {
 
+    this.abogadoList = [];
+
+    this.db.collection("Sindicato").doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
+
+      if (snapshotChanges.exists) {
+
+        snapshotChanges.data().abogados.forEach(element => {
+
+
+          this.db.collection("users").get().subscribe((querySnapshot) => {
+
+            querySnapshot.forEach((doc) => {
+
+              if (doc.data().email == element.correo) {
+
+                var abogado= {
+                  nombre: doc.data().name,
+                  correo: doc.data().email,
+                  uid: doc.data().uid
+
+                }
+                this.abogadoList.push(abogado);
+                console.log("abogado: ",abogado)
+              }
+
+            })
+          })
+
+
+
+        });
+
+      }
+    })
+
+
+  }
+
+  selectAbogado() {
+
+    var abogadoSeleccionado = this.selectedAbogado;
+    console.log("valor seleccionado: ", abogadoSeleccionado);
+    this.idAbogado = abogadoSeleccionado;
+    if(this.abogadoList.length >0){
+      this.getIdFundacion(this.abogadoList[0].correo);
+
+    }
+
+  }
+
+  getIdFundacion (emailAbogado:string){
+
+    this.db.collection("Fundacion").get().subscribe((querySnapshot) => {
+
+      querySnapshot.forEach((doc) => {
+
+
+       doc.data().usuarios.forEach(element => {
+console.log("email sesion: ",emailAbogado);
+console.log("email bd: ",element.correo)
+        if(emailAbogado == element.correo){
+          console.log("fundacion encontrada!!!");
+          this.idFundacion = doc.data().idAdmin;
+          console.log("id fundacion: ",this.idFundacion);
+
+        }
+         
+       });
+      })
+    })
+
+  }
 getIdSindicato(){
   console.log("User id:",this.userId)
   this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
     if(snapshotChanges.exists){
       var usuario =snapshotChanges.data();
+      console.log("usuario: ",usuario)
       if (usuario.uid == this.userId){
 
         console.log("es admin?: ",usuario.isAdmin)
@@ -93,7 +183,7 @@ getIdSindicato(){
         }
         else{
 
-          this.idSindicatoUser = usuario.idSindicato;
+          this.idSindicatoUser = usuario.idOrg;
         }
 
        
@@ -189,7 +279,9 @@ getIdSindicato(){
         idCreador: this.userId,
         email: this.userEmail,
         idSindicato: this.idSindicatoUser,
-        started:false
+        started:false,
+        idAbogado:this.idAbogado,
+        idFundacion:this.idFundacion
       }
       if(this.reunion.horaInicio.length ==0){
         this.horaInicioVacia =true;
@@ -221,7 +313,7 @@ getIdSindicato(){
       if(this.horaInicioVacia == false && this.horaTerminoVacia == false && this.tituloVacío ==false)
       {
         console.log('Reunion: ',this.reunion)
-        this.meetingSvc.addMeeting(this.reunion,this.userId);
+        this.meetingSvc.addMeeting(this.reunion);
         this.dialogRef.close({});
       }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ReunionFundacion } from '../shared/Interfaces/Reunion';
+import { Reunion } from '../shared/Interfaces/Reunion';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MeetingService } from '../services/meeting.service';
@@ -26,7 +26,7 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
    horaTerminoFormControl = new FormControl('', [Validators.required]);
  
    //Interfaz Reunion
-   reunion: ReunionFundacion;
+   reunion: Reunion;
    userId: any;
    userEmail: any;
  
@@ -242,7 +242,7 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
          this.tituloVacío == false
        ) {
          console.log('Reunion: ', this.reunion);
-         this.meetingSvc.updateMeetingFundacion(this.reunion,this.idReunion);
+         this.meetingSvc.updateMeeting(this.reunion,this.idReunion);
          this.dialogRef.close({});
        }
      }
@@ -254,7 +254,7 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
  
    onIniciarReunion(){
  
-     var reunion:ReunionFundacion = {
+     var reunion:Reunion = {
        titulo:this.data.reunion.titulo,
        descripcion:this.data.reunion.descripcion,
        email:this.data.reunion.email,
@@ -268,7 +268,7 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
        idFundacion:this.data.reunion.idFundacion,
        started:true
      }
-     this.meetingSvc.startMeetingFundacion(reunion);
+     this.meetingSvc.startMeeting(reunion);
      this.dialogRef.close({});
      
    }

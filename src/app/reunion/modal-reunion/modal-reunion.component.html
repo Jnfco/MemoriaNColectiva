@@ -15,6 +15,14 @@
         <mat-label>Descripción</mat-label>
         <textarea  matInput [formControl]="descripcionFormControl"></textarea>
     </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Seleccionar abogado</mat-label>
+      <mat-select  [(ngModel)]="selectedAbogado" name="abogadoList">
+        <mat-option (click)="selectAbogado()" *ngFor="let abogado of abogadoList" [value]="abogado.uid">
+          {{abogado.nombre}}, correo: {{abogado.correo}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field>
       <mat-label>Fecha</mat-label>
       <mat-error >La fecha es requerida</mat-error>
