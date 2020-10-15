@@ -67,37 +67,15 @@ export class RegisterComponent implements OnInit {
     const organization = this.org;
     const isAdmin = true;
     this.isLoading = true;
-    //const idFundacion = this.userId;
     try{
 
-      //const user =  this.authSvc.register(email,password,name,organization,isAdmin);
-
       
-      //if (this.org == "Fundación"){
-        //console.log("org: ",this.org)
-        //var adminFundacion = {
-          //nombre:name,
-          //correo:email,
-          //pass:password
-        //}
-
-
-    //var uuid = require("uuid");
-    //var id = uuid.v4();
-      //this.user = this.authSvc.registerWithFundationAdmin(email,password,name,organization,true,this.fundacionFormControl.value)
-      //this.authSvc.addInactiveAdmin(name, email, password,id);
-
-      //}
-      //else{
-       //this.user =  this.authSvc.register(email,password,name,organization,isAdmin);
-      //}
       this.user =  this.authSvc.register(email,password,name,organization,isAdmin);
       if(this.user){
         console.log("email control form:  ",this.authSvc.eventAuthError$);
-        //this.router.navigate(["/home"]);
         this.isLoading = false;
       }
-      this.router.navigate(['/login']);
+      
     }
     catch(error){
       console.log(error);

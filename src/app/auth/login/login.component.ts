@@ -35,13 +35,7 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
-    /*
-    const { email, password } = this.loginForm.value;
-    const user = this.authSvc.login(email, password);
-    if (user) {
-      redireccionar a inicio
-      this.router.navigate(['/home']);
-    }*/
+   
 
     const email = this.emailFormControl.value;
     const password = this.passwordFormControl.value;

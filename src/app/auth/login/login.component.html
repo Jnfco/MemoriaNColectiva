@@ -1,7 +1,4 @@
 
-
-
-
 <body class="body">
 
   <mat-card class="my-5">
@@ -21,22 +18,22 @@
           <mat-label>Email</mat-label>
           <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" required
             [errorStateMatcher]="matcher">
-
-
         </mat-form-field>
+
         <mat-form-field class="form-login">
           <mat-label>Contraseña</mat-label>
-          <input matInput [formControl]="passwordFormControl" placeholder="Contraseña" name="contraseña" type="password"
+          <input matInput [formControl]="passwordFormControl" placeholder="Contraseña" name="contraseña" [type]="hide ? 'password' : 'text'"
             required minlength="7">
+            <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </mat-form-field>
         <div class="resetForm">
           <p> <a [routerLink]="['/reset']">¿Olvidó su contraseña?</a></p>
           <div class="registerForm">
-            <p> ¿No tiene una cuenta? <a [routerLink]="['/register']">Registrarse</a></p>
+            <p> <a [routerLink]="['/register']">Registrar administrador sindicato / fundación</a></p>
           </div>
 
           <div class="registerForm">
-            <p> <a [routerLink]="['/activate']">Activar cuenta</a></p>
+            <p> <a [routerLink]="['/activate']">Activar cuenta miembro sindicato / fundación</a></p>
           </div>
         </div>
       </form>

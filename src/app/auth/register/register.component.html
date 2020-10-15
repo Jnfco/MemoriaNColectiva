@@ -20,8 +20,10 @@
               </mat-form-field>
               <mat-form-field class="form-register">
                 <mat-label>Contraseña</mat-label>
-                <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña (mínimo 7 carácteres)" name="contraseña" type="password" required minlength="7">
+                <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña (mínimo 7 carácteres)" [type]="hide ? 'password' : 'text'" name="contraseña" type="password" required minlength="7">
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
               </mat-form-field>
+              
               <mat-form-field>
                 <mat-label >Seleccionar organización</mat-label>
                 <mat-select class="select" [(value)]="org">

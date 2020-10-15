@@ -29,7 +29,7 @@
 <!--Tabla Activos Corrientes-->
 <h2 *ngIf="noDataMessage == true">No se ha cargado el estado financiero</h2>
 <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
-<mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="!noData">
+<mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="this.noData == false">
   <mat-card-content>
 <h1 class ="table-title" style="text-align: center;">  Activos Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%"  >
@@ -134,9 +134,17 @@
   </td>
 
 </ng-container>
+
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+      <mat-icon (click)="delete(element)">delete</mat-icon>
+  </td>
+</ng-container>
 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+<button style="text-align: center;" (click)="addAC()" mat-button>+</button>
 
 <!-- Tabla Activos no corrientes-->
   <h1 class ="table-title" style="text-align: center;">  Activos No Corrientes</h1>

@@ -89,11 +89,11 @@ export class AuthService implements CanActivate {
 
                   }
                   else {
-                    if(doc.data().isAdmin == false){
+                    if (doc.data().isAdmin == false) {
                       this.router.navigate(['/home/estado-financiero-fundacion']);
 
                     }
-                    else{
+                    else {
                       this.router.navigate(['/home/fundacion']);
 
                     }
@@ -119,7 +119,7 @@ export class AuthService implements CanActivate {
         }
       });
 
-   
+
   }
 
   registerWithFundationAdmin(email: string, password: string, name: string, organization: string, isAdmin: boolean, nombreFundacion: string) {
@@ -157,8 +157,6 @@ export class AuthService implements CanActivate {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        /* Call the SendVerificaitonMail() function when new user sign
-    up and returns promise */
 
         setTimeout(() => {
           this.sendEmailVerification();
@@ -170,10 +168,14 @@ export class AuthService implements CanActivate {
           duration: 3000,
           verticalPosition: 'bottom'
         });
+        this.router.navigate(['/login']);
       })
       .catch((error) => {
         if (error.code == 'auth/email-already-in-use') {
-          window.alert("Este correo está asociado a una cuenta ya existente!");
+          this.snackbar.open("El correo ingresado pertenece a una cuenta ya existente", '', {
+            duration: 3000,
+            verticalPosition: 'bottom'
+          });
         }
       });
   }
@@ -384,7 +386,7 @@ export class AuthService implements CanActivate {
     });
   }
 
- 
+
 
 
   deleteInactiveUser(idInactive: string) {
@@ -448,11 +450,20 @@ export class AuthService implements CanActivate {
                 });
               });
             }, 1000)
-
-
-
+          }
+          else{
+            this.snackbar.open("La combinación de email y contraseña es incorrecta", '', {
+              duration: 3000,
+              verticalPosition: 'bottom'
+            });
           }
 
+        }
+        else{
+          this.snackbar.open("La combinación de email y contraseña es incorrecta", '', {
+            duration: 3000,
+            verticalPosition: 'bottom'
+          });
         }
 
       })
@@ -513,8 +524,7 @@ export class AuthService implements CanActivate {
 
   addMemberToOrg(idOrg: string, memberOrg: any, org: string) {
     console.log("Tipo de organizacion: ", org)
-    if(org == "Fundación")
-    {
+    if (org == "Fundación") {
       org = "Fundacion";
     }
 
@@ -542,8 +552,9 @@ export class AuthService implements CanActivate {
             idAdmin: memberDoc.idAdmin,
             usuarios: memberDoc.usuarios
           }
-           return userRef.set(sindicato, { merge: true,
-           });
+          return userRef.set(sindicato, {
+            merge: true,
+          });
         }
 
         if (org == "Fundacion") {

@@ -1,8 +1,8 @@
 
 
 <body class ="body">
-    <app-spinner *ngIf="isLoading"></app-spinner>
-          <mat-card class="my-5" *ngIf="!isLoading">
+    
+          <mat-card class="my-5">
   
             <mat-card-content  class="cardContent" >
               <div class="logo-container">
@@ -16,7 +16,8 @@
                 </mat-form-field>
                 <mat-form-field class="form-register">
                   <mat-label>Contraseña</mat-label>
-                  <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña (mínimo 7 carácteres)" name="contraseña" type="password" required minlength="7">
+                  <input matInput  [formControl]="passwordFormControl" placeholder="Contraseña (mínimo 7 carácteres)" [type]="hide ? 'password' : 'text'" name="contraseña" type="password" required minlength="7">
+                  <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </mat-form-field>
               </form>
               <mat-card-actions class="botonSection">
