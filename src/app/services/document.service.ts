@@ -69,6 +69,49 @@ export class DocumentService {
     return estadoFinancieroRef.set(estadoFinanciero, { merge: true });
   }
 
+  SaveDraft(
+    activosCorrientes: ActivosC[],
+    activosNoCorrientes: ActivosNC[],
+    pasivosCorrientes: PasivosC[],
+    pasivocNoCorrientes: PasivosNC[],
+    patrimonio: Patrimonio[],
+    estadoResultados: EstadoR[],
+    gananciaAntesImp: GananciaAntImp[],
+    gananciaAtribuible: GananciaAtribuible[],
+    estadoResIntegrales: EstadoResIntegrales[],
+    idSindicato
+  ) {
+    var uuid = require("uuid");
+    var id = uuid.v4();
+
+    const estadoFinancieroID = Math.random();
+    const estadoFinanciero = {
+      activosCorrientes: activosCorrientes,
+      activosNoCorrientes: activosNoCorrientes,
+      pasivosCorrientes: pasivosCorrientes,
+      pasivosNoCorrientes: pasivocNoCorrientes,
+      patrimonio: patrimonio,
+      estadoResultados: estadoResultados,
+      gananciaAntesImp: gananciaAntesImp,
+      gananciaAtribuible: gananciaAtribuible,
+      estadoResIntegrales: estadoResIntegrales,
+      isDraft:true,
+      idSindicato:idSindicato,
+      draftId:id
+    };
+
+
+    const estadoFinancieroRef: AngularFirestoreDocument<any> = this.db.doc(
+      `EstadoFinanciero/${id}`
+    );
+    console.log('Estado financiero ref: ',estadoFinanciero)
+    this.snackbar.open("Datos guardados exitosamente!",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
+    return estadoFinancieroRef.set(estadoFinanciero, { merge: true });
+  }
+
   SaveInfoDocument (informacionInominada: InformacionInominada[],userId:any){
 
 

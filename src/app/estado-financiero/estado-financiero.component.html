@@ -1,15 +1,16 @@
-
-<div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;" >
-  <label for="file-upload" class="custom-file-upload" >
-    Cargar Datos
- </label>
-   <input type="file" id="file-upload"  onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
-   <button class="btnGuardar"mat-button color="warn"  (click)="saveDocument()">Guardar Datos</button>
-   <label class="custom-file-upload" (click)="deleteEstado()">
+<div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;">
+  <button class="btnGuardar" mat-button color="warn" (click)="loadUpdated()">Cargar datos actualizados</button>
+  <label for="file-upload" class="custom-file-upload">
+    Cargar archivo
+  </label>
+  <input type="file" id="file-upload" onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
+  <button class="btnGuardar" mat-button color="warn" (click)="saveDocument()">Guardar Datos</button>
+  <label class="custom-file-upload" (click)="deleteEstado()">
     Eliminar Datos
   </label>
-
-  </div>
+  <button [disabled]="this.draftExists" class="btnGuardar" mat-button color="warn" (click)="saveDraft()">Guardar borrador</button>
+  <button class="btnGuardar" mat-button color="warn" (click)="loadDraft()">Ver borrador</button>
+</div>
 
 <!--Tabla dinamica prueba-->
 
@@ -29,122 +30,1044 @@
 <!--Tabla Activos Corrientes-->
 <h2 *ngIf="noDataMessage == true">No se ha cargado el estado financiero</h2>
 <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
-<mat-card  style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="this.noData == false">
+<mat-card style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;"
+  *ngIf="this.noData == false && this.isDraft == false">
   <mat-card-content>
+    <h1 class="table-title" style="text-align: center;"> Activos Corrientes</h1>
+    <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%">
+      <ng-container matColumnDef="Año">
+        <th class="w-a" mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field>
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Efectivo y equivalentes al efectivo">
+        <th mat-header-cell *matHeaderCellDef>Efectivo y equivalentes al efectivo</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #efectivo="ngModel" [value]="element.efectivo" [(ngModel)]="element.efectivo" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="efectivo?.invalid">
+              <div *ngIf="efectivo.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="efectivo.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Activos financieros">
+        <th mat-header-cell *matHeaderCellDef>Activos financieros</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+
+            <input matInput #activosF="ngModel" [value]="element.activosF" [(ngModel)]="element.activosF" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="activosF?.invalid">
+              <div *ngIf="activosF.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="activosF.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Otros activos no financieros">
+        <th mat-header-cell *matHeaderCellDef>Otros activos no financieros</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+
+            <input matInput #otrosAc="ngModel" [value]="element.otrosAc" [(ngModel)]="element.otrosAc" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otrosAc?.invalid">
+              <div *ngIf="otrosAc.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otrosAc.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Deudores educacionales y otras cuentas por cobrar, netos">
+        <th mat-header-cell *matHeaderCellDef>Deudores educacionales y otras cuentas por cobrar,netos</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #deudores="ngModel" [value]="element.deudores" [(ngModel)]="element.deudores" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="deudores?.invalid">
+              <div *ngIf="deudores.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="deudores.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Cuentas por cobrar a partes relacionadas">
+        <th mat-header-cell *matHeaderCellDef>Cuentas por cobrar a partes relacionadas</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #cuentas="ngModel" [value]="element.cuentas" [(ngModel)]="element.cuentas" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="cuentas?.invalid">
+              <div *ngIf="cuentas.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="cuentas.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Activo por impuestos corrientes">
+        <th mat-header-cell *matHeaderCellDef>Activo por impuestos corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #activoImpC="ngModel" [value]="element.activoImpC" [(ngModel)]="element.activoImpC" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="activoImpC?.invalid">
+              <div *ngIf="activoImpC.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="activoImpC.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="Total activos corrientes">
+        <th mat-header-cell *matHeaderCellDef>Total activos corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #total="ngModel" [value]="element.total" [(ngModel)]="element.total" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="total?.invalid">
+              <div *ngIf="total.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="total.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deleteAC(element)">delete</mat-icon>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addAC()" mat-button>+</button>
+
+    </div>
+
+    <!-- Tabla Activos no corrientes-->
+    <h1 class="table-title" style="text-align: center;"> Activos No Corrientes</h1>
+    <table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="otros activos">
+        <th mat-header-cell *matHeaderCellDef>Otros activos financieros no corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #otrosA="ngModel" [value]="element.otrosA" [(ngModel)]="element.otrosA" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otrosA?.invalid">
+              <div *ngIf="otrosA.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otrosA.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="activos intangibles">
+        <th mat-header-cell *matHeaderCellDef>Activos intantangibles, neto</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #activosI="ngModel" [value]="element.activosI" [(ngModel)]="element.activosI" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="activosI?.invalid">
+              <div *ngIf="activosI.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="activosI.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="propiedades">
+        <th mat-header-cell *matHeaderCellDef>Propiedades planta y equipos, neto</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #prop="ngModel" [value]="element.prop" [(ngModel)]="element.prop" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="prop?.invalid">
+              <div *ngIf="prop.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="prop.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="activos por derecho">
+        <th mat-header-cell *matHeaderCellDef>Activos por derecho de uso</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #activosD="ngModel" [value]="element.activosD" [(ngModel)]="element.activosD" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="activosD?.invalid">
+              <div *ngIf="activosD.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="activosD.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="total no corrientes">
+        <th mat-header-cell *matHeaderCellDef>Total activos no corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #totalNC="ngModel" [value]="element.totalNC" [(ngModel)]="element.totalNC" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="totalNC?.invalid">
+              <div *ngIf="totalNC.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="totalNC.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef>Total activos</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+
+            <input matInput #totalA="ngModel" [value]="element.totalA" [(ngModel)]="element.totalA" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="totalA?.invalid">
+              <div *ngIf="totalA.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="totalA.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="eliminar">
+      <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+      <td class="eliminar" mat-cell *matCellDef="let element">
+        <mat-icon (click)="deleteNC(element)">delete</mat-icon>
+      </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="tablaActivosNC"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaActivosNC;"></tr>
+
+
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addNC()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla activos pasivos corrientes-->
+    <h1 class="table-title" style="text-align: center;"> Activos Pasivos Corrientes</h1>
+    <table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="pasivos arrendamientos">
+        <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #pasivosAr="ngModel" [value]="element.pasivosAr" [(ngModel)]="element.pasivosAr" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="pasivosAr?.invalid">
+              <div *ngIf="pasivosAr.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="pasivosAr.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="otros pasivos">
+        <th mat-header-cell *matHeaderCellDef>Otros pasivos no financieros</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #otrosP="ngModel" [value]="element.otrosP" [(ngModel)]="element.otrosP" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otrosP?.invalid">
+              <div *ngIf="otrosP.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otrosP.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="cuentas comerciales">
+        <th mat-header-cell *matHeaderCellDef>Cuentas por pagar comerciales y otras cuentas por pagar</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #cuentasC="ngModel" [value]="element.cuentasC" [(ngModel)]="element.cuentasC" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="cuentasC?.invalid">
+              <div *ngIf="cuentasC.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="cuentasC.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="cuentas relacionadas">
+        <th mat-header-cell *matHeaderCellDef>Cuentas por pagar a partes relacionadas</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #cuentasR="ngModel" [value]="element.cuentasR" [(ngModel)]="element.cuentasR" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="cuentasR?.invalid">
+              <div *ngIf="cuentasR.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="cuentasR.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="otras provisiones">
+        <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never" style="width: 100px;">
+            <input matInput #otras="ngModel" [value]="element.otras" [(ngModel)]="element.otras" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otras?.invalid">
+              <div *ngIf="otras.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otras.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="pasivos impuestos corrientes">
+        <th mat-header-cell *matHeaderCellDef>Pasivos por impuestos corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never" style="width: 100px;">
+            <input matInput #pasivosI="ngModel" [value]="element.pasivosI" [(ngModel)]="element.pasivosI" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="pasivosI?.invalid">
+              <div *ngIf="pasivosI.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="pasivosI.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="provisiones">
+        <th mat-header-cell *matHeaderCellDef>Pasivos por beneficios a los empleados</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #provisiones="ngModel" [value]="element.provisiones" [(ngModel)]="element.provisiones"
+              required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="provisiones?.invalid">
+              <div *ngIf="provisiones.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="provisiones.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="total pasivos corrientes">
+        <th mat-header-cell *matHeaderCellDef>Total pasivos corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #totalPC="ngModel" [value]="element.totalPC" [(ngModel)]="element.totalPC" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="totalPC?.invalid">
+              <div *ngIf="totalPC.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="totalPC.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deletePC(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="tablaPasivosC"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaPasivosC;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addPC()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla pasivos no corrientes-->
+    <h1 class="table-title" style="text-align: center;"> Activos Pasivos No Corrientes</h1>
+    <table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="pasivos arrendamientos">
+        <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #pasivosAr="ngModel" [value]="element.pasivosAr" [(ngModel)]="element.pasivosAr" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="pasivosAr?.invalid">
+              <div *ngIf="pasivosAr.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="pasivosAr.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="otras provisiones">
+        <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #otrosP="ngModel" [value]="element.otrosP" [(ngModel)]="element.otrosP" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otrosP?.invalid">
+              <div *ngIf="otrosP.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otrosP.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="provisiones beneficios">
+        <th mat-header-cell *matHeaderCellDef>Provisiones por beneficios a los empleados</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #provisionesB="ngModel" [value]="element.provisionesB" [(ngModel)]="element.provisionesB"
+              required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="provisionesB?.invalid">
+              <div *ngIf="provisionesB.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="provisionesB.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="total pasivos no corrientes">
+        <th mat-header-cell *matHeaderCellDef>Total pasivos no corrientes</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #total="ngModel" [value]="element.total" [(ngModel)]="element.total" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="total?.invalid">
+              <div *ngIf="total.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="total.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deletePNC(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="tablaPasivosNC"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaPasivosNC;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addPNC()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla patrimonio-->
+    <h1 class="table-title" style="text-align: center;"> Patrimonio</h1>
+    <table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="aportes">
+        <th mat-header-cell *matHeaderCellDef>Aportes y donaciones</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #aportes="ngModel" [value]="element.aportes" [(ngModel)]="element.aportes" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="aportes?.invalid">
+              <div *ngIf="aportes.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="aportes.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="resultados retenidos">
+        <th mat-header-cell *matHeaderCellDef>Resultados retenidos</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #resultadosR="ngModel" [value]="element.resultadosR" [(ngModel)]="element.resultadosR"
+              required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="resultadosR?.invalid">
+              <div *ngIf="resultadosR.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="resultadosR.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="patrimonio contador">
+        <th mat-header-cell *matHeaderCellDef>Patrimonio atribuible al contador</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #patrimonioContador="ngModel" [value]="element.patrimonioContador"
+              [(ngModel)]="element.patrimonioContador" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="patrimonioContador?.invalid">
+              <div *ngIf="patrimonioContador.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="patrimonioContador.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="participaciones">
+        <th mat-header-cell *matHeaderCellDef>Participaciones no controladoras</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #participaciones="ngModel" [value]="element.participaciones"
+              [(ngModel)]="element.participaciones" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="participaciones?.invalid">
+              <div *ngIf="participaciones.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="participaciones.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="total patrimonio neto">
+        <th mat-header-cell *matHeaderCellDef>Total patrimonio neto</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #totalPNeto="ngModel" [value]="element.totalPNeto" [(ngModel)]="element.totalPNeto" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="totalPNeto?.invalid">
+              <div *ngIf="totalPNeto.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="totalPNeto.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="total pasivos y patrimonio">
+        <th mat-header-cell *matHeaderCellDef>Total pasivos y patrimonio</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #totalPP="ngModel" [value]="element.totalPP" [(ngModel)]="element.totalPP" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="totalPP?.invalid">
+              <div *ngIf="totalPP.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="totalPP.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deleteP(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="tablaPatrimonio"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaPatrimonio;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addP()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla estado resultado-->
+    <h1 class="table-title" style="text-align: center;"> Estado Resultado</h1>
+    <table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never" style="width: 100px;">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="ingresos">
+        <th mat-header-cell *matHeaderCellDef>Ingresos de actividades ordinarios</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never" style="width: 100px;">
+            <input matInput #ingresos="ngModel" [value]="element.ingresos" [(ngModel)]="element.ingresos" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="ingresos?.invalid">
+              <div *ngIf="ingresos.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="ingresos.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="costo ventas">
+        <th mat-header-cell *matHeaderCellDef>Costo de ventas</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #costoVentas="ngModel" [value]="element.costoVentas" [(ngModel)]="element.costoVentas"
+              required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="costoVentas?.invalid">
+              <div *ngIf="costoVentas.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="costoVentas.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="margen">
+        <th mat-header-cell *matHeaderCellDef>Margen bruto</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #margen="ngModel" [value]="element.margen" [(ngModel)]="element.margen" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="margen?.invalid">
+              <div *ngIf="margen.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="margen.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="otros ingresos">
+        <th mat-header-cell *matHeaderCellDef>Otros ingresos por función</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #otrosI="ngModel" [value]="element.otrosI" [(ngModel)]="element.otrosI" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otrosI?.invalid">
+              <div *ngIf="otrosI.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otrosI.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="gastos admin">
+        <th mat-header-cell *matHeaderCellDef>Gastos de administración</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #gastosAdm="ngModel" [value]="element.gastosAdm" [(ngModel)]="element.gastosAdm" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="gastosAdm?.invalid">
+              <div *ngIf="gastosAdm.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="gastosAdm.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="otras ganancias">
+        <th mat-header-cell *matHeaderCellDef>Otras ganancias(pérdidas)</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never" style="width: 100px;">
+            <input matInput #otrasGanancias="ngModel" [value]="element.otrasGanancias"
+              [(ngModel)]="element.otrasGanancias" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="otrasGanancias?.invalid">
+              <div *ngIf="otrasGanancias.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="otrasGanancias.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="ingresos financieros">
+        <th mat-header-cell *matHeaderCellDef>Ingresos financieros</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #ingresosF="ngModel" [value]="element.ingresosF" [(ngModel)]="element.ingresosF" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="ingresosF?.invalid">
+              <div *ngIf="ingresosF.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="ingresosF.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="costos financieros">
+        <th mat-header-cell *matHeaderCellDef>Costos financieros</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #costosF="ngModel" [value]="element.costosF" [(ngModel)]="element.costosF" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="costosF?.invalid">
+              <div *ngIf="costosF.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="costosF.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="resultado reajuste">
+        <th mat-header-cell *matHeaderCellDef>Resultado por unidad de reajuste</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never" style="width: 70px;">
+            <input matInput #resultadoR="ngModel" [value]="element.resultadoR" [(ngModel)]="element.resultadoR" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="resultadoR?.invalid">
+              <div *ngIf="resultadoR.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="resultadoR.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deleteER(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="tablaEstadoResultados"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaEstadoResultados;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addER()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla ganancia antes del impuesto-->
+    <h1 class="table-title" style="text-align: center;"> Ganancia antes del impuesto</h1>
+    <table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="gastoImp">
+        <th mat-header-cell *matHeaderCellDef>Gasto por impuesto a las ganancias</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #gastoImp="ngModel" [value]="element.gastoImp" [(ngModel)]="element.gastoImp" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="gastoImp?.invalid">
+              <div *ngIf="gastoImp.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="gastoImp.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="gananciaDespImp">
+        <th mat-header-cell *matHeaderCellDef>Ganancia después de impuesto</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #gastoDespImp="ngModel" [value]="element.gastoDespImp" [(ngModel)]="element.gastoDespImp"
+              required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="gastoDespImp?.invalid">
+              <div *ngIf="gastoDespImp.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="gastoDespImp.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="totalRes">
+        <th mat-header-cell *matHeaderCellDef>Total resultados</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #totalRes="ngModel" [value]="element.totalRes" [(ngModel)]="element.totalRes" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="totalRes?.invalid">
+              <div *ngIf="totalRes.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="totalRes.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deleteGI(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="tablaGananciaAntesImpuestos"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaGananciaAntesImpuestos;"></tr>
+    </table>
+
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addGI()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla ganancia atribuible a-->
+    <h1 class="table-title" style="text-align: center;"> Ganancia atribuible a</h1>
+    <table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="gananciaControlador">
+        <th mat-header-cell *matHeaderCellDef>Ganancia atribuible al controlador</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #gananciaControlador="ngModel" [value]="element.gananciaControlador"
+              [(ngModel)]="element.gananciaControlador" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="gananciaControlador?.invalid">
+              <div *ngIf="gananciaControlador.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="gananciaControlador.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="gananciaNoControl">
+        <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #gananciaNoControladora="ngModel" [value]="element.gananciaNoControladora"
+              [(ngModel)]="element.gananciaNoControladora" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="gananciaNoControladora?.invalid">
+              <div *ngIf="gananciaNoControladora.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="gananciaNoControladora.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="ganancia">
+        <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #ganancia="ngModel" [value]="element.ganancia" [(ngModel)]="element.ganancia" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="ganancia?.invalid">
+              <div *ngIf="ganancia.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="ganancia.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deleteGA(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="tablaGananciaAtribuibleA"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaGananciaAtribuibleA;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addGA()" mat-button>+</button>
+
+    </div>
+
+    <!--Tabla Total resultados integrales-->
+    <h1 class="table-title" style="text-align: center;"> Estado resultados integrales</h1>
+    <table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z8" style="width: 100%;">
+      <ng-container matColumnDef="Año">
+        <th mat-header-cell *matHeaderCellDef>Año</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput [value]="element.anio" [(ngModel)]="element.anio">
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="ganancia">
+        <th mat-header-cell *matHeaderCellDef>Ganancia</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #ganancia="ngModel" [value]="element.ganancia" [(ngModel)]="element.ganancia" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="ganancia?.invalid">
+              <div *ngIf="ganancia.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="ganancia.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="gananciaActuariales">
+        <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #gananciaAct="ngModel" [value]="element.gananciaAct" [(ngModel)]="element.gananciaAct"
+              required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="gananciaAct?.invalid">
+              <div *ngIf="gananciaAct.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="gananciaAct.errors.pattern">Sólo números y puntos</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+
+      <ng-container matColumnDef="totalResIntegrales">
+        <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input matInput #total="ngModel" [value]="element.total" [(ngModel)]="element.total" required
+              pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
+            <mat-error *ngIf="total?.invalid">
+              <div *ngIf="total.errors.required">El campo no puede estar vacío</div>
+              <div *ngIf="total.errors.pattern">Sólo números o numeros con puntos o comas</div>
+            </mat-error>
+          </mat-form-field>
+        </td>
+
+      </ng-container>
+      <ng-container matColumnDef="eliminar">
+        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+        <td class="eliminar" mat-cell *matCellDef="let element">
+          <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+        </td>
+        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="tablaEstadoResultadosIntegrales"></tr>
+      <tr mat-row *matRowDef="let row; columns: tablaEstadoResultadosIntegrales;"></tr>
+    </table>
+    <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
+      <button mat-flat-button color="primary" (click)="addTRI()" mat-button>+</button>
+
+    </div>
+
+  </mat-card-content>
+  <mat-card-actions style="text-align: center;">
+
+  </mat-card-actions>
+</mat-card>
+
+<!--Tablas borrador-->
+
+
+<mat-card   style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="this.isDraft == true">
+  <mat-card-content >
 <h1 class ="table-title" style="text-align: center;">  Activos Corrientes</h1>
 <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%"  >
 <ng-container  matColumnDef ="Año">
   <th class="w-a"mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element" >
-    <mat-form-field >
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+    {{element.anio}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="Efectivo y equivalentes al efectivo">
   <th mat-header-cell *matHeaderCellDef>Efectivo y equivalentes al efectivo</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-    <input matInput   #efectivo="ngModel" [value]="element.efectivo"  [(ngModel)]="element.efectivo" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="efectivo?.invalid">
-      <div *ngIf="efectivo.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="efectivo.errors.pattern">Sólo números y puntos</div>
-  </mat-error>
-
-  </mat-form-field></td>
+    {{element.efectivo}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="Activos financieros">
   <th mat-header-cell *matHeaderCellDef>Activos financieros</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-
-    <input matInput   #activosF="ngModel" [value]="element.activosF"  [(ngModel)]="element.activosF" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="activosF?.invalid">
-      <div *ngIf="activosF.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="activosF.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+      {{element.activosF}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="Otros activos no financieros">
   <th mat-header-cell *matHeaderCellDef>Otros activos no financieros</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-
-      <input matInput   #otrosAc="ngModel" [value]="element.otrosAc"  [(ngModel)]="element.otrosAc" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otrosAc?.invalid">
-      <div *ngIf="otrosAc.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otrosAc.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.otrosAC}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="Deudores educacionales y otras cuentas por cobrar, netos">
   <th mat-header-cell *matHeaderCellDef>Deudores educacionales y otras cuentas por cobrar,netos</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #deudores="ngModel" [value]="element.deudores"  [(ngModel)]="element.deudores" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="deudores?.invalid">
-      <div *ngIf="deudores.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="deudores.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.deudores}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="Cuentas por cobrar a partes relacionadas">
   <th mat-header-cell *matHeaderCellDef>Cuentas por cobrar a partes relacionadas</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #cuentas="ngModel" [value]="element.cuentas"  [(ngModel)]="element.cuentas" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="cuentas?.invalid">
-      <div *ngIf="cuentas.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="cuentas.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.cuentas}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="Activo por impuestos corrientes">
   <th mat-header-cell *matHeaderCellDef>Activo por impuestos corrientes</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #activoImpC="ngModel" [value]="element.activoImpC"  [(ngModel)]="element.activoImpC" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="activoImpC?.invalid">
-      <div *ngIf="activoImpC.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="activoImpC.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.activoImpC}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="Total activos corrientes">
   <th mat-header-cell *matHeaderCellDef>Total activos corrientes</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #total="ngModel" [value]="element.total"  [(ngModel)]="element.total" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="total?.invalid">
-      <div *ngIf="total.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="total.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+  {{element.total}}
   </td>
 
 </ng-container>
-
 <ng-container matColumnDef="eliminar">
   <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
   <td class="eliminar" mat-cell *matCellDef="let element">
-      <mat-icon (click)="delete(element)">delete</mat-icon>
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
   </td>
-</ng-container>
-<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </ng-container>
+<tr mat-header-row *matHeaderRowDef="BdisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: BdisplayedColumns;"></tr>
 </table>
-<button style="text-align: center;" (click)="addAC()" mat-button>+</button>
 
 <!-- Tabla Activos no corrientes-->
   <h1 class ="table-title" style="text-align: center;">  Activos No Corrientes</h1>
@@ -152,87 +1075,60 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+    {{element.anio}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="otros activos">
   <th mat-header-cell *matHeaderCellDef>Otros activos financieros no corrientes</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #otrosA="ngModel" [value]="element.otrosA"  [(ngModel)]="element.otrosA" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otrosA?.invalid">
-      <div *ngIf="otrosA.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otrosA.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.otrosA}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="activos intangibles">
   <th mat-header-cell *matHeaderCellDef>Activos intantangibles, neto</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-    <input matInput   #activosI="ngModel" [value]="element.activosI"  [(ngModel)]="element.activosI" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="activosI?.invalid">
-      <div *ngIf="activosI.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="activosI.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field>
+    {{element.activosI}}
 </td>
 
 </ng-container>
 <ng-container matColumnDef ="propiedades">
   <th mat-header-cell *matHeaderCellDef>Propiedades planta y equipos, neto</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #prop="ngModel" [value]="element.prop"  [(ngModel)]="element.prop" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="prop?.invalid">
-      <div *ngIf="prop.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="prop.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field>
+  <td  mat-cell *matCellDef="let element">
+      {{element.prop}}
 </td>
 
 </ng-container>
 <ng-container matColumnDef ="activos por derecho">
   <th mat-header-cell *matHeaderCellDef>Activos por derecho de uso</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #activosD="ngModel" [value]="element.activosD"  [(ngModel)]="element.activosD" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="activosD?.invalid">
-      <div *ngIf="activosD.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="activosD.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field>
+  <td  mat-cell *matCellDef="let element">
+      {{element.activosD}}
 </td>
 
 </ng-container>
 <ng-container matColumnDef ="total no corrientes">
   <th mat-header-cell *matHeaderCellDef>Total activos no corrientes</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #totalNC="ngModel" [value]="element.totalNC"  [(ngModel)]="element.totalNC" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="totalNC?.invalid">
-      <div *ngIf="totalNC.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="totalNC.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.totalNC}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="total">
   <th mat-header-cell *matHeaderCellDef>Total activos</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-
-    <input matInput   #totalA="ngModel" [value]="element.totalA"  [(ngModel)]="element.totalA" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="totalA?.invalid">
-      <div *ngIf="totalA.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="totalA.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.totalA}}
+  </td>
 
 </ng-container>
-<tr mat-header-row *matHeaderRowDef="tablaActivosNC"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaActivosNC;"></tr>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
+<tr mat-header-row *matHeaderRowDef="BtablaActivosNC"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaActivosNC;"></tr>
 </table>
 
 <!--Tabla activos pasivos corrientes-->
@@ -241,103 +1137,74 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field   floatLabel="never">
-    <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-  </mat-form-field></td>
+      {{element.anio}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="pasivos arrendamientos">
   <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #pasivosAr="ngModel" [value]="element.pasivosAr"  [(ngModel)]="element.pasivosAr" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="pasivosAr?.invalid">
-      <div *ngIf="pasivosAr.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="pasivosAr.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.pasivosAr}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="otros pasivos">
   <th mat-header-cell *matHeaderCellDef>Otros pasivos no financieros</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #otrosP="ngModel" [value]="element.otrosP"  [(ngModel)]="element.otrosP" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otrosP?.invalid">
-      <div *ngIf="otrosP.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otrosP.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.otrosP}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="cuentas comerciales">
   <th mat-header-cell *matHeaderCellDef>Cuentas por pagar comerciales y otras cuentas por pagar</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #cuentasC="ngModel" [value]="element.cuentasC"  [(ngModel)]="element.cuentasC" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="cuentasC?.invalid">
-      <div *ngIf="cuentasC.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="cuentasC.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.cuentasC}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="cuentas relacionadas">
   <th mat-header-cell *matHeaderCellDef>Cuentas por pagar a partes relacionadas</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #cuentasR="ngModel" [value]="element.cuentasR"  [(ngModel)]="element.cuentasR" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="cuentasR?.invalid">
-      <div *ngIf="cuentasR.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="cuentasR.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.cuentasR}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="otras provisiones">
   <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never" style ="width: 100px;">
-    <input matInput   #otras="ngModel" [value]="element.otras"  [(ngModel)]="element.otras" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otras?.invalid">
-      <div *ngIf="otras.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otras.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+      {{element.otras}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="pasivos impuestos corrientes">
   <th  mat-header-cell *matHeaderCellDef>Pasivos por impuestos corrientes</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never" style ="width: 100px;">
-    <input matInput   #pasivosI="ngModel" [value]="element.pasivosI"  [(ngModel)]="element.pasivosI" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="pasivosI?.invalid">
-      <div *ngIf="pasivosI.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="pasivosI.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+      {{element.pasivosI}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="provisiones">
   <th mat-header-cell *matHeaderCellDef>Pasivos por beneficios a los empleados</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #provisiones="ngModel" [value]="element.provisiones"  [(ngModel)]="element.provisiones" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="provisiones?.invalid">
-      <div *ngIf="provisiones.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="provisiones.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.provisiones}}
+  </td>
 
 </ng-container>
 <ng-container matColumnDef ="total pasivos corrientes">
   <th mat-header-cell *matHeaderCellDef>Total pasivos corrientes</th>
-  <td  mat-cell *matCellDef="let element"><mat-form-field floatLabel="never">
-    <input matInput   #totalPC="ngModel" [value]="element.totalPC"  [(ngModel)]="element.totalPC" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="totalPC?.invalid">
-      <div *ngIf="totalPC.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="totalPC.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-  </mat-form-field></td>
+  <td  mat-cell *matCellDef="let element">
+      {{element.totalPC}}
+  </td>
 
 </ng-container>
-<tr mat-header-row *matHeaderRowDef="tablaPasivosC"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaPasivosC;"></tr>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
+<tr mat-header-row *matHeaderRowDef="BtablaPasivosC"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaPasivosC;"></tr>
 </table>
 
 <!--Tabla pasivos no corrientes-->
@@ -346,67 +1213,47 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+    {{element.anio}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="pasivos arrendamientos">
   <th mat-header-cell *matHeaderCellDef>Pasivos financieros por arrendamientos</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #pasivosAr="ngModel" [value]="element.pasivosAr"  [(ngModel)]="element.pasivosAr" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="pasivosAr?.invalid">
-      <div *ngIf="pasivosAr.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="pasivosAr.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.pasivosAr}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="otras provisiones">
   <th mat-header-cell *matHeaderCellDef>Otras provisiones</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #otrosP="ngModel" [value]="element.otrosP"  [(ngModel)]="element.otrosP" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otrosP?.invalid">
-      <div *ngIf="otrosP.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otrosP.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.otrosP}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="provisiones beneficios">
   <th mat-header-cell *matHeaderCellDef>Provisiones por beneficios a los empleados</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #provisionesB="ngModel" [value]="element.provisionesB"  [(ngModel)]="element.provisionesB" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="provisionesB?.invalid">
-      <div *ngIf="provisionesB.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="provisionesB.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.provisionesB}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="total pasivos no corrientes">
   <th mat-header-cell *matHeaderCellDef>Total pasivos no corrientes</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #total="ngModel" [value]="element.total"  [(ngModel)]="element.total" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="total?.invalid">
-      <div *ngIf="total.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="total.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.total}}
   </td>
 
 </ng-container>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
 
-<tr mat-header-row *matHeaderRowDef="tablaPasivosNC"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaPasivosNC;"></tr>
+<tr mat-header-row *matHeaderRowDef="BtablaPasivosNC"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaPasivosNC;"></tr>
 </table>
 
 
@@ -416,61 +1263,35 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+   {{element.anio}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="aportes">
   <th mat-header-cell *matHeaderCellDef>Aportes y donaciones</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #aportes="ngModel" [value]="element.aportes"  [(ngModel)]="element.aportes" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="aportes?.invalid">
-      <div *ngIf="aportes.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="aportes.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.aportes}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="resultados retenidos">
   <th mat-header-cell *matHeaderCellDef>Resultados retenidos</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #resultadosR="ngModel" [value]="element.resultadosR"  [(ngModel)]="element.resultadosR" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="resultadosR?.invalid">
-      <div *ngIf="resultadosR.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="resultadosR.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+   {{element.resultadosR}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="patrimonio contador">
   <th mat-header-cell *matHeaderCellDef>Patrimonio atribuible al contador</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #patrimonioContador="ngModel" [value]="element.patrimonioContador"  [(ngModel)]="element.patrimonioContador" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-      <mat-error *ngIf="patrimonioContador?.invalid">
-        <div *ngIf="patrimonioContador.errors.required">El campo no puede estar vacío</div>
-        <div *ngIf="patrimonioContador.errors.pattern">Sólo números y puntos</div>
-      </mat-error>
-    </mat-form-field>
+    {{element.patrimonioContador}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="participaciones">
   <th mat-header-cell *matHeaderCellDef>Participaciones no controladoras</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #participaciones="ngModel" [value]="element.participaciones"  [(ngModel)]="element.participaciones" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="participaciones?.invalid">
-      <div *ngIf="participaciones.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="participaciones.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.participaciones}}
   </td>
 
 </ng-container>
@@ -478,13 +1299,7 @@
 <ng-container matColumnDef ="total patrimonio neto">
   <th mat-header-cell *matHeaderCellDef>Total patrimonio neto</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #totalPNeto="ngModel" [value]="element.totalPNeto"  [(ngModel)]="element.totalPNeto" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="totalPNeto?.invalid">
-      <div *ngIf="totalPNeto.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="totalPNeto.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.totalPNeto}}
   </td>
 
 </ng-container>
@@ -492,19 +1307,19 @@
 <ng-container matColumnDef ="total pasivos y patrimonio">
   <th mat-header-cell *matHeaderCellDef>Total pasivos y patrimonio</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #totalPP="ngModel" [value]="element.totalPP"  [(ngModel)]="element.totalPP" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="totalPP?.invalid">
-      <div *ngIf="totalPP.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="totalPP.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.totalPP}}
   </td>
 
 </ng-container>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
 
-<tr mat-header-row *matHeaderRowDef="tablaPatrimonio"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaPatrimonio;"></tr>
+<tr mat-header-row *matHeaderRowDef="BtablaPatrimonio"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaPatrimonio;"></tr>
 </table>
 
 
@@ -514,61 +1329,35 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never" style ="width: 100px;">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+    {{element.anio}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="ingresos">
   <th mat-header-cell *matHeaderCellDef>Ingresos de actividades ordinarios</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never" style ="width: 100px;">
-      <input matInput   #ingresos="ngModel" [value]="element.ingresos"  [(ngModel)]="element.ingresos" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="ingresos?.invalid">
-      <div *ngIf="ingresos.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="ingresos.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+   {{element.ingresos}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="costo ventas">
   <th mat-header-cell *matHeaderCellDef>Costo de ventas</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #costoVentas="ngModel" [value]="element.costoVentas"  [(ngModel)]="element.costoVentas" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="costoVentas?.invalid">
-      <div *ngIf="costoVentas.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="costoVentas.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.costoVentas}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="margen">
   <th mat-header-cell *matHeaderCellDef>Margen bruto</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #margen="ngModel" [value]="element.margen"  [(ngModel)]="element.margen" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="margen?.invalid">
-      <div *ngIf="margen.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="margen.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.margen}}
   </td>
 
 </ng-container>
 <ng-container matColumnDef ="otros ingresos">
   <th mat-header-cell *matHeaderCellDef>Otros ingresos por función</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #otrosI="ngModel" [value]="element.otrosI"  [(ngModel)]="element.otrosI" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otrosI?.invalid">
-      <div *ngIf="otrosI.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otrosI.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.otrosI}}
   </td>
 
 </ng-container>
@@ -576,13 +1365,7 @@
 <ng-container matColumnDef ="gastos admin">
   <th mat-header-cell *matHeaderCellDef>Gastos de administración</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #gastosAdm="ngModel" [value]="element.gastosAdm"  [(ngModel)]="element.gastosAdm" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="gastosAdm?.invalid">
-      <div *ngIf="gastosAdm.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="gastosAdm.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.gastosAdm}}
   </td>
 
 </ng-container>
@@ -590,13 +1373,7 @@
 <ng-container matColumnDef ="otras ganancias">
   <th mat-header-cell *matHeaderCellDef>Otras ganancias(pérdidas)</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never" style ="width: 100px;">
-      <input matInput   #otrasGanancias="ngModel" [value]="element.otrasGanancias"  [(ngModel)]="element.otrasGanancias" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="otrasGanancias?.invalid">
-      <div *ngIf="otrasGanancias.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="otrasGanancias.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.otrasGanancias}}
   </td>
 
 </ng-container>
@@ -604,13 +1381,7 @@
 <ng-container matColumnDef ="ingresos financieros">
   <th mat-header-cell *matHeaderCellDef>Ingresos financieros</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #ingresosF="ngModel" [value]="element.ingresosF"  [(ngModel)]="element.ingresosF" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="ingresosF?.invalid">
-      <div *ngIf="ingresosF.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="ingresosF.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.ingresosF}}
   </td>
 
 </ng-container>
@@ -618,13 +1389,7 @@
 <ng-container matColumnDef ="costos financieros">
   <th mat-header-cell *matHeaderCellDef>Costos financieros</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #costosF="ngModel" [value]="element.costosF"  [(ngModel)]="element.costosF" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="costosF?.invalid">
-      <div *ngIf="costosF.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="costosF.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.costosF}}
   </td>
 
 </ng-container>
@@ -632,19 +1397,19 @@
 <ng-container matColumnDef ="resultado reajuste">
   <th mat-header-cell *matHeaderCellDef>Resultado por unidad de reajuste</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never" style ="width: 70px;">
-      <input matInput   #resultadoR="ngModel" [value]="element.resultadoR"  [(ngModel)]="element.resultadoR" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="resultadoR?.invalid">
-      <div *ngIf="resultadoR.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="resultadoR.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.resultadoR}}
   </td>
 
 </ng-container>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
 
-<tr mat-header-row *matHeaderRowDef="tablaEstadoResultados"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaEstadoResultados;"></tr>
+<tr mat-header-row *matHeaderRowDef="BtablaEstadoResultados"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaEstadoResultados;"></tr>
 </table>
 
 
@@ -654,9 +1419,7 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+    {{element.anio}}
   </td>
 
 </ng-container>
@@ -664,13 +1427,7 @@
 <ng-container matColumnDef ="gastoImp">
   <th mat-header-cell *matHeaderCellDef>Gasto por impuesto a las ganancias</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #gastoImp="ngModel" [value]="element.gastoImp"  [(ngModel)]="element.gastoImp" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="gastoImp?.invalid">
-      <div *ngIf="gastoImp.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="gastoImp.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+   {{element.gastoImp}}
   </td>
 
 </ng-container>
@@ -678,13 +1435,7 @@
 <ng-container matColumnDef ="gananciaDespImp">
   <th mat-header-cell *matHeaderCellDef>Ganancia después de impuesto</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #gastoDespImp="ngModel" [value]="element.gastoDespImp"  [(ngModel)]="element.gastoDespImp" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="gastoDespImp?.invalid">
-      <div *ngIf="gastoDespImp.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="gastoDespImp.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+   {{element.gastoDespImp}}
   </td>
 
 </ng-container>
@@ -692,19 +1443,19 @@
 <ng-container matColumnDef ="totalRes">
   <th mat-header-cell *matHeaderCellDef>Total resultados</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #totalRes="ngModel" [value]="element.totalRes"  [(ngModel)]="element.totalRes" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="totalRes?.invalid">
-      <div *ngIf="totalRes.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="totalRes.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.totalRes}}
   </td>
 
 </ng-container>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
 
-<tr mat-header-row *matHeaderRowDef="tablaGananciaAntesImpuestos"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaGananciaAntesImpuestos;"></tr>
+<tr mat-header-row *matHeaderRowDef="BtablaGananciaAntesImpuestos"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaGananciaAntesImpuestos;"></tr>
 </table>
 
 <!--Tabla ganancia atribuible a-->
@@ -713,9 +1464,7 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+    {{element.anio}}
   </td>
 
 </ng-container>
@@ -723,13 +1472,7 @@
 <ng-container matColumnDef ="gananciaControlador">
   <th mat-header-cell *matHeaderCellDef>Ganancia atribuible al controlador</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #gananciaControlador="ngModel" [value]="element.gananciaControlador"  [(ngModel)]="element.gananciaControlador" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="gananciaControlador?.invalid">
-      <div *ngIf="gananciaControlador.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="gananciaControlador.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.gananciaControlador}}
   </td>
 
 </ng-container>
@@ -737,13 +1480,7 @@
 <ng-container matColumnDef ="gananciaNoControl">
   <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #gananciaNoControladora="ngModel" [value]="element.gananciaNoControladora"  [(ngModel)]="element.gananciaNoControladora" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="gananciaNoControladora?.invalid">
-      <div *ngIf="gananciaNoControladora.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="gananciaNoControladora.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.gananciaNoControladora}}
   </td>
 
 </ng-container>
@@ -751,19 +1488,19 @@
 <ng-container matColumnDef ="ganancia">
   <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #ganancia="ngModel" [value]="element.ganancia"  [(ngModel)]="element.ganancia" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="ganancia?.invalid">
-      <div *ngIf="ganancia.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="ganancia.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.ganancia}}
   </td>
 
 </ng-container>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
 
-<tr mat-header-row *matHeaderRowDef="tablaGananciaAtribuibleA"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaGananciaAtribuibleA;"></tr>
+<tr mat-header-row *matHeaderRowDef="BtablaGananciaAtribuibleA"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaGananciaAtribuibleA;"></tr>
 </table>
 
 <!--Tabla Total resultados integrales-->
@@ -772,9 +1509,7 @@
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput  [value]="element.anio" [(ngModel)]="element.anio">
-    </mat-form-field>
+   {{element.anio}}
   </td>
 
 </ng-container>
@@ -782,13 +1517,7 @@
 <ng-container matColumnDef ="ganancia">
   <th mat-header-cell *matHeaderCellDef>Ganancia</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #ganancia="ngModel" [value]="element.ganancia"  [(ngModel)]="element.ganancia" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="ganancia?.invalid">
-      <div *ngIf="ganancia.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="ganancia.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.ganancia}}
   </td>
 
 </ng-container>
@@ -796,13 +1525,7 @@
 <ng-container matColumnDef ="gananciaActuariales">
   <th mat-header-cell *matHeaderCellDef>Ganancia actuariales por planes de beneficios actuariales</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #gananciaAct="ngModel" [value]="element.gananciaAct"  [(ngModel)]="element.gananciaAct" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="gananciaAct?.invalid">
-      <div *ngIf="gananciaAct.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="gananciaAct.errors.pattern">Sólo números y puntos</div>
-    </mat-error>
-    </mat-form-field>
+   {{element.gananciaAct}}
   </td>
 
 </ng-container>
@@ -810,22 +1533,24 @@
 <ng-container matColumnDef ="totalResIntegrales">
   <th mat-header-cell *matHeaderCellDef>Total resultado de ingresos y gastos integrales</th>
   <td  mat-cell *matCellDef="let element">
-    <mat-form-field floatLabel="never">
-      <input matInput   #total="ngModel" [value]="element.total"  [(ngModel)]="element.total" required pattern="(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)">
-    <mat-error *ngIf="total?.invalid">
-      <div *ngIf="total.errors.required">El campo no puede estar vacío</div>
-      <div *ngIf="total.errors.pattern">Sólo números o numeros con puntos o comas</div>
-    </mat-error>
-    </mat-form-field>
+    {{element.total}}
   </td>
 
 </ng-container>
+<ng-container matColumnDef="eliminar">
+  <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+  <td class="eliminar" mat-cell *matCellDef="let element">
+    <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+  </td>
+  </ng-container>
 
-<tr mat-header-row *matHeaderRowDef="tablaEstadoResultadosIntegrales"></tr>
-        <tr mat-row *matRowDef="let row; columns: tablaEstadoResultadosIntegrales;"></tr>
+<tr mat-header-row *matHeaderRowDef="BtablaEstadoResultadosIntegrales"></tr>
+        <tr mat-row *matRowDef="let row; columns: BtablaEstadoResultadosIntegrales;"></tr>
 </table>
 </mat-card-content>
 <mat-card-actions style="text-align: center;">
 
 </mat-card-actions>
 </mat-card>
+
+
