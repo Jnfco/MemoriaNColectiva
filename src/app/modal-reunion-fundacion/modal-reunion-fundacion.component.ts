@@ -150,6 +150,10 @@ export class ModalReunionFundacionComponent {
     const formattedDate = moment(momentDate).format("YYYY-MM-DD");
     var fecha = new Date(this.fechaFormControl.value);
     var fechaHoy = new Date(Date.now());
+    var fecha = new Date(this.fechaFormControl.value);
+    var fechaHoy = new Date(Date.now());
+    var horaActual = moment(fechaHoy).format("HH:mm");
+    var fechaHoyFormatted = moment(fechaHoy).format("YYYY-MM-DD");
 
     console.log('fecha: ', fecha)
     console.log('fecha hoy: ', fechaHoy)
@@ -158,12 +162,31 @@ export class ModalReunionFundacionComponent {
     console.log('fecha sin formato: ', this.fechaFormControl.value)
     console.log('Agendar formated date: ', formattedDate)
 
-    this.userId = firebase.auth().currentUser.uid;
-    if (fecha < fechaHoy) {
-      this.fechaCorrecta = false;
+    if (fechaHoyFormatted == formattedDate) {
+
+      console.log("hora actual: ", horaActual);
+      console.log("hora inicio: ", this.horaInicioFormControl.value)
+      if (horaActual > this.horaInicioFormControl.value) {
+
+        console.log("La hora actual es mayor que la hora de inicio!")
+        this.fechaCorrecta = false;
+
+      }
+      else{
+        this.fechaCorrecta = true;
+      }
+
     }
-    else if (fecha >= fechaHoy) {
-      this.fechaCorrecta = true;
+
+    this.userId = firebase.auth().currentUser.uid;
+    if (fechaHoyFormatted != formattedDate) {
+
+      if (fecha < fechaHoy) {
+        this.fechaCorrecta = false;
+      }
+      else if (fecha >= fechaHoy) {
+        this.fechaCorrecta = true;
+      }
     }
 
 

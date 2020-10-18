@@ -90,7 +90,7 @@ export class ReunionFundacionComponent implements OnInit {
       const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
 
 
-
+      this.reuniones = [];
 
       this.getMeeting();
     });

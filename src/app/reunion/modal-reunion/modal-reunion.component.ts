@@ -1,15 +1,15 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {  OnInit } from '@angular/core';
+import { OnInit } from '@angular/core';
 import { Theme } from '@fullcalendar/core';
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi } from '@fullcalendar/angular';
 import { MatDialog } from '@angular/material/dialog';
-import {MatDatepickerModule} from '@angular/material/datepicker/';
+import { MatDatepickerModule } from '@angular/material/datepicker/';
 import { FormControl, Validators } from '@angular/forms';
 import { Reunion } from 'src/app/shared/Interfaces/Reunion';
 import * as firebase from 'firebase';
 
-import {MeetingService} from '../../services/meeting.service';
+import { MeetingService } from '../../services/meeting.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as moment from 'moment';
 import { AngularFireDatabase, snapshotChanges } from '@angular/fire/database';
@@ -28,22 +28,22 @@ export class ModalReunionComponent {
   tituloFormControl = new FormControl('', [
     Validators.required,
   ]);
-  descripcionFormControl = new FormControl ('',[
+  descripcionFormControl = new FormControl('', [
 
   ])
 
-  fechaFormControl = new FormControl ('',[
+  fechaFormControl = new FormControl('', [
     Validators.required
   ])
-  horaInicioFormControl = new FormControl ('',[
+  horaInicioFormControl = new FormControl('', [
     Validators.required
   ])
-  horaTerminoFormControl = new FormControl ('',[
+  horaTerminoFormControl = new FormControl('', [
     Validators.required
   ])
 
   //Interfaz Reunion
-  reunion : Reunion;
+  reunion: Reunion;
   userId: any;
   userEmail: any;
 
@@ -54,12 +54,12 @@ export class ModalReunionComponent {
   tituloVacío = true;
   horaInicioMayorNoVacio = false;
   fechaVacia = true;
-  listaEventos: any []
+  listaEventos: any[]
   fechaCorrecta: boolean = true;
 
-  public idSindicatoUser:string;
+  public idSindicatoUser: string;
 
-  abogadoList:any[];
+  abogadoList: any[];
   public selectedAbogado: string;
 
   abogadosAsociados: string[] = [];
@@ -68,27 +68,27 @@ export class ModalReunionComponent {
 
   public sindicatoSelected = false;
 
-  public idFundacion:string;
+  public idFundacion: string;
 
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService,public snackbar: MatSnackBar,public db: AngularFirestore) {
+    @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService, public snackbar: MatSnackBar, public db: AngularFirestore) {
 
-        this.userEmail = firebase.auth().currentUser.email;
-        var actualDate = moment();
-        var formattedFecha =actualDate.format("YYYY-MM-DD")
-        console.log("data: ",data)
-      this.userId = firebase.auth().currentUser.uid;
-      console.log("user id !!: ",this.userId);
-        console.log('Fecha actual: ',formattedFecha);
-       
-        this.getIdSindicato();
-        setTimeout(()=>{
-          this.cargarAbogados();
-        },1000)
-        
+    this.userEmail = firebase.auth().currentUser.email;
+    var actualDate = moment();
+    var formattedFecha = actualDate.format("YYYY-MM-DD")
+    console.log("data: ", data)
+    this.userId = firebase.auth().currentUser.uid;
+    console.log("user id !!: ", this.userId);
+    console.log('Fecha actual: ', formattedFecha);
 
-     }
+    this.getIdSindicato();
+    setTimeout(() => {
+      this.cargarAbogados();
+    }, 1000)
+
+
+  }
 
   onNoClick(): void {
     this.dialogRef.close({
@@ -111,14 +111,14 @@ export class ModalReunionComponent {
 
               if (doc.data().email == element.correo) {
 
-                var abogado= {
+                var abogado = {
                   nombre: doc.data().name,
                   correo: doc.data().email,
                   uid: doc.data().uid
 
                 }
                 this.abogadoList.push(abogado);
-                console.log("abogado: ",abogado)
+                console.log("abogado: ", abogado)
               }
 
             })
@@ -139,103 +139,141 @@ export class ModalReunionComponent {
     var abogadoSeleccionado = this.selectedAbogado;
     console.log("valor seleccionado: ", abogadoSeleccionado);
     this.idAbogado = abogadoSeleccionado;
-    if(this.abogadoList.length >0){
+    if (this.abogadoList.length > 0) {
       this.getIdFundacion(this.abogadoList[0].correo);
 
     }
 
   }
 
-  getIdFundacion (emailAbogado:string){
+  getIdFundacion(emailAbogado: string) {
 
     this.db.collection("Fundacion").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
 
 
-       doc.data().usuarios.forEach(element => {
-console.log("email sesion: ",emailAbogado);
-console.log("email bd: ",element.correo)
-        if(emailAbogado == element.correo){
-          console.log("fundacion encontrada!!!");
-          this.idFundacion = doc.data().idAdmin;
-          console.log("id fundacion: ",this.idFundacion);
+        doc.data().usuarios.forEach(element => {
+          console.log("email sesion: ", emailAbogado);
+          console.log("email bd: ", element.correo)
+          if (emailAbogado == element.correo) {
+            console.log("fundacion encontrada!!!");
+            this.idFundacion = doc.data().idAdmin;
+            console.log("id fundacion: ", this.idFundacion);
 
-        }
-         
-       });
+          }
+
+        });
       })
     })
 
   }
-getIdSindicato(){
-  console.log("User id:",this.userId)
-  this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
-    if(snapshotChanges.exists){
-      var usuario =snapshotChanges.data();
-      console.log("usuario: ",usuario)
-      if (usuario.uid == this.userId){
+  getIdSindicato() {
+    console.log("User id:", this.userId)
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges) => {
+      if (snapshotChanges.exists) {
+        var usuario = snapshotChanges.data();
+        console.log("usuario: ", usuario)
+        if (usuario.uid == this.userId) {
 
-        console.log("es admin?: ",usuario.isAdmin)
-        if(usuario.isAdmin == true){
+          console.log("es admin?: ", usuario.isAdmin)
+          if (usuario.isAdmin == true) {
 
-          this.idSindicatoUser = this.userId;
+            this.idSindicatoUser = this.userId;
+          }
+          else {
+
+            this.idSindicatoUser = usuario.idOrg;
+          }
+
+
+          console.log("id sindicato: ", this.idSindicatoUser)
         }
-        else{
-
-          this.idSindicatoUser = usuario.idOrg;
-        }
-
-       
-        console.log("id sindicato: ",this.idSindicatoUser)
       }
-    }
-  })
-}
+    })
+  }
 
-  onAgendar ():void {
+  onAgendar(): void {
 
 
-    console.log("id de ahora: ",this.userId)
+    console.log("id de ahora: ", this.userId)
     const momentDate = new Date(this.fechaFormControl.value);
-    momentDate.setHours (parseInt(this.horaInicioFormControl.value))
+    momentDate.setHours(parseInt(this.horaInicioFormControl.value))
     const formattedDate = moment(momentDate).format("YYYY-MM-DD");
+    console.log("formated date: ", formattedDate);
     var fecha = new Date(this.fechaFormControl.value);
-    var fechaHoy = new Date( Date.now());
-
-    console.log('fecha: ',fecha)
-    console.log('fecha hoy: ',fechaHoy)
+    var fechaHoy = new Date(Date.now());
+    var horaActual = moment(fechaHoy).format("HH:mm");
+    var fechaHoyFormatted = moment(fechaHoy).format("YYYY-MM-DD");
+    console.log('fecha: ', fecha)
+    console.log('fecha hoy: ', fechaHoy)
     console.log('fecha ingresada es mayor que hoy?: ', fecha > fechaHoy);
 
     console.log('fecha sin formato: ', this.fechaFormControl.value)
-    console.log ('Agendar formated date: ', formattedDate)
+    console.log('Agendar formated date: ', formattedDate)
+
+    console.log("horainicio: ", this.horaInicioFormControl.value)
+
+
+    console.log("hora actual: ", horaActual);
+    console.log("horainicio: ", formattedDate)
+    console.log("fecha hoy es igual a la del calendario?: ", fechaHoyFormatted == formattedDate);
+    if (fechaHoyFormatted == formattedDate) {
+
+      console.log("hora actual: ", horaActual);
+      console.log("hora inicio: ", this.horaInicioFormControl.value)
+      if (horaActual > this.horaInicioFormControl.value) {
+
+        console.log("La hora actual es mayor que la hora de inicio!")
+        this.fechaCorrecta = false;
+
+      }
+    }
+
+    if (fechaHoyFormatted == formattedDate) {
+
+      console.log("hora actual: ", horaActual);
+      console.log("hora inicio: ", this.horaInicioFormControl.value)
+      if (horaActual > this.horaInicioFormControl.value) {
+
+        console.log("La hora actual es mayor que la hora de inicio!")
+        this.fechaCorrecta = false;
+
+      }
+      else{
+        this.fechaCorrecta = true;
+      }
+
+    }
 
     this.userId = firebase.auth().currentUser.uid;
-    if(fecha < fechaHoy){
+    if (fechaHoyFormatted != formattedDate) {
+
+      if (fecha < fechaHoy) {
         this.fechaCorrecta = false;
-    }
-    else if (fecha >= fechaHoy){
-      this.fechaCorrecta = true;
+      }
+      else if (fecha >= fechaHoy) {
+        this.fechaCorrecta = true;
+      }
     }
 
 
-    console.log('horacorrecta: ',this.horaCorrecta);
-    console.log('inicio > final ?',this.horaInicioFormControl.value > this.horaTerminoFormControl.value)
-    console.log('tamaño hora inicio: ',this.horaInicioFormControl.value.length);
+
+    console.log('horacorrecta: ', this.horaCorrecta);
+    console.log('inicio > final ?', this.horaInicioFormControl.value > this.horaTerminoFormControl.value)
+    console.log('tamaño hora inicio: ', this.horaInicioFormControl.value.length);
     console.log('hora termino size: ', this.horaTerminoFormControl.value.length)
-    console.log('comparacion antes del if: ',  (this.horaInicioFormControl.value.length !=0 && this.horaTerminoFormControl.value.length !=0)) ;
-    if((this.horaInicioFormControl.value < this.horaTerminoFormControl.value ))
-    {
+    console.log('comparacion antes del if: ', (this.horaInicioFormControl.value.length != 0 && this.horaTerminoFormControl.value.length != 0));
+    if ((this.horaInicioFormControl.value < this.horaTerminoFormControl.value)) {
       this.horaCorrecta = true;
-      if((this.horaInicioFormControl.value.length !=0 && this.horaTerminoFormControl.value.length !=0))
-      {
+      if ((this.horaInicioFormControl.value.length != 0 && this.horaTerminoFormControl.value.length != 0)) {
 
 
         this.horaInicioVacia = false;
         this.horaTerminoVacia = false;
-        console.log('horacorrecta: ',this.horaCorrecta);
-        console.log('hora inicio vacia: ',this.horaInicioVacia);
-        console.log ('hora termino vacia: ',this.horaTerminoVacia)
+        console.log('horacorrecta: ', this.horaCorrecta);
+        console.log('hora inicio vacia: ', this.horaInicioVacia);
+        console.log('hora termino vacia: ', this.horaTerminoVacia)
       }
       else {
         this.horaInicioVacia = true;
@@ -243,17 +281,16 @@ getIdSindicato(){
       }
 
     }
-    else{
+    else {
       this.horaCorrecta = false;
       console.log('else hora mayor menor')
-      console.log('horacorrecta: ',this.horaCorrecta);
-      console.log('hora inicio vacia: ',this.horaInicioVacia);
-      console.log ('hora termino vacia: ',this.horaTerminoVacia)
+      console.log('horacorrecta: ', this.horaCorrecta);
+      console.log('hora inicio vacia: ', this.horaInicioVacia);
+      console.log('hora termino vacia: ', this.horaTerminoVacia)
     }
-    if (this.horaCorrecta == false){
+    if (this.horaCorrecta == false) {
 
-      if((this.horaInicioFormControl.value.length !=0 && this.horaTerminoFormControl.value.length !=0))
-      {
+      if ((this.horaInicioFormControl.value.length != 0 && this.horaTerminoFormControl.value.length != 0)) {
         this.horaInicioVacia = false;
         this.horaTerminoVacia = false;
       }
@@ -265,54 +302,51 @@ getIdSindicato(){
 
     }
 
-    if(this.horaCorrecta == true && this.fechaCorrecta == true)
-    {
+    if (this.horaCorrecta == true && this.fechaCorrecta == true) {
 
-        console.log('horacorrecta: ',this.horaCorrecta);
-        this.reunion = {
-        idReunion:"",
+      console.log('horacorrecta: ', this.horaCorrecta);
+      this.reunion = {
+        idReunion: "",
         titulo: this.tituloFormControl.value,
         descripcion: this.descripcionFormControl.value,
         fecha: formattedDate,
-        horaInicio:this.horaInicioFormControl.value,
+        horaInicio: this.horaInicioFormControl.value,
         horaTermino: this.horaTerminoFormControl.value,
         idCreador: this.userId,
         email: this.userEmail,
         idSindicato: this.idSindicatoUser,
-        started:false,
-        idAbogado:this.idAbogado,
-        idFundacion:this.idFundacion
+        started: false,
+        idAbogado: this.idAbogado,
+        idFundacion: this.idFundacion
       }
-      if(this.reunion.horaInicio.length ==0){
-        this.horaInicioVacia =true;
+      if (this.reunion.horaInicio.length == 0) {
+        this.horaInicioVacia = true;
       }
-      else if (this.reunion.horaInicio.length !=0){
+      else if (this.reunion.horaInicio.length != 0) {
         this.horaInicioVacia = false;
       }
-      if(this.reunion.horaTermino.length ==0){
-          this.horaTerminoVacia = true;
+      if (this.reunion.horaTermino.length == 0) {
+        this.horaTerminoVacia = true;
       }
-      else if(this.reunion.horaTermino.length !=0){
+      else if (this.reunion.horaTermino.length != 0) {
         this.horaTerminoVacia = false;
       }
-      if (this.reunion.horaInicio > this.reunion.horaTermino){
+      if (this.reunion.horaInicio > this.reunion.horaTermino) {
         this.horaCorrecta = true;
       }
       else {
         this.horaCorrecta = false;
       }
 
-      if(this.reunion.titulo.length <=0)
-      {
+      if (this.reunion.titulo.length <= 0) {
         this.tituloVacío = true;
       }
       else {
         this.tituloVacío = false;
       }
 
-      if(this.horaInicioVacia == false && this.horaTerminoVacia == false && this.tituloVacío ==false)
-      {
-        console.log('Reunion: ',this.reunion)
+      if (this.horaInicioVacia == false && this.horaTerminoVacia == false && this.tituloVacío == false) {
+        console.log('Reunion: ', this.reunion)
         this.meetingSvc.addMeeting(this.reunion);
         this.dialogRef.close({});
       }
@@ -326,7 +360,7 @@ getIdSindicato(){
 
   }
 
-  onCerrar ():void{
+  onCerrar(): void {
     this.dialogRef.close({});
   }
 

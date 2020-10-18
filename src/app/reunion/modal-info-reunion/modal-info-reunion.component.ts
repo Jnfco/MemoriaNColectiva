@@ -21,7 +21,7 @@ import * as moment from 'moment';
 //enviar correo
 
 import { DataService } from "../../services/data.service"
-import { postData, respData} from "../../shared/Interfaces/postDataObj";
+import { postData, respData } from "../../shared/Interfaces/postDataObj";
 import { AngularFirestore } from '@angular/fire/firestore';
 import { snapshotChanges } from '@angular/fire/database';
 
@@ -57,8 +57,8 @@ export class ModalInfoReunionComponent {
 
   listaEventos: any[];
   idReunion: string;
-  public idSindicatoUser:string;
-  public started:boolean;
+  public idSindicatoUser: string;
+  public started: boolean;
   public
 
   constructor(
@@ -66,7 +66,7 @@ export class ModalInfoReunionComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public meetingSvc: MeetingService,
     public snackbar: MatSnackBar,
-    public db:AngularFirestore
+    public db: AngularFirestore
   ) {
     this.started = this.data.reunion.started;
     this.userId = firebase.auth().currentUser.uid;
@@ -78,56 +78,56 @@ export class ModalInfoReunionComponent {
     this.fechaFormControl.setValue(this.data.reunion.fecha);
 
     const momentDate = new Date(this.fechaFormControl.value);
-    momentDate.setDate(momentDate.getDate() +2);
+    momentDate.setDate(momentDate.getDate() + 2);
     const formattedDate = moment(momentDate).format('YYYY-MM-DD');
     this.fechaFormControl.setValue(formattedDate);
-    console.log('Fecha despues de set value: ',this.fechaFormControl)
+    console.log('Fecha despues de set value: ', this.fechaFormControl)
     this.horaInicioFormControl.setValue(this.data.reunion.horaInicio);
     this.horaTerminoFormControl.setValue(this.data.reunion.horaTermino);
 
 
-    console.log('formatedd date:',formattedDate)
-    console.log("id de la reunion: ",this.data.reunion.idReunion)
-    console.log("started desde afuera: ",this.data.reunion.started)
+    console.log('formatedd date:', formattedDate)
+    console.log("id de la reunion: ", this.data.reunion.idReunion)
+    console.log("started desde afuera: ", this.data.reunion.started)
     this.getIdSindicato();
-    
-    
+
+
     //this.fechaFormControl.setValue(momentDate.toUTCString())
   }
 
   onNoClick(): void {
     this.dialogRef.close({});
-    
-  }
-  
-  
 
-  onEliminar(){
-    this.meetingSvc.deleteMeeting(this.userId,this.idReunion);
+  }
+
+
+
+  onEliminar() {
+    this.meetingSvc.deleteMeeting(this.userId, this.idReunion);
     this.dialogRef.close({});
   }
 
-  getIdSindicato(){
-    console.log("User id:",this.userId)
-    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
-      if(snapshotChanges.exists){
-        var usuario =snapshotChanges.data();
-        if (usuario.uid == this.userId){
-  
+  getIdSindicato() {
+    console.log("User id:", this.userId)
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges) => {
+      if (snapshotChanges.exists) {
+        var usuario = snapshotChanges.data();
+        if (usuario.uid == this.userId) {
+
           //this.data.reunion.started = usuario.started;
-          console.log("Started ? : ",this.data.reunion)
-          console.log("es admin?: ",usuario.isAdmin)
-          if(usuario.isAdmin == true){
-  
+          console.log("Started ? : ", this.data.reunion)
+          console.log("es admin?: ", usuario.isAdmin)
+          if (usuario.isAdmin == true) {
+
             this.idSindicatoUser = this.userId;
           }
-          else{
-  
+          else {
+
             this.idSindicatoUser = usuario.idOrg;
           }
-  
-         
-          console.log("id sindicato: ",this.idSindicatoUser)
+
+
+          console.log("id sindicato: ", this.idSindicatoUser)
         }
       }
     })
@@ -140,15 +140,41 @@ export class ModalInfoReunionComponent {
     this.userId = firebase.auth().currentUser.uid;
 
     var fecha = new Date(this.fechaFormControl.value);
-    var fechaHoy = new Date( Date.now());
+    var fechaHoy = new Date(Date.now());
 
+    var horaActual = moment(fechaHoy).format("HH:mm");
+    var fechaHoyFormatted = moment(fechaHoy).format("YYYY-MM-DD");
     this.userId = firebase.auth().currentUser.uid;
-    if(fecha < fechaHoy){
+
+
+
+    if (fechaHoyFormatted == formattedDate) {
+
+      console.log("hora actual: ", horaActual);
+      console.log("hora inicio: ", this.horaInicioFormControl.value)
+      if (horaActual > this.horaInicioFormControl.value) {
+
+        console.log("La hora actual es mayor que la hora de inicio!")
         this.fechaCorrecta = false;
+
+      }
+      else{
+        this.fechaCorrecta = true;
+      }
+
     }
-    else if (fecha >= fechaHoy){
-      this.fechaCorrecta = true;
+
+    if (fechaHoyFormatted != formattedDate) {
+
+      if (fecha < fechaHoy) {
+        this.fechaCorrecta = false;
+      }
+      else if (fecha >= fechaHoy) {
+        this.fechaCorrecta = true;
+      }
+
     }
+
 
     console.log('horacorrecta: ', this.horaCorrecta);
     console.log(
@@ -166,7 +192,7 @@ export class ModalInfoReunionComponent {
     console.log(
       'comparacion antes del if: ',
       this.horaInicioFormControl.value.length != 0 &&
-        this.horaTerminoFormControl.value.length != 0
+      this.horaTerminoFormControl.value.length != 0
     );
     if (this.horaInicioFormControl.value < this.horaTerminoFormControl.value) {
       this.horaCorrecta = true;
@@ -202,8 +228,8 @@ export class ModalInfoReunionComponent {
         this.horaTerminoVacia = true;
       }
     }
-
-    if (this.horaCorrecta == true && this.fechaCorrecta ==true) {
+    console.log('horacorrecta: ', this.horaCorrecta);
+    if (this.horaCorrecta == true && this.fechaCorrecta == true) {
       console.log('horacorrecta: ', this.horaCorrecta);
       this.reunion = {
         idReunion: '',
@@ -215,9 +241,9 @@ export class ModalInfoReunionComponent {
         idCreador: this.userId,
         email: this.userEmail,
         idSindicato: this.idSindicatoUser,
-        started:false,
-        idAbogado:this.data.reunion.idAbogado,
-        idFundacion:this.data.reunion.idFundacion
+        started: false,
+        idAbogado: this.data.reunion.idAbogado,
+        idFundacion: this.data.reunion.idFundacion
       };
       if (this.reunion.horaInicio.length == 0) {
         this.horaInicioVacia = true;
@@ -235,7 +261,7 @@ export class ModalInfoReunionComponent {
         this.horaCorrecta = false;
       }
 
-    
+
       if (this.reunion.titulo.length <= 0) {
         this.tituloVacío = true;
       } else {
@@ -248,7 +274,7 @@ export class ModalInfoReunionComponent {
         this.tituloVacío == false
       ) {
         console.log('Reunion: ', this.reunion);
-        this.meetingSvc.updateMeeting(this.reunion,this.idReunion);
+        this.meetingSvc.updateMeeting(this.reunion, this.idReunion);
         this.dialogRef.close({});
       }
     }
@@ -258,24 +284,24 @@ export class ModalInfoReunionComponent {
     this.dialogRef.close({});
   }
 
-  onIniciarReunion(){
+  onIniciarReunion() {
 
-    var reunion:Reunion = {
-      titulo:this.data.reunion.titulo,
-      descripcion:this.data.reunion.descripcion,
-      email:this.data.reunion.email,
-      fecha:this.data.reunion.fecha,
-      horaInicio:this.data.reunion.horaInicio,
-      horaTermino:this.data.reunion.horaTermino,
-      idCreador:this.data.reunion.idCreador,
-      idReunion:this.data.reunion.idReunion,
-      idSindicato:this.data.reunion.idSindicato,
-      started:true,
+    var reunion: Reunion = {
+      titulo: this.data.reunion.titulo,
+      descripcion: this.data.reunion.descripcion,
+      email: this.data.reunion.email,
+      fecha: this.data.reunion.fecha,
+      horaInicio: this.data.reunion.horaInicio,
+      horaTermino: this.data.reunion.horaTermino,
+      idCreador: this.data.reunion.idCreador,
+      idReunion: this.data.reunion.idReunion,
+      idSindicato: this.data.reunion.idSindicato,
+      started: true,
       idAbogado: this.data.reunion.idAbogado,
-      idFundacion:this.data.reunion.idFundacion
+      idFundacion: this.data.reunion.idFundacion
     }
     this.meetingSvc.startMeeting(reunion);
     this.dialogRef.close({});
-    
+
   }
 }

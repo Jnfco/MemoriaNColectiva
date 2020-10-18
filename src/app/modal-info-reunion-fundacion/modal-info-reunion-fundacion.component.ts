@@ -135,14 +135,35 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
  
      var fecha = new Date(this.fechaFormControl.value);
      var fechaHoy = new Date( Date.now());
- 
-     this.userId = firebase.auth().currentUser.uid;
-     if(fecha < fechaHoy){
-         this.fechaCorrecta = false;
-     }
-     else if (fecha >= fechaHoy){
-       this.fechaCorrecta = true;
-     }
+     var horaActual = moment(fechaHoy).format("HH:mm");
+     var fechaHoyFormatted = moment(fechaHoy).format("YYYY-MM-DD");
+     
+     if (fechaHoyFormatted == formattedDate) {
+
+      console.log("hora actual: ", horaActual);
+      console.log("hora inicio: ", this.horaInicioFormControl.value)
+      if (horaActual > this.horaInicioFormControl.value) {
+
+        console.log("La hora actual es mayor que la hora de inicio!")
+        this.fechaCorrecta = false;
+
+      }
+      else{
+        this.fechaCorrecta = true;
+      }
+
+    }
+
+    this.userId = firebase.auth().currentUser.uid;
+    if (fechaHoyFormatted != formattedDate) {
+
+      if (fecha < fechaHoy) {
+        this.fechaCorrecta = false;
+      }
+      else if (fecha >= fechaHoy) {
+        this.fechaCorrecta = true;
+      }
+    }
  
      console.log('horacorrecta: ', this.horaCorrecta);
      console.log(
