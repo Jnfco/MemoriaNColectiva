@@ -39,6 +39,7 @@ export class HistorialFundacionComponent implements OnInit {
   sindicatosAsociados: string[] = [];
   historialExists = true;
   sindicatoSelected = false;
+  isAdmin:boolean;
 
   ngOnInit(): void {
 
@@ -48,10 +49,78 @@ export class HistorialFundacionComponent implements OnInit {
 
     console.log("data: ", this.dataSource)
     //this.historialExists = false;
+    this.checkAdmin();
     this.cargarSindicatos();
+   
     console.log("historial exists: ", this.historialExists)
   }
 
+
+
+  checkAdmin() {
+
+
+    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
+
+      this.isAdmin = snapshotChanges.data().isAdmin;
+
+    })
+
+  }
+
+  getMeetingAdmin(){
+    this.isLoading = true;
+    this.reuniones = [];
+
+    console.log("id sindicato: ", this.idSindicatoUser)
+
+    this.db.collection("Reunion").get().subscribe((querySnapshot) => {
+
+      querySnapshot.forEach((doc) => {
+
+
+        if (doc.data().idSindicato == this.idSindicatoUser && doc.data().started == true) {
+          console.log("doc: ", doc.data());
+          var reunion: Reunion = {
+            idReunion: doc.data().idReunion,
+            idCreador: doc.data().idCreador,
+            titulo: doc.data().titulo,
+            descripcion: doc.data().descripcion,
+            fecha: doc.data().fecha,
+            horaInicio: doc.data().horaInicio,
+            horaTermino: doc.data().horaTermino,
+            email: doc.data().email,
+            idSindicato: doc.data().idSindicato,
+            started: doc.data().started,
+            idAbogado: doc.data().idAbogado,
+            idFundacion: doc.data().idFundacion
+          }
+          this.reuniones.push(reunion);
+
+
+          console.log('Reuniones ', this.reuniones)
+
+          this.tieneReuniones = true;
+
+        }
+
+
+      })
+      this.dataSource = new MatTableDataSource<Reunion>(this.reuniones);
+
+      if (this.reuniones.length == 0) {
+        this.tieneReuniones = false;
+
+      }
+      else {
+        this.tieneReuniones = true;
+        this.tieneReuniones = true;
+      }
+      this.isLoading = false;
+
+    })
+
+  }
 
   getMeeting() {
 
@@ -65,7 +134,7 @@ export class HistorialFundacionComponent implements OnInit {
       querySnapshot.forEach((doc) => {
 
 
-        if (doc.data().idSindicato == this.idSindicatoUser && doc.data().started == true) {
+        if (doc.data().idSindicato == this.idSindicatoUser && doc.data().started == true && doc.data().idAbogado == this.userId) {
           console.log("doc: ", doc.data());
           var reunion: Reunion = {
             idReunion: doc.data().idReunion,
@@ -160,7 +229,15 @@ export class HistorialFundacionComponent implements OnInit {
     var sindicatoSeleccionado = this.selectedValue;
     console.log("valor seleccionado: ", sindicatoSeleccionado);
     this.idSindicatoUser = sindicatoSeleccionado;
-    this.getMeeting();
+
+    if(this.isAdmin == true){
+
+      this.getMeetingAdmin()
+    }
+    else{
+      this.getMeeting();
+
+    }
     //this.getDocument();
 
   }
@@ -190,7 +267,7 @@ export class HistorialFundacionComponent implements OnInit {
         correoAbogado:correoAbogado
 
       }
-      
+
       console.log("reunion: ", reunionSelect)
 
 
