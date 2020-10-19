@@ -24,7 +24,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field  *ngIf="this.isAdmin == true" appearance="fill">
     <mat-label>Seleccionar abogado</mat-label>
     <mat-select [disabled]="!this.sindicatoSelected" [(ngModel)]="selectedAbogado" name="abogadoList">
       <mat-option (click)="selectAbogado()" *ngFor="let abogado of abogadoList" [value]="abogado.uid">

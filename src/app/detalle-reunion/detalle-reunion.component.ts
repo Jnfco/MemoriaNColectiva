@@ -10,6 +10,8 @@ export class DetalleReunionComponent implements OnInit {
 titulo:string
 descripcion:string
 fecha:string
+nombreAbogado:string
+correoAbogado:string
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 
@@ -17,7 +19,9 @@ fecha:string
 
     this.titulo =this.data.titulo;
     this.descripcion = this.data.descripcion,
-    this.fecha= this.data.fecha
+    this.fecha= this.data.fecha,
+    this.nombreAbogado = this.data.nombreAbogado,
+    this.correoAbogado = this.data.correoAbogado
   }
 
 }

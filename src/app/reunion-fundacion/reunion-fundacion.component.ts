@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import * as firebase from 'firebase';
 import { ModalReunionFundacionComponent } from '../modal-reunion-fundacion/modal-reunion-fundacion.component';
 import * as moment from 'moment';
+import { snapshotChanges } from '@angular/fire/database';
 
 @Component({
   selector: 'app-reunion-fundacion',
@@ -52,15 +53,37 @@ export class ReunionFundacionComponent implements OnInit {
   url = "http://localhost:5001/negociacioncolectiva-80355/us-central1/sendMail?dest=" + this.email + "&horaInicio=" + this.horaInicio + "&horaTermino=" + this.horaTermino + "&titulo=" + this.titulo;
   json;
 
+  isAdmin: boolean;
   constructor(public dialog: MatDialog, public meetingSvc: MeetingService, public db: AngularFirestore, public http: HttpClient) { }
 
   ngOnInit(): void {
     //this.eventService.getEvents().then(events => {this.events = events;});
     this.userId = firebase.auth().currentUser.uid;
     this.userEmail = firebase.auth().currentUser.email;
+    this.checkAdmin();
+    setTimeout(() => {
 
-    this.getMeeting();
+      if(this.isAdmin == true){
+        this.getAdminMeetings();
+      }
+      else{
+        this.getMeeting();
+      }
 
+    }, 1000)
+
+
+
+  }
+
+  checkAdmin() {
+
+
+    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
+
+      this.isAdmin = snapshotChanges.data().isAdmin;
+
+    })
 
   }
 
@@ -81,7 +104,7 @@ export class ReunionFundacionComponent implements OnInit {
   openInfoReunion(reunion: Reunion): void {
 
     const dialogRef = this.dialog.open(ModalInfoReunionFundacionComponent, {
-      data: { reunion: reunion },
+      data: { reunion: reunion, },
       width: '800px'
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -92,7 +115,12 @@ export class ReunionFundacionComponent implements OnInit {
 
       this.reuniones = [];
 
-      this.getMeeting();
+      if(this.isAdmin == true){
+        this.getAdminMeetings();
+      }
+      else{
+        this.getMeeting();
+      }
     });
 
   }
@@ -100,7 +128,8 @@ export class ReunionFundacionComponent implements OnInit {
   openDialog(): void {
 
     const dialogRef = this.dialog.open(ModalReunionFundacionComponent, {
-      width: '800px'
+      width: '800px',
+      data: this.isAdmin
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -114,8 +143,13 @@ export class ReunionFundacionComponent implements OnInit {
         end: yearMonth + '-10'
       }];
 
+      if(this.isAdmin == true){
+        this.getAdminMeetings();
+      }
+      else{
+        this.getMeeting();
 
-      this.getMeeting();
+      }
     });
   }
   handleEventClick(arg) {
@@ -152,6 +186,91 @@ export class ReunionFundacionComponent implements OnInit {
 
   }
 
+
+
+  // Este método hace que se muestren todas las reuniones del sindicato del usuario administrador, incluye todos los abogados de esta
+  getAdminMeetings() {
+
+
+    this.listaTest = [];
+    this.reuniones = [];
+    //Primero se buscan los sindicatos asociados al abogado que inicia la sesión
+
+
+
+    this.db.collection("Reunion").get().subscribe((querySnapshot) => {
+
+      querySnapshot.forEach((doc) => {
+
+        if (this.userId == doc.data().idFundacion) {
+
+          var reunion: Reunion = {
+            idReunion: doc.data().idReunion,
+            idCreador: doc.data().idCreador,
+            titulo: doc.data().titulo,
+            descripcion: doc.data().descripcion,
+            fecha: doc.data().fecha,
+            horaInicio: doc.data().horaInicio,
+            horaTermino: doc.data().horaTermino,
+            email: doc.data().email,
+            idSindicato: doc.data().idSindicato,
+            idAbogado: doc.data().idAbogado,
+            idFundacion: doc.data().idFundacion,
+            started: doc.data().started
+          }
+          this.reuniones.push(reunion);
+
+          let array = {
+            title: doc.data().titulo,
+            start: doc.data().fecha + "T" + doc.data().horaInicio,
+            end: doc.data().fecha + "T" + doc.data().horaTermino,
+            description: doc.data().descripcion,
+            id: doc.data().idReunion,
+
+
+          }
+          console.log("array: ", array)
+
+          this.listaTest.push(array)
+        }
+
+      })
+    })
+
+
+    //console.log('reuniones simp: ',this.reunionesSimple)
+    setTimeout(() => {
+      this.options = {
+        //plugins:[ dayGridPlugin, timeGridPlugin, interactionPlugin ],
+        locale: 'es',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth'//timeGridWeek,timeGridDay'
+        },
+        buttonText: {
+          today: 'Hoy',
+          month: 'Mes',
+          day: 'Día',
+          week: 'Semana',
+          list: 'Lista'
+        },
+        events: this.listaTest
+        ,
+        height: 500,
+        firstDay: 1,
+        initialDate: this.today,
+        dateClick: this.handleDateClick.bind(this),
+        eventClick: this.handleEventClick.bind(this)
+
+      };
+      console.log('opciones: ', this.options);
+      console.log('Reuniones hardcode: ', this.listaTest);
+    }, 1000)
+
+    console.log('Reuniones ', this.reuniones)
+
+  }
 
   //obtener las reuniones buscandolas todas primero y luego comparar con la reunion
   //reunion que tenga la misma id del administrador perteneciente al mismo sindicato

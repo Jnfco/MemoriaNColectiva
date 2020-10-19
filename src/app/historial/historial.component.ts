@@ -94,36 +94,50 @@ export class HistorialComponent implements OnInit {
 
       })
 
-      
-
-
-
-
-
+     
 
   }
   verDetalle(elm) {
 
     
-    var reunionSelect = {
-      titulo: elm.titulo,
-      descripcion:elm.descripcion,
-      fecha: elm.fecha+"  "+elm.horaInicio+" - "+elm.horaTermino,
-      idReunion:elm.idReunion,
-      idSindicato:elm.idSindicato
-    }
-    console.log("reunion: ",reunionSelect)
+    var nombreAbogado: string;
+    var correoAbogado: string;
+    this.db.collection("users").doc(elm.idAbogado).get().subscribe((snapshotChanges) => {
+
+      var user = snapshotChanges.data();
+      nombreAbogado = user.name;
+      correoAbogado = user.email;
 
 
-    const dialogRef = this.dialog.open(DetalleReunionComponent, {
-      width: '300px',
-      data: reunionSelect
-    });
+    })
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
-      //const nowDate = new Date();
-      //const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
-    });
+    setTimeout(() => {
+      var reunionSelect = {
+        titulo: elm.titulo,
+        descripcion: elm.descripcion,
+        fecha: elm.fecha + "  " + elm.horaInicio + " - " + elm.horaTermino,
+        idReunion: elm.idReunion,
+        idSindicato: elm.idSindicato,
+        nombreAbogado:nombreAbogado,
+        correoAbogado:correoAbogado
+
+      }
+      
+      console.log("reunion: ", reunionSelect)
+
+
+      const dialogRef = this.dialog.open(DetalleReunionComponent, {
+        width: '300px',
+        data: reunionSelect
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+        //const nowDate = new Date();
+        //const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
+      });
+
+    }, 1000)
+
   }
 }

@@ -91,6 +91,7 @@ import { InominadaFundacionComponent } from './inominada-fundacion/inominada-fun
 import { ReunionFundacionComponent } from './reunion-fundacion/reunion-fundacion.component';
 import { ModalInfoReunionFundacionComponent } from './modal-info-reunion-fundacion/modal-info-reunion-fundacion.component';
 import { ModalReunionFundacionComponent } from './modal-reunion-fundacion/modal-reunion-fundacion.component';
+import { HistorialFundacionComponent } from './historial-fundacion/historial-fundacion.component';
 
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
@@ -139,7 +140,8 @@ FullCalendarModule.registerPlugins([
     InominadaFundacionComponent,
     ReunionFundacionComponent,
     ModalInfoReunionFundacionComponent,
-    ModalReunionFundacionComponent
+    ModalReunionFundacionComponent,
+    HistorialFundacionComponent
 
 
   ],

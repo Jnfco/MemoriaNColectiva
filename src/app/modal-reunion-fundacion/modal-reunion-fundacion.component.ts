@@ -76,6 +76,10 @@ export class ModalReunionFundacionComponent {
 
   public idFundacion: string;
 
+  public isAdmin: boolean;
+
+
+
   constructor(
     public dialogRef: MatDialogRef<ModalReunionFundacionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService, public snackbar: MatSnackBar, public db: AngularFirestore) {
@@ -87,6 +91,7 @@ export class ModalReunionFundacionComponent {
     this.userId = firebase.auth().currentUser.uid;
     console.log("user id !!: ", this.userId);
     console.log('Fecha actual: ', formattedFecha);
+    this.isAdmin = this.data;
     this.getIdFundacion();
     this.cargarSindicatos();
 
@@ -172,7 +177,7 @@ export class ModalReunionFundacionComponent {
         this.fechaCorrecta = false;
 
       }
-      else{
+      else {
         this.fechaCorrecta = true;
       }
 
@@ -354,7 +359,13 @@ export class ModalReunionFundacionComponent {
 
     //this.getDocumentInfo();
     this.sindicatoSelected = true;
-    this.cargarAbogados();
+    if(this.isAdmin == true){
+      this.cargarAbogados();
+
+    }
+    else{
+      this.idAbogado =this.userId;
+    }
 
   }
 
