@@ -28,7 +28,7 @@ export class AgregarUsuarioSindicatoComponent implements OnInit {
     Validators.required,
     Validators.max(100),
   ]);
-  hide
+  hide = true
   userId: any;
   emailExists: boolean;
   inactiveExists: boolean;

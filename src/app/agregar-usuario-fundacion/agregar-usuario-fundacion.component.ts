@@ -28,7 +28,7 @@ export class AgregarUsuarioFundacionComponent implements OnInit {
     Validators.required,
     Validators.max(100),
   ]);
-  hide
+  hide=true;
   userId: any;
   emailExists: boolean;
   inactiveExists: boolean;
@@ -56,8 +56,6 @@ export class AgregarUsuarioFundacionComponent implements OnInit {
 
   onAddUser() {
 
-
-
     this.db.collection("users").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
@@ -74,9 +72,6 @@ export class AgregarUsuarioFundacionComponent implements OnInit {
         }
 
       })
-
-
-
     })
 
     console.log("existe el email?: ", this.emailExists)
