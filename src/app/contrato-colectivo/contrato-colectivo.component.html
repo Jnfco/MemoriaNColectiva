@@ -5,7 +5,7 @@
         [init]="{
            base_url: '/tinymce',
            suffix: '.min',
-           height: 500,
+           height: 600,
            menubar: true,
            plugins: [
              'advlist autolink lists link image charmap print preview ',
@@ -16,9 +16,8 @@
          }"
       ></editor>
       <div>
-        <div class="saveButton" (click)="onGuardar(textoFormControl.value)">Guardar</div>
-        <div class="saveButton" (click)="onFinalizar()">Finalizar documento</div>
+        <button mat-button  class="saveButton" mat-flat-button color="primary" (click)="onGuardar(textoFormControl.value)">Guardar</button>
+        
+        
       </div>
-      <div id="htmlData" #htmlData>
-holaaa
-      </div>
+    
