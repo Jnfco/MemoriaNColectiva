@@ -1,1 +1,24 @@
-<p>contrato-colectivo works!</p>
+
+      <editor
+        class="centered"
+        [formControl]="textoFormControl"
+        [init]="{
+           base_url: '/tinymce',
+           suffix: '.min',
+           height: 500,
+           menubar: true,
+           plugins: [
+             'advlist autolink lists link image charmap print preview ',
+             'searchreplace visualblocks code fullscreen image imagetools',
+             'insertdatetime media table paste code help wordcount'
+           ],
+           toolbar:'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | help'
+         }"
+      ></editor>
+      <div>
+        <div class="saveButton" (click)="onGuardar(textoFormControl.value)">Guardar</div>
+        <div class="saveButton" (click)="onFinalizar()">Finalizar documento</div>
+      </div>
+      <div id="htmlData" #htmlData>
+holaaa
+      </div>

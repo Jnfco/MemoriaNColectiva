@@ -93,6 +93,11 @@ import { ModalInfoReunionFundacionComponent } from './modal-info-reunion-fundaci
 import { ModalReunionFundacionComponent } from './modal-reunion-fundacion/modal-reunion-fundacion.component';
 import { HistorialFundacionComponent } from './historial-fundacion/historial-fundacion.component';
 
+
+//Editor de texto
+import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
+
+
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
   timeGridPlugin,
@@ -181,10 +186,11 @@ FullCalendarModule.registerPlugins([
     MatDatepickerModule,
     MatNativeDateModule,
     NgxMaterialTimepickerModule,
+    EditorModule
   ],
   providers: [DocumentService,
     AuthService, MatDatepickerModule,
-    MatNativeDateModule,HttpClient],
+    MatNativeDateModule,HttpClient,{provide: TINYMCE_SCRIPT_SRC,useValue: 'tinymce/tinymce.min.js'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
