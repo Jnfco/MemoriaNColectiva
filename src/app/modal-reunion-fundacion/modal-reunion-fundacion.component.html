@@ -64,7 +64,7 @@
 <mat-error *ngIf="this.horaTerminoVacia == true || this.horaInicioVacia == true" style="text-align: center;margin-top: 10px;" >Las horas no pueden estar vacías!</mat-error>
 <mat-error *ngIf="this.horaCorrecta == false && (this.horaInicioVacia == false && this.horaTerminoVacia == false)" style="text-align: center;margin-top: 10px;">La hora de inicio no puede ser mayor a la hora de término</mat-error>
 <mat-card-actions class="modal-buttons">
-<button (click)="onAgendar()" [disabled]="!this.sindicatoSelected" mat-raised-button color="primary">Agendar</button>
+<button class="btn-agendar" (click)="onAgendar()" [disabled]="!this.sindicatoSelected" mat-raised-button color="primary">Agendar</button>
 <button (click)="onCerrar()" mat-raised-button color="warn">Cancelar</button>
 </mat-card-actions>
     </form>

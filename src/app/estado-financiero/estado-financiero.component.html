@@ -8,7 +8,7 @@
   <label class="custom-file-upload" (click)="deleteEstado()">
     Eliminar Datos
   </label>
-  <button [disabled]="this.draftExists" class="btnGuardar" mat-button color="warn" (click)="saveDraft()">Guardar borrador</button>
+  <button  [disabled]="this.draftExists" class="btnGuardar" mat-button color="warn" (click)="saveDraft()">Guardar borrador</button>
   <button class="btnGuardar" mat-button color="warn" (click)="loadDraft()">Ver borrador</button>
 </div>
 
@@ -29,7 +29,7 @@
 
 <!--Tabla Activos Corrientes-->
 <h2 *ngIf="noDataMessage == true">No se ha cargado el estado financiero</h2>
-<mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
+<mat-progress-bar class="mat-progress-bar-buffer" mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
 <mat-card style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;"
   *ngIf="this.noData == false && this.isDraft == false">
   <mat-card-content>
@@ -149,14 +149,14 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deleteAC(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deleteAC(element)">delete</mat-icon>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addAC()" mat-button>+</button>
+      <button class="btnGuardar"  mat-flat-button color="primary" (click)="addAC()" mat-button>+</button>
 
     </div>
 
@@ -261,7 +261,7 @@
       <ng-container matColumnDef="eliminar">
       <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
       <td class="eliminar" mat-cell *matCellDef="let element">
-        <mat-icon (click)="deleteNC(element)">delete</mat-icon>
+        <mat-icon class="delete" (click)="deleteNC(element)">delete</mat-icon>
       </td>
       </ng-container>
 
@@ -271,7 +271,7 @@
 
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addNC()" mat-button>+</button>
+      <button class="btnGuardar" mat-flat-button color="primary" (click)="addNC()" mat-button>+</button>
 
     </div>
 
@@ -403,7 +403,7 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deletePC(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deletePC(element)">delete</mat-icon>
         </td>
         </ng-container>
 
@@ -411,7 +411,7 @@
       <tr mat-row *matRowDef="let row; columns: tablaPasivosC;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addPC()" mat-button>+</button>
+      <button class="btnGuardar" mat-flat-button color="primary" (click)="addPC()" mat-button>+</button>
 
     </div>
 
@@ -487,14 +487,14 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deletePNC(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deletePNC(element)">delete</mat-icon>
         </td>
         </ng-container>
       <tr mat-header-row *matHeaderRowDef="tablaPasivosNC"></tr>
       <tr mat-row *matRowDef="let row; columns: tablaPasivosNC;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addPNC()" mat-button>+</button>
+      <button class="btnGuardar" mat-flat-button color="primary" (click)="addPNC()" mat-button>+</button>
 
     </div>
 
@@ -602,14 +602,14 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deleteP(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deleteP(element)">delete</mat-icon>
         </td>
         </ng-container>
       <tr mat-header-row *matHeaderRowDef="tablaPatrimonio"></tr>
       <tr mat-row *matRowDef="let row; columns: tablaPatrimonio;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addP()" mat-button>+</button>
+      <button class="btnGuardar" mat-flat-button color="primary" (click)="addP()" mat-button>+</button>
 
     </div>
 
@@ -761,14 +761,14 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deleteER(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deleteER(element)">delete</mat-icon>
         </td>
         </ng-container>
       <tr mat-header-row *matHeaderRowDef="tablaEstadoResultados"></tr>
       <tr mat-row *matRowDef="let row; columns: tablaEstadoResultados;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addER()" mat-button>+</button>
+      <button class="btnGuardar"  mat-flat-button color="primary" (click)="addER()" mat-button>+</button>
 
     </div>
 
@@ -833,7 +833,7 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deleteGI(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deleteGI(element)">delete</mat-icon>
         </td>
         </ng-container>
       <tr mat-header-row *matHeaderRowDef="tablaGananciaAntesImpuestos"></tr>
@@ -841,7 +841,7 @@
     </table>
 
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addGI()" mat-button>+</button>
+      <button class="btnGuardar"  mat-flat-button color="primary" (click)="addGI()" mat-button>+</button>
 
     </div>
 
@@ -907,14 +907,14 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deleteGA(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deleteGA(element)">delete</mat-icon>
         </td>
         </ng-container>
       <tr mat-header-row *matHeaderRowDef="tablaGananciaAtribuibleA"></tr>
       <tr mat-row *matRowDef="let row; columns: tablaGananciaAtribuibleA;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addGA()" mat-button>+</button>
+      <button class="btnGuardar"  mat-flat-button color="primary" (click)="addGA()" mat-button>+</button>
 
     </div>
 
@@ -979,14 +979,14 @@
       <ng-container matColumnDef="eliminar">
         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
         <td class="eliminar" mat-cell *matCellDef="let element">
-          <mat-icon (click)="deleteTRI(element)">delete</mat-icon>
+          <mat-icon class="delete" (click)="deleteTRI(element)">delete</mat-icon>
         </td>
         </ng-container>
       <tr mat-header-row *matHeaderRowDef="tablaEstadoResultadosIntegrales"></tr>
       <tr mat-row *matRowDef="let row; columns: tablaEstadoResultadosIntegrales;"></tr>
     </table>
     <div style="display:flex ;flex-direction: row;justify-content:center; margin-top: 2%;margin-bottom: 2%;">
-      <button mat-flat-button color="primary" (click)="addTRI()" mat-button>+</button>
+      <button class="btnGuardar" mat-flat-button color="primary" (click)="addTRI()" mat-button>+</button>
 
     </div>
 

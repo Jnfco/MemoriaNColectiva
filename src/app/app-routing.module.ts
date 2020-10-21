@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {RegisterComponent} from './auth/register/register.component';
+import { RegisterComponent } from './auth/register/register.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RecuperarPassComponent } from './auth/recuperar-pass/recuperar-pass.component';
@@ -25,88 +25,92 @@ import { EstadoFinancieroFundacionComponent } from './estado-financiero-fundacio
 import { InominadaFundacionComponent } from './inominada-fundacion/inominada-fundacion.component';
 import { ReunionFundacionComponent } from './reunion-fundacion/reunion-fundacion.component';
 import { HistorialFundacionComponent } from './historial-fundacion/historial-fundacion.component';
+import { ContratoFundacionComponent } from './contrato-fundacion/contrato-fundacion.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/login', pathMatch: 'full'},
-  {path: 'register', component: RegisterComponent},
-  {path: 'home',
-  canActivate: [AuthService],
-   component: HomeComponent,
-   children:[{
-     path: '',
-     component: EstadoFinancieroComponent
-   },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'register', component: RegisterComponent },
   {
-    path: 'estadoFinanciero',
-    component: EstadoFinancieroComponent
-  },
-  {
-    path: 'reunion',
-    component: ReunionComponent
-  },
-  {
-    path: 'innominada',
-    component: InnominadaComponent
-  },
-  {
-    path:'historial',
-    component: HistorialComponent
-  },
-  {
-    path:'comparativa',
-    component: ComparativaComponent
-  },
-  {
-    path:'contrato',
-    component: ContratoColectivoComponent
-  },
-  
-  {
-    path: 'sindicato',
-    component: SindicatoComponent
-  }
-  ,
-  {
-    path: 'crearSindicato',
-    component: CrearSindicatoComponent
-  },
-  {
-    path: 'fundacion',
-    component:FundacionComponent
-  },
-  {
-    path: 'crearFundacion',
-    component:CrearFundacionComponent
-  },
-  {
-    path: 'sindicatos-fundacion',
-    component:SindicatosFundacionComponent
-  },
-  {
-    path: 'estado-financiero-fundacion',
-    component:EstadoFinancieroFundacionComponent
-  },
-  {
-    path: 'inominada-fundacion',
-    component:InominadaFundacionComponent
-  },
-  {
-    path: 'reunion-fundacion',
-    component: ReunionFundacionComponent
-  },
-  {
-    path: 'historial-fundacion',
-    component: HistorialFundacionComponent
-  }
+    path: 'home',
+    canActivate: [AuthService],
+    component: HomeComponent,
+    children: [{
+      path: '',
+      component: EstadoFinancieroComponent
+    },
+    {
+      path: 'estadoFinanciero',
+      component: EstadoFinancieroComponent
+    },
+    {
+      path: 'reunion',
+      component: ReunionComponent
+    },
+    {
+      path: 'innominada',
+      component: InnominadaComponent
+    },
+    {
+      path: 'historial',
+      component: HistorialComponent
+    },
+    {
+      path: 'comparativa',
+      component: ComparativaComponent
+    },
+    {
+      path: 'contrato',
+      component: ContratoColectivoComponent
+    },
 
-]
+    {
+      path: 'sindicato',
+      component: SindicatoComponent
+    }
+      ,
+    {
+      path: 'crearSindicato',
+      component: CrearSindicatoComponent
+    },
+    {
+      path: 'fundacion',
+      component: FundacionComponent
+    },
+    {
+      path: 'crearFundacion',
+      component: CrearFundacionComponent
+    },
+    {
+      path: 'sindicatos-fundacion',
+      component: SindicatosFundacionComponent
+    },
+    {
+      path: 'estado-financiero-fundacion',
+      component: EstadoFinancieroFundacionComponent
+    },
+    {
+      path: 'inominada-fundacion',
+      component: InominadaFundacionComponent
+    },
+    {
+      path: 'reunion-fundacion',
+      component: ReunionFundacionComponent
+    },
+    {
+      path: 'historial-fundacion',
+      component: HistorialFundacionComponent
+    },
+    { path: 'contrato-fundacion', component: ContratoFundacionComponent }
+
+    ]
   },
-  {path: 'login', component: LoginComponent},
-  {path: 'reset',component: RecuperarPassComponent},
-  {path: 'activate',component:ActivarCuentaComponent},
-  {path: 'registerUserSindicato',component:AgregarUsuarioSindicatoComponent},
-  {path: 'detalleSindicatoFundacion',component:ModalDetalleSindicatoFundacionComponent},
-  {path: 'crearSindicatoFundacion',component:CrearSindicatoComponent}
+  { path: 'login', component: LoginComponent },
+  { path: 'reset', component: RecuperarPassComponent },
+  { path: 'activate', component: ActivarCuentaComponent },
+  { path: 'registerUserSindicato', component: AgregarUsuarioSindicatoComponent },
+  { path: 'detalleSindicatoFundacion', component: ModalDetalleSindicatoFundacionComponent },
+  { path: 'crearSindicatoFundacion', component: CrearSindicatoComponent }
+
 ];
 
 @NgModule({

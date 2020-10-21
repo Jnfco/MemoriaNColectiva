@@ -12,7 +12,6 @@ descripcion:string
 fecha:string
 nombreAbogado:string
 correoAbogado:string
-
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {

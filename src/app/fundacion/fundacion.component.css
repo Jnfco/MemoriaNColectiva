@@ -1,5 +1,5 @@
 body {
-    background-color: #007bff;
+  background-color: #730800;
     background: linear-gradient(to right, #0062E6, #33AEFF);
     overflow: hidden;
   }
@@ -11,8 +11,7 @@ body {
   .boton{
     letter-spacing: .1rem;
     transition: all 0.2s;
-    width: 50%;
-    background-color:#36A0F5;
+    background-color: #730800;
     color: white;
   }
   

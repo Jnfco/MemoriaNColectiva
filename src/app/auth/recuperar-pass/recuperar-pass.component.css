@@ -1,5 +1,5 @@
 .botonReset{
-  background-color:#36A0F5;
+  background-color: #730800;
   color: white;
 
 }
@@ -28,8 +28,8 @@
 
   overflow: hidden;
   height: 100%;
-  background-color: #007bff;
-  background: linear-gradient(to right, #0062E6, #33AEFF);
+  background-color: #730800;
+  background: linear-gradient(to right, #730800, #B30D00);
 }
 .title{
   text-shadow: red;

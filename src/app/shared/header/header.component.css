@@ -2,6 +2,9 @@ ul li{
   list-style:none ;
 }
 
+.body{
+  background-color:  #B30D00;
+}
 .mat-toolbar{
  overflow:hidden;
 }
@@ -13,6 +16,12 @@ ul li{
 .logo-text{
   margin-left: 2%;
   margin-top: 5%;
+  color: white;
+}
+
+.user-menu{
+
+  color:  #B30D00;
 }
 
 .header{

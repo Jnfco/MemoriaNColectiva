@@ -16,10 +16,11 @@ input[type="file"] {
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
-  background-color: #36A0F5;
+  background-color: #730800;
   color: white;
 }
 
 .pestañaActiva{
   background-color: gainsboro ;
 }
+

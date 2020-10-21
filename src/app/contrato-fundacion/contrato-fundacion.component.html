@@ -1,0 +1,32 @@
+<mat-form-field appearance="fill">
+    <mat-label>Sindicatos asociados</mat-label>
+    <mat-select   [(ngModel)]="selectedValue" name="sindicatoList">
+      <mat-option (click)="selectSindicato()" *ngFor="let sindicato of sindicatoList" [value]="sindicato.idAdmin">
+        {{sindicato.nombre}}, admin: {{sindicato.nombreAdmin}}, correo: {{sindicato.correoAdmin}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+<div style="text-align: center;">
+    <h1> Contrato colectivo</h1>
+  </div>
+  <mat-progress-bar class="mat-progress-bar-buffer" mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
+  <h1 *ngIf="this.sindicatoSeleccionado == false" style="text-align: center;" >No se ha seleccionado ningún sindicato</h1>
+  <editor *ngIf="this.contratoExists == true" class="centered" [formControl]="textoFormControl" [init]="{
+             base_url: '/tinymce',
+             suffix: '.min',
+             height: 600,
+             menubar: false,
+             plugins: [
+               'advlist lists  image  preview',
+               'searchreplace image imagetools',
+               ' table paste copy print'
+             ],
+             toolbar:'preview print|undo redo | bold italic underline strikethrough superscript subscript fontselect fontsizeselect fontcolorselect| formatselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent| table selectall |help'
+           }"></editor>
+  <div style="text-align: right;">
+    <button class="boton" mat-button  *ngIf="this.contratoExists == true" mat-flat-button color="primary"
+      (click)="onGuardar(textoFormControl.value)">Guardar</button>
+    
+  
+  
+  </div>

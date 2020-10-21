@@ -1,4 +1,4 @@
-<mat-toolbar >
+<mat-toolbar class="body">
   <mat-toolbar-row>
     <button mat-icon-button (click)="onToggle()">
         <mat-icon>menu</mat-icon>
@@ -12,12 +12,12 @@
       </div>
 
     </span>
-    <div fxFlex fxLayout="row" fxLayoutAlign="flex-end" >
-      <ul fxLayout="row" fxLayoutGap="20px" >
+    <div  class="user-menu" fxFlex fxLayout="row" fxLayoutAlign="flex-end" >
+      <ul class ="user-menu" fxLayout="row" fxLayoutGap="20px" >
 
         <li>
           <button mat-button [matMenuTriggerFor]="menu" >
-            <mat-icon class="user-icon">person outline</mat-icon>
+            <mat-icon class="user-icon" style="color:tomato">person outline</mat-icon>
 
           </button>
           <mat-menu #menu="matMenu" >

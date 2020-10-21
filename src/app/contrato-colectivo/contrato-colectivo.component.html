@@ -1,23 +1,23 @@
-
-      <editor
-        class="centered"
-        [formControl]="textoFormControl"
-        [init]="{
+<div style="text-align: center;">
+  <h1> Contrato colectivo</h1>
+</div>
+<mat-progress-bar  mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
+<editor  *ngIf="this.isLoading == false" class="centered" [formControl]="textoFormControl" [init]="{
            base_url: '/tinymce',
            suffix: '.min',
-           height: 600,
-           menubar: true,
+           height: 700,
+           menubar: false,
            plugins: [
-             'advlist autolink lists link image charmap print preview ',
-             'searchreplace visualblocks code fullscreen image imagetools',
-             'insertdatetime media table paste code help wordcount'
+             'advlist lists  image  preview',
+             'searchreplace image imagetools',
+             ' table paste copy print'
            ],
-           toolbar:'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | help'
-         }"
-      ></editor>
-      <div>
-        <button mat-button  class="saveButton" mat-flat-button color="primary" (click)="onGuardar(textoFormControl.value)">Guardar</button>
-        
-        
-      </div>
-    
+           toolbar:'preview print|undo redo | bold italic underline strikethrough superscript subscript fontselect fontsizeselect fontcolorselect| formatselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent| table selectall |help'
+         }"></editor>
+<div style="text-align: right;">
+  <button  *ngIf="this.isLoading ==false" mat-button class="save-button" mat-flat-button color="primary"
+    (click)="onGuardar(textoFormControl.value)">Guardar</button>
+  
+
+
+</div>

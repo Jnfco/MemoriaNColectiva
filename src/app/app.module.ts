@@ -96,6 +96,8 @@ import { HistorialFundacionComponent } from './historial-fundacion/historial-fun
 
 //Editor de texto
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
+import { VerDocumentoHistorialComponent } from './ver-documento-historial/ver-documento-historial.component';
+import { ContratoFundacionComponent } from './contrato-fundacion/contrato-fundacion.component';
 
 
 FullCalendarModule.registerPlugins([
@@ -146,7 +148,9 @@ FullCalendarModule.registerPlugins([
     ReunionFundacionComponent,
     ModalInfoReunionFundacionComponent,
     ModalReunionFundacionComponent,
-    HistorialFundacionComponent
+    HistorialFundacionComponent,
+    VerDocumentoHistorialComponent,
+    ContratoFundacionComponent
 
 
   ],

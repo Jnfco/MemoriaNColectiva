@@ -1,7 +1,12 @@
 .addLawyer{
     cursor: pointer;
+    
 }
 
 .verAbogado{
     cursor: pointer;
+}
+
+.add-user{
+    background-color: #730800;
 }
