@@ -70,6 +70,9 @@ export class ModalReunionComponent {
 
   public idFundacion: string;
 
+  
+ 
+
   constructor(
     public dialogRef: MatDialogRef<ModalReunionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any, public meetingSvc: MeetingService, public snackbar: MatSnackBar, public db: AngularFirestore) {
@@ -348,6 +351,7 @@ export class ModalReunionComponent {
       if (this.horaInicioVacia == false && this.horaTerminoVacia == false && this.tituloVacío == false) {
         console.log('Reunion: ', this.reunion)
         this.meetingSvc.addMeeting(this.reunion);
+        this.meetingSvc.sentMeetingEmail(this.idSindicatoUser,this.reunion);
         this.dialogRef.close({});
       }
 

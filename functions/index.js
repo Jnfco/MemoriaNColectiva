@@ -23,12 +23,16 @@ exports.sendMail = functions.https.onRequest((req, res) => {
         const titulo = req.query.titulo;
         const horaInicio = req.query.horaInicio;
         const horaTermino = req.query.horaTermino;
+        const fecha = req.query.fecha;
+        const nombreSindicato = req.query.nombreSindicato;
 
         const mailOptions = {
             from: 'NColectivaApp <ncolectivaapp@gmail.com>', // Something like: Jane Doe <janedoe@gmail.com>
             to: dest,
-            subject: 'Recordatorio de la reunión:'+titulo, // email subject
-            html: "Esta reunión comienza a las "+horaInicio+" y termina a las "+horaTermino
+            subject: 'Reunión de sindicato agendada:'+titulo, // email subject
+            html: "Tu sindicato "+"<b>"+nombreSindicato+"</b>"+ " ha agendado una reunión para el día "+fecha+ "<br/>"+
+            " <b>Hora inicio:</b> "+ horaInicio+"<br/>"+
+            " <b>Hora término: </b>"+horaTermino
         };
 
         // returning result

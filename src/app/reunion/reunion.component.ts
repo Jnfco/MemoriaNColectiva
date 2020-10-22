@@ -50,6 +50,8 @@ export class ReunionComponent implements OnInit {
   public horaInicio = "15:30"
   public horaTermino = "18:00"
   public titulo  = "Reunion mesa negociadora"
+  public fecha ="22/10/2020"
+  public nombreSindicato ="Sindicato de profesores de inacap Curicó"
 
    //Email
 
@@ -62,7 +64,7 @@ export class ReunionComponent implements OnInit {
    postData = {
     test: 'my content',
   };
-  url = "http://localhost:5001/negociacioncolectiva-80355/us-central1/sendMail?dest="+this.email+"&horaInicio="+this.horaInicio+"&horaTermino="+this.horaTermino+"&titulo="+this.titulo;
+  url = "http://localhost:5001/negociacioncolectiva-80355/us-central1/sendMail?dest="+this.email+"&horaInicio="+this.horaInicio+"&horaTermino="+this.horaTermino+"&titulo="+this.titulo+"&fecha="+this.fecha+"&nombreSindicato="+this.nombreSindicato;
   json;
 
   constructor(public dialog: MatDialog, public meetingSvc: MeetingService,public db: AngularFirestore, public http:HttpClient) { }
@@ -72,6 +74,7 @@ export class ReunionComponent implements OnInit {
       this.userId = firebase.auth().currentUser.uid;
       this.userEmail= firebase.auth().currentUser.email;
 
+     
     this.getMeeting();
 
 
