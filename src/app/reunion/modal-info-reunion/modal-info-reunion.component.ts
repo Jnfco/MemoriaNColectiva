@@ -24,6 +24,9 @@ import { DataService } from "../../services/data.service"
 import { postData, respData } from "../../shared/Interfaces/postDataObj";
 import { AngularFirestore } from '@angular/fire/firestore';
 import { snapshotChanges } from '@angular/fire/database';
+import { Contrato } from 'src/app/shared/Interfaces/Contrato';
+import { ContratoService } from 'src/app/services/contrato.service';
+import { VerDocumentoHistorialComponent } from 'src/app/ver-documento-historial/ver-documento-historial.component';
 
 @Component({
   selector: 'modal-info-reunion',
@@ -59,14 +62,19 @@ export class ModalInfoReunionComponent {
   idReunion: string;
   public idSindicatoUser: string;
   public started: boolean;
-  public
+  public documentAttached = false;
+
+  public dialog: MatDialog
+ 
 
   constructor(
     public dialogRef: MatDialogRef<ModalInfoReunionComponent>,
+    public dialog2: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public meetingSvc: MeetingService,
     public snackbar: MatSnackBar,
-    public db: AngularFirestore
+    public db: AngularFirestore,
+    private contratoSvc: ContratoService
   ) {
     this.started = this.data.reunion.started;
     this.userId = firebase.auth().currentUser.uid;
@@ -106,6 +114,7 @@ export class ModalInfoReunionComponent {
     this.meetingSvc.deleteMeeting(this.userId, this.idReunion);
     this.dialogRef.close({});
   }
+
 
   getIdSindicato() {
     console.log("User id:", this.userId)
@@ -158,7 +167,7 @@ export class ModalInfoReunionComponent {
         this.fechaCorrecta = false;
 
       }
-      else{
+      else {
         this.fechaCorrecta = true;
       }
 
@@ -286,22 +295,83 @@ export class ModalInfoReunionComponent {
 
   onIniciarReunion() {
 
-    var reunion: Reunion = {
-      titulo: this.data.reunion.titulo,
-      descripcion: this.data.reunion.descripcion,
-      email: this.data.reunion.email,
-      fecha: this.data.reunion.fecha,
-      horaInicio: this.data.reunion.horaInicio,
-      horaTermino: this.data.reunion.horaTermino,
-      idCreador: this.data.reunion.idCreador,
-      idReunion: this.data.reunion.idReunion,
-      idSindicato: this.data.reunion.idSindicato,
-      started: true,
-      idAbogado: this.data.reunion.idAbogado,
-      idFundacion: this.data.reunion.idFundacion
-    }
-    this.meetingSvc.startMeeting(reunion);
-    this.dialogRef.close({});
+    if (this.documentAttached == true) {
 
+      this.db.collection("Contrato").doc(this.data.reunion.idSindicato).get().subscribe((snapshotChanges) => {
+
+        if (snapshotChanges.exists) {
+          var contrato: Contrato = {
+            content: snapshotChanges.data().content,
+            idSindicato: snapshotChanges.data().idSindicato,
+            isNew: snapshotChanges.data().isNew,
+            isfinished: snapshotChanges.data().isfinished
+          }
+
+          var reunion: Reunion = {
+            titulo: this.data.reunion.titulo,
+            descripcion: this.data.reunion.descripcion,
+            email: this.data.reunion.email,
+            fecha: this.data.reunion.fecha,
+            horaInicio: this.data.reunion.horaInicio,
+            horaTermino: this.data.reunion.horaTermino,
+            idCreador: this.data.reunion.idCreador,
+            idReunion: this.data.reunion.idReunion,
+            idSindicato: this.data.reunion.idSindicato,
+            started: true,
+            idAbogado: this.data.reunion.idAbogado,
+            idFundacion: this.data.reunion.idFundacion
+          }
+          console.log("contrato: ",contrato);
+          console.log("reunion: ",reunion)
+          this.meetingSvc.startMeetingWithContract(reunion, contrato);
+          this.dialogRef.close({});
+
+        }
+      })
+    }
+    else{
+      var reunion: Reunion = {
+        titulo: this.data.reunion.titulo,
+        descripcion: this.data.reunion.descripcion,
+        email: this.data.reunion.email,
+        fecha: this.data.reunion.fecha,
+        horaInicio: this.data.reunion.horaInicio,
+        horaTermino: this.data.reunion.horaTermino,
+        idCreador: this.data.reunion.idCreador,
+        idReunion: this.data.reunion.idReunion,
+        idSindicato: this.data.reunion.idSindicato,
+        started: true,
+        idAbogado: this.data.reunion.idAbogado,
+        idFundacion: this.data.reunion.idFundacion
+      }
+      this.meetingSvc.startMeeting(reunion);
+      this.dialogRef.close({});
+    }
+
+
+    
+
+  }
+
+  adjuntarContrato() {
+
+    
+    this.documentAttached = true;
+    console.log("documento adjuntado: ",this.documentAttached)
+
+  }
+
+  verContrato(){
+    
+
+    const dialogRef = this.dialog2.open(VerDocumentoHistorialComponent, {
+      width: '800px',
+      data: this.data.reunion.idSindicato
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+   
+    });
   }
 }

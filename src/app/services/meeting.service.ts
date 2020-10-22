@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {AngularFirestore,AngularFirestoreDocument} from '@angular/fire/firestore';
 import { Reunion} from '../shared/Interfaces/Reunion';
 import { MatSnackBar} from '@angular/material/snack-bar';
+import { Contrato } from '../shared/Interfaces/Contrato';
 
 @Injectable({
   providedIn: 'root',
@@ -49,6 +50,7 @@ export class MeetingService {
         horaInicio:reunion.horaInicio,
         horaTermino:reunion.horaTermino,
         emailCreador: reunion.email
+
       }
 
       this.snackbar.open("Reunión modificada exitosamente!",'',{
@@ -71,6 +73,40 @@ export class MeetingService {
       return this.fireservices.collection("Reunion").doc(reunion.idReunion).set(reunion,{merge:true});
     }
 
+    startMeetingWithContract(reunion:Reunion,contrato:Contrato){
+
+
+      var contratoR = {
+        content:contrato.content
+      
+      }
+
+      var reunionContrato = {
+
+        descripcion:reunion.descripcion,
+        email:reunion.email,
+        fecha:reunion.fecha,
+        horaInicio:reunion.horaInicio,
+        horaTermino:reunion.horaTermino,
+        idAbogado:reunion.idAbogado,
+        idCreador:reunion.idCreador,
+        idFundacion:reunion.idFundacion,
+        idReunion:reunion.idReunion,
+        idSindicato:reunion.idSindicato,
+        started: true,
+        titulo:reunion.titulo,
+        contrato:contratoR,
+        contractAttached: true
+
+        
+      }
+
+      this.snackbar.open("Reunión iniciada!",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+      return this.fireservices.collection("Reunion").doc(reunion.idReunion).set(reunionContrato,{merge:true});
+    }
 
     deleteMeeting (userId:any, reunionId:string){
 

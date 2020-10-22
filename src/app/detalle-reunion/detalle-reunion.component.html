@@ -23,7 +23,7 @@
     </mat-form-field>
 
     <mat-card-actions style="text-align: center;">
-        <button class="btn-ver-doc" mat-flat-button color="primary">Ver Documento</button>
+        <button [disabled]="!this.haveContract" class="btn-ver-doc" mat-flat-button color="primary" (click)="verContrato()">Ver contrato</button>
     </mat-card-actions>
     
 

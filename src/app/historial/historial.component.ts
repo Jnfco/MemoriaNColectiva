@@ -6,6 +6,7 @@ import { ModalReunionComponent } from '../reunion/modal-reunion/modal-reunion.co
 import { DetalleReunionComponent } from '../detalle-reunion/detalle-reunion.component';
 import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { VerDocumentoHistorialComponent } from '../ver-documento-historial/ver-documento-historial.component';
 
 @Component({
   selector: 'app-historial',
@@ -21,7 +22,7 @@ export class HistorialComponent implements OnInit {
   reuniones: Reunion[];
   tieneReuniones = false;
   isLoading = true;
-  constructor(public dialog: MatDialog,public db: AngularFirestore) {
+  constructor(public dialog: MatDialog,public dialog2: MatDialog,public db: AngularFirestore) {
 
     this.tieneReuniones = false;
     this.userId = firebase.auth().currentUser.uid;
@@ -111,6 +112,7 @@ export class HistorialComponent implements OnInit {
 
     })
 
+    
     setTimeout(() => {
       var reunionSelect = {
         titulo: elm.titulo,
@@ -138,6 +140,21 @@ export class HistorialComponent implements OnInit {
       });
 
     }, 1000)
+
+  }
+
+  verContrato(elm){
+
+    console.log ("elm", elm)
+    const dialogRef = this.dialog2.open(VerDocumentoHistorialComponent, {
+      width: '800px',
+      data: elm.idReunion
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+   
+    });
 
   }
 }
