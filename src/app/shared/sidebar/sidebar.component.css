@@ -4,22 +4,23 @@
 
 }
 body {
-  background-color: #730800;
+  background-color: #454040;
   color: white;
   height: 100%;
 }
 
 mat-card{
-  width: 80%;
+  width: 85%;
   margin-left: 5%;
   margin-bottom: 10%;
-  background-color: #960c02;
+  background-color: #383030;
   color: white;
   display: flex;
   flex-direction: row;
 }
 .usuariotext{
-  margin-left: 10%;
+  margin-left: 5%;
+  font-size: medium;
 }
 .iconoUser{
   font-size: 36px;
@@ -35,7 +36,7 @@ mat-card{
 }
 
 .menu-text{
-  color:rgb(206, 206, 206);
+  color:white;
 }
 
 .user-card{

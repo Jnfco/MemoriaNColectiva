@@ -34,3 +34,7 @@ mat-selection-list {
         vertical-align: middle;
     }
   
+    .btn{
+      background-color: #730800;
+    color: white;
+    }

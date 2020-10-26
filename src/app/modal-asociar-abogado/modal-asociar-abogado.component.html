@@ -49,7 +49,7 @@
     <h2 *ngIf="this.lawyersExists == false" style="text-align: center;">No hay abogados para asociar a este sindicato</h2>
   </div>
   <div style="display: flex;flex-direction: row;justify-content: space-evenly;margin-top: 5%;">
-    <button mat-flat-button color="primary" (click)="onAsociarAbogado()" [disabled]="!this.lawyersExists">Aceptar</button>
+    <button class="btn" mat-flat-button  (click)="onAsociarAbogado()" [disabled]="!this.lawyersExists">Aceptar</button>
     <button mat-flat-button color="warn" (click)="onCancelar()">Cancelar</button>
   </div>
 </div>
