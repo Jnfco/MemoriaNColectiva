@@ -1,11 +1,14 @@
 <mat-form-field appearance="fill">
-    <mat-label>Sindicatos asociados</mat-label>
-    <mat-select   [(ngModel)]="selectedValue" name="sindicatoList">
-      <mat-option (click)="selectSindicato()" *ngFor="let sindicato of sindicatoList" [value]="sindicato.idAdmin">
-        {{sindicato.nombre}}, admin: {{sindicato.nombreAdmin}}, correo: {{sindicato.correoAdmin}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <mat-label>Sindicatos asociados</mat-label>
+  <mat-select   [(ngModel)]="selectedValue" name="sindicatoList">
+    <mat-option (click)="selectSindicato()" *ngFor="let sindicato of sindicatoList" [value]="sindicato.idAdmin">
+      {{sindicato.nombre}}, admin: {{sindicato.nombreAdmin}}, correo: {{sindicato.correoAdmin}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-tab-group>
+  <mat-tab label="Historial de reuniones">
+
 
   <h1 *ngIf="this.sindicatoExists == false" style="text-align: center;" >No se ha seleccionado ningún sindicato</h1>
 
@@ -45,3 +48,23 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 </div>
+  </mat-tab>
+<mat-tab label="Historial de cambios">
+  <mat-list>
+      <mat-list-item *ngFor="let cambio of historialDocList">
+        
+        <h3 matLine> El usuario {{cambio.nombre}} ha realizado un cambio en el documento de contrato colectivo en la fecha {{cambio.fecha}}  </h3>
+        
+        <button mat-button (click)="verContrato(cambio)" class="btn-doc">Ver documento</button>
+      </mat-list-item>
+      
+    </mat-list>
+<!------
+  <mat-select name="historialDocList">
+      <mat-option  *ngFor="let cambio of historialDocList" [value]="cambio.idAdmin">
+          El usuario {{cambio.nombre}} ha realizado un cambio en el documento de contrato colectivo 
+      </mat-option>
+    </mat-select>-->
+
+</mat-tab>
+</mat-tab-group>

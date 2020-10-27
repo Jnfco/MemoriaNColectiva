@@ -98,6 +98,7 @@ import { HistorialFundacionComponent } from './historial-fundacion/historial-fun
 import {EditorModule, TINYMCE_SCRIPT_SRC} from '@tinymce/tinymce-angular';
 import { VerDocumentoHistorialComponent } from './ver-documento-historial/ver-documento-historial.component';
 import { ContratoFundacionComponent } from './contrato-fundacion/contrato-fundacion.component';
+import { VerDocHistorialComponent } from './ver-doc-historial/ver-doc-historial.component';
 
 
 FullCalendarModule.registerPlugins([
@@ -150,7 +151,8 @@ FullCalendarModule.registerPlugins([
     ModalReunionFundacionComponent,
     HistorialFundacionComponent,
     VerDocumentoHistorialComponent,
-    ContratoFundacionComponent
+    ContratoFundacionComponent,
+    VerDocHistorialComponent
 
 
   ],

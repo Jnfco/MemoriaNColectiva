@@ -7,6 +7,7 @@ import { DetalleReunionComponent } from '../detalle-reunion/detalle-reunion.comp
 import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { VerDocumentoHistorialComponent } from '../ver-documento-historial/ver-documento-historial.component';
+import { VerDocHistorialComponent } from '../ver-doc-historial/ver-doc-historial.component';
 
 @Component({
   selector: 'app-historial',
@@ -22,6 +23,11 @@ export class HistorialComponent implements OnInit {
   reuniones: Reunion[];
   tieneReuniones = false;
   isLoading = true;
+
+  //Para el historial general
+  historialDocList: any[] = [];
+
+
   constructor(public dialog: MatDialog,public dialog2: MatDialog,public db: AngularFirestore) {
 
     this.tieneReuniones = false;
@@ -30,6 +36,9 @@ export class HistorialComponent implements OnInit {
 
     this.reuniones = [];
     this.getMeeting();
+    setTimeout(()=>{
+        this.getHistorialDoc()
+    },1000)
   }
   userId: any;
   idSindicatoUser:any;
@@ -40,6 +49,30 @@ export class HistorialComponent implements OnInit {
     
     console.log("data: ", this.dataSource)
   }
+
+  getHistorialDoc(){
+
+    
+    this.db.collection("Historial").get().subscribe((querySnapshot)=>{
+      querySnapshot.forEach((doc)=>{
+
+        if(doc.data().idSindicato == this.idSindicatoUser){
+
+          var historial = {
+            nombre:doc.data().nombre,
+            correo:doc.data().correo,
+            fecha:doc.data().fecha,
+            idCambio:doc.data().idCambio
+          }
+          console.log("historial: ",historial)
+          this.historialDocList.push(historial);
+
+        }
+      })
+    })
+
+  }
+  
   getMeeting(){
 
     
@@ -146,9 +179,9 @@ export class HistorialComponent implements OnInit {
   verContrato(elm){
 
     console.log ("elm", elm)
-    const dialogRef = this.dialog2.open(VerDocumentoHistorialComponent, {
+    const dialogRef = this.dialog2.open(VerDocHistorialComponent, {
       width: '800px',
-      data: elm.idReunion
+      data: elm.idCambio
     });
 
     dialogRef.afterClosed().subscribe(result => {

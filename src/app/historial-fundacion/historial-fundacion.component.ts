@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import { MatTableDataSource } from '@angular/material/table';
 import { DetalleReunionComponent } from '../detalle-reunion/detalle-reunion.component';
 import { snapshotChanges } from '@angular/fire/database';
+import { VerDocHistorialComponent } from '../ver-doc-historial/ver-doc-historial.component';
 
 @Component({
   selector: 'app-historial-fundacion',
@@ -21,7 +22,7 @@ export class HistorialFundacionComponent implements OnInit {
   reuniones: Reunion[];
   tieneReuniones = true;
   isLoading: boolean;
-  constructor(public dialog: MatDialog, public db: AngularFirestore) {
+  constructor(public dialog: MatDialog, public db: AngularFirestore,public dialog2: MatDialog) {
 
     this.tieneReuniones = false;
     this.userId = firebase.auth().currentUser.uid;
@@ -40,6 +41,8 @@ export class HistorialFundacionComponent implements OnInit {
   historialExists = true;
   sindicatoSelected = false;
   isAdmin:boolean;
+  //Para el historial general
+  historialDocList: any[] = [];
 
   ngOnInit(): void {
 
@@ -178,7 +181,28 @@ export class HistorialFundacionComponent implements OnInit {
 
   }
 
+  getHistorialDoc(){
+this.historialDocList = [];
+    
+    this.db.collection("Historial").get().subscribe((querySnapshot)=>{
+      querySnapshot.forEach((doc)=>{
 
+        if(doc.data().idSindicato == this.idSindicatoUser){
+
+          var historial = {
+            nombre:doc.data().nombre,
+            correo:doc.data().correo,
+            fecha:doc.data().fecha,
+            idCambio:doc.data().idCambio
+          }
+          console.log("historial: ",historial)
+          this.historialDocList.push(historial);
+
+        }
+      })
+    })
+
+  }
   cargarSindicatos() {
 
     //Primero se buscan todos los sindicatos que están asociados al abogado actual en la sesión
@@ -240,8 +264,27 @@ export class HistorialFundacionComponent implements OnInit {
     }
     //this.getDocument();
 
+    setTimeout(()=>{
+
+      this.getHistorialDoc();
+    },1000)
+
   }
 
+  verContrato(elm){
+
+    console.log ("elm", elm)
+    const dialogRef = this.dialog2.open(VerDocHistorialComponent, {
+      width: '800px',
+      data: elm.idCambio
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+   
+    });
+
+  }
 
   verDetalle(elm) {
 

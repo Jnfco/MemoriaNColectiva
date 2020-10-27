@@ -8,6 +8,8 @@ import { ContratoService } from '../services/contrato.service';
 import { Contrato } from '../shared/Interfaces/Contrato';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';  
+import { HistorialDocSindicato } from '../shared/Interfaces/Historial';
+import * as moment from 'moment';
  
 // Default export is a4 paper, portrait, using millimeters for units
 //const doc = new jsPDF();
@@ -86,7 +88,7 @@ export class ContratoColectivoComponent implements OnInit {
     }
 
     this.contratoSvc.saveContractEdit(contrato);
-
+    this.saveHistory();
   }
 
   onFinalizar(){
@@ -118,6 +120,33 @@ export class ContratoColectivoComponent implements OnInit {
       }
     })
   }
+saveHistory(){
+
+
+  this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
+
+    var fechaHoy = new Date(Date.now());
+    var fechaHoyFormatted = moment(fechaHoy).format("YYYY-MM-DD hh:mm");
+    var uuid = require("uuid");
+    var id = uuid.v4();
+    var historialEdicion :HistorialDocSindicato = {
+
+      idMiembro: this.userId,
+      idSindicato: this.idSindicato,
+      nombre:snapshotChanges.data().name,
+      correo:snapshotChanges.data().email,
+      documento: this.content,
+      fecha: fechaHoyFormatted,
+      idCambio:id
+    }
+    
+    this.contratoSvc.saveDocToHistory(historialEdicion,id);
+
+  })
+
+ 
+
+}
 
   getIdSindicato() {
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
