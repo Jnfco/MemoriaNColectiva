@@ -110,7 +110,7 @@ export class EventosComponent implements OnInit {
       console.log('event data: ', arg.event);
       var evento= {
         nombre: arg.event.title,
-        descripcion:arg.event.description,
+        descripcion:snapshotChanges.data().descripcion,
         fecha:arg.event.start,
         id:arg.event.id,
         idSindicato:snapshotChanges.data().idSindicato

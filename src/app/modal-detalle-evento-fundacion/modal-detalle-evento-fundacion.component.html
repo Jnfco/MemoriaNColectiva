@@ -13,6 +13,10 @@
         <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl" [readonly] = "true" >
     </mat-form-field>
     <mat-form-field>
+      <mat-label>Nombre del sindicato</mat-label>
+      <input  matInput [formControl]="nombreSindicatoFormControl" [readonly] = "true">
+  </mat-form-field>
+    <mat-form-field *ngIf="this.descripcionExist == true">
       <mat-label>Descripción</mat-label>
       <input  matInput [formControl]="descripcionFormControl" [readonly] = "true">
   </mat-form-field>
