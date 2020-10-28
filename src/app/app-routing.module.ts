@@ -26,6 +26,8 @@ import { InominadaFundacionComponent } from './inominada-fundacion/inominada-fun
 import { ReunionFundacionComponent } from './reunion-fundacion/reunion-fundacion.component';
 import { HistorialFundacionComponent } from './historial-fundacion/historial-fundacion.component';
 import { ContratoFundacionComponent } from './contrato-fundacion/contrato-fundacion.component';
+import { EventosComponent } from './eventos/eventos.component';
+import { EventosFundacionComponent } from './eventos-fundacion/eventos-fundacion.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -100,7 +102,9 @@ const routes: Routes = [
       path: 'historial-fundacion',
       component: HistorialFundacionComponent
     },
-    { path: 'contrato-fundacion', component: ContratoFundacionComponent }
+    { path: 'contrato-fundacion', component: ContratoFundacionComponent },
+    { path: 'eventos', component: EventosComponent },
+    {path: 'eventos-fundacion',component:EventosFundacionComponent}
 
     ]
   },

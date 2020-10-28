@@ -1,0 +1,48 @@
+
+  <mat-card-header class="header">
+    <mat-card-title  >Agregar evento</mat-card-title>
+</mat-card-header>
+<mat-divider></mat-divider>
+    <mat-card-content style="margin-top: 5%;">
+    <!-- put the form here -->
+    <form style="display: flex;flex-direction: column;justify-content: space-between;">
+      <mat-form-field>
+        <mat-label>Nombre de evento</mat-label>
+        <mat-error *ngIf="tituloFormControl.hasError('required')">Campo requerido</mat-error>
+        <input  matInput   name="Título"  required  [formControl]="tituloFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Descripción</mat-label>
+      <textarea  matInput [formControl]="descripcionFormControl"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Seleccionar sindicato</mat-label>
+    <mat-select   [(ngModel)]="selectedSindicato" name="sindicatoList">
+      <mat-option (click)="selectSindicato()" *ngFor="let sindicato of sindicatoList" [value]="sindicato.idAdmin">
+        {{sindicato.nombre}}, admin: {{sindicato.nombreAdmin}}, correo: {{sindicato.correoAdmin}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Fecha</mat-label>
+    <mat-error >La fecha es requerida</mat-error>
+
+    <input   matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl" required>
+    <mat-datepicker-toggle  matSuffix [for]="myPicker"></mat-datepicker-toggle>
+    <mat-datepicker #myPicker></mat-datepicker>
+</mat-form-field>
+<!--<mat-error *ngIf="this.fechaCorrecta == false">La fecha ingresada ya ha pasado</mat-error>-->
+
+
+
+
+<mat-card-actions class="modal-buttons">
+<button [disabled] ="!this.tituloFormControl.valid || this.fechaCorrecta == false" class="btn-agendar" (click)="onAgregarEvento()" mat-raised-button color="primary">Agregar</button>
+<button (click)="onCerrar()" mat-raised-button color="warn">Cancelar</button>
+</mat-card-actions>
+    </form>
+    </mat-card-content>
+    <mat-card-actions>
+    <!-- put buttons here -->
+    </mat-card-actions>
+

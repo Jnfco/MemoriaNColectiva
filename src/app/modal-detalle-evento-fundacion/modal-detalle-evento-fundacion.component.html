@@ -1,0 +1,26 @@
+<mat-card-header class="header" style="display: flex;flex-direction: row; justify-content: space-between;">
+    <mat-card-title  >Detalles del evento</mat-card-title>
+    <div class="buttons" style="display: flex;flex-direction: row;">
+
+  </div>
+</mat-card-header>
+<mat-divider></mat-divider>
+    <mat-card-content style="margin-top: 5%;">
+    <!-- put the form here -->
+    <form style="display: flex;flex-direction: column;justify-content: space-between;">
+      <mat-form-field>
+        <mat-label>Nombre evento</mat-label>
+        <input  matInput  placeholder="Título"  name="Título"   [formControl]="tituloFormControl" [readonly] = "true" >
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Descripción</mat-label>
+      <input  matInput [formControl]="descripcionFormControl" [readonly] = "true">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Fecha</mat-label>
+    <input  matInput [matDatepicker]="myPicker" readonly placeholder="Fecha" [formControl]="fechaFormControl" [disabled] = "true">
+    <mat-datepicker-toggle  matSuffix [for]="myPicker"></mat-datepicker-toggle>
+    <mat-datepicker #myPicker></mat-datepicker>
+</mat-form-field>
+    </form>
+    </mat-card-content>
