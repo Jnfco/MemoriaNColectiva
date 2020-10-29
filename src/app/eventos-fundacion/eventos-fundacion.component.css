@@ -1,0 +1,18 @@
+.btn-agendar{
+    background-color: #730800;
+    color: white;
+}
+
+
+::ng-deep .cdk-overlay-container {
+    z-index: 1200 !important;
+  }
+  
+  .timepicker-overlay {
+    z-index: 10000000 !important;
+  }
+  
+  .timepicker-backdrop-overlay {
+    z-index: 10000000 !important;
+  }
+  
