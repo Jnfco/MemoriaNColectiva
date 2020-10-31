@@ -36,12 +36,13 @@
           <mat-icon style="width: 10%;">history</mat-icon>Historial
         </a>
         <mat-divider></mat-divider>
+        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="propuestas">
+          <mat-icon style="width: 10%;">compare</mat-icon>Propuestas
+        </a>
         <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato">
           <mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo
         </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="comparativa">
-          <mat-icon style="width: 10%;">compare</mat-icon>Comparativa
-        </a>
+        
         <mat-divider></mat-divider>
       </div>
       <div *ngIf="this.sindicato == false">
@@ -67,6 +68,9 @@
           <mat-icon style="width: 10%;">history</mat-icon>Historial
         </a>
         <mat-divider></mat-divider>
+        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="propuestas">
+          <mat-icon style="width: 10%;">compare</mat-icon> Propuestas
+        </a>
         <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato-fundacion">
           <mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo
         </a>

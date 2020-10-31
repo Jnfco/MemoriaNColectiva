@@ -45,7 +45,6 @@ import { InicioComponent } from './inicio/inicio.component';
 import { EstadoFinancieroComponent } from './estado-financiero/estado-financiero.component';
 import { HistorialComponent } from './historial/historial.component';
 import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
-import { ComparativaComponent } from './comparativa/comparativa.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
 import { SatPopoverModule } from '@ncstate/sat-popover';
 import { InnominadaComponent } from './innominada/innominada.component';
@@ -105,6 +104,7 @@ import { ModalAgregarEventoComponent } from './modal-agregar-evento/modal-agrega
 import { ModalAgregarEventoFundacionComponent } from './modal-agregar-evento-fundacion/modal-agregar-evento-fundacion.component';
 import { ModalDetalleEventoSindicatoComponent } from './modal-detalle-evento-sindicato/modal-detalle-evento-sindicato.component';
 import { ModalDetalleEventoFundacionComponent } from './modal-detalle-evento-fundacion/modal-detalle-evento-fundacion.component';
+import { PropuestasComponent } from './propuestas/propuestas.component';
 
 
 FullCalendarModule.registerPlugins([
@@ -130,7 +130,6 @@ FullCalendarModule.registerPlugins([
     EstadoFinancieroComponent,
     HistorialComponent,
     ContratoColectivoComponent,
-    ComparativaComponent,
     SpinnerComponent,
     InnominadaComponent,
     ReunionComponent,
@@ -164,7 +163,8 @@ FullCalendarModule.registerPlugins([
     ModalAgregarEventoComponent,
     ModalAgregarEventoFundacionComponent,
     ModalDetalleEventoSindicatoComponent,
-    ModalDetalleEventoFundacionComponent
+    ModalDetalleEventoFundacionComponent,
+    PropuestasComponent
 
 
   ],

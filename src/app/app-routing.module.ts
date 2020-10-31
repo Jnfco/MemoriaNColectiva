@@ -9,7 +9,6 @@ import { InicioComponent } from './inicio/inicio.component';
 import { DashboardComponent } from './shared/dashboard/dashboard.component';
 import { EstadoFinancieroComponent } from './estado-financiero/estado-financiero.component';
 import { HistorialComponent } from './historial/historial.component';
-import { ComparativaComponent } from './comparativa/comparativa.component';
 import { ContratoColectivoComponent } from './contrato-colectivo/contrato-colectivo.component';
 import { InnominadaComponent } from './innominada/innominada.component';
 import { ReunionComponent } from './reunion/reunion.component';
@@ -28,6 +27,7 @@ import { HistorialFundacionComponent } from './historial-fundacion/historial-fun
 import { ContratoFundacionComponent } from './contrato-fundacion/contrato-fundacion.component';
 import { EventosComponent } from './eventos/eventos.component';
 import { EventosFundacionComponent } from './eventos-fundacion/eventos-fundacion.component';
+import { PropuestasComponent } from './propuestas/propuestas.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -55,10 +55,6 @@ const routes: Routes = [
     {
       path: 'historial',
       component: HistorialComponent
-    },
-    {
-      path: 'comparativa',
-      component: ComparativaComponent
     },
     {
       path: 'contrato',
@@ -104,7 +100,8 @@ const routes: Routes = [
     },
     { path: 'contrato-fundacion', component: ContratoFundacionComponent },
     { path: 'eventos', component: EventosComponent },
-    {path: 'eventos-fundacion',component:EventosFundacionComponent}
+    {path: 'eventos-fundacion',component:EventosFundacionComponent},
+    {path: 'propuestas',component:PropuestasComponent}
 
     ]
   },

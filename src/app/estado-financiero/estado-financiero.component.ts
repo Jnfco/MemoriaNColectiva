@@ -18,12 +18,8 @@ import { PasivosNC } from '../shared/Interfaces/TablasI';
 import { Patrimonio } from '../shared/Interfaces/TablasI';
 import { EstadoR } from '../shared/Interfaces/TablasI';
 import { GananciaAntImp } from '../shared/Interfaces/TablasI';
-import {
-  AngularFirestoreDocument,
-  AngularFirestore,
-} from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { IUser } from '../services/User';
 
 import { AuthService } from '../services/auth.service';
 import { DocumentService } from '../services/document.service';
@@ -307,12 +303,12 @@ export class EstadoFinancieroComponent implements OnInit {
     });
 
   }
-  loadDraft(){
+  loadDraft() {
     this.isDraft = true;
     console.log("AAAAAAAAAAAAAA")
     this.isLoading = true;
     this.activosC = [];
-    console.log("ACtivos: ",this.activosC)
+    console.log("ACtivos: ", this.activosC)
 
     this.activosNC = [];
     this.pasivosC = [];
@@ -325,17 +321,16 @@ export class EstadoFinancieroComponent implements OnInit {
     this.estadoResInt = [];
 
 
-   
+
 
     this.db.collection("EstadoFinanciero").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((estado) => {
 
-        if(estado.data().idSindicato == this.idSindicatoUser)
-        {
-          if(estado.data().isDraft == true){
+        if (estado.data().idSindicato == this.idSindicatoUser) {
+          if (estado.data().isDraft == true) {
 
-            
+
             this.noDataMessage = false;
 
             var doc = estado.data();
@@ -361,9 +356,9 @@ export class EstadoFinancieroComponent implements OnInit {
                 activoImpC: activosC[i].activoImpC,
                 total: activosC[i].total
               }
-             
+
               this.activosC.push(activosCorrientes);
-              
+
             }
 
             for (let i = 0; i < activosNC.length; i++) {
@@ -475,7 +470,7 @@ export class EstadoFinancieroComponent implements OnInit {
             }
 
 
-           
+
 
             this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
 
@@ -985,12 +980,11 @@ export class EstadoFinancieroComponent implements OnInit {
     }
   }
 
-loadUpdated()
-{
-  this.getDocument(this.userId)
-}
+  loadUpdated() {
+    this.getDocument(this.userId)
+  }
   getDocument(userId: any) {
-    this.isDraft =false;
+    this.isDraft = false;
     this.activosC = [];
 
     this.activosNC = [];
