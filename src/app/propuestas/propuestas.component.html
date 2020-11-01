@@ -1,69 +1,54 @@
 <mat-tab-group>
     <mat-tab label="Propuesta Sindicato">
 
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>Datos iniciales</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <form>
-                    <mat-form-field>
-                        <mat-label>Nombre cargo</mat-label>
 
-                        <input matInput placeholder="Cargo" name="Cargo" [formControl]="administrativoFormControl">
-                    </mat-form-field>
-                    <mat-form-field style="margin-left: 7%;">
-                        <mat-label>Años de vigencia</mat-label>
-                        <input type="number" matInput [formControl]="vigenciaFormControl" min="0">
-                    </mat-form-field>
-                    <button style="margin-left: 5%;" class="btn" mat-flat-button
-                        (click)="onAceptarDatos()">Aceptar</button>
-                </form>
-            </mat-card-content>
-        </mat-card>
+        <mat-card-header>
+            <mat-card-title>Datos iniciales</mat-card-title>
+        </mat-card-header>
+        <form>
+            <mat-form-field>
+                <mat-label>Nombre cargo</mat-label>
+
+                <input matInput placeholder="Cargo" name="Cargo" [formControl]="administrativoFormControl">
+            </mat-form-field>
+            <mat-form-field style="margin-left: 7%;">
+                <mat-label>Años de vigencia</mat-label>
+                <input type="number" matInput [formControl]="vigenciaFormControl" min="0">
+            </mat-form-field>
+            <button style="margin-left: 5%;" class="btn" mat-flat-button (click)="onAceptarDatos()">Aceptar</button>
+        </form>
         <mat-divider></mat-divider>
         <div class="mat-elevation-z8" *ngIf="mostrarForms == true">
 
 
+            <h2>IPC Proyectado</h2>
+            <table mat-table #tablaIPC [dataSource]="ipcDataSource" class="mat-elevation-z2">
+                <ng-container matColumnDef="Año">
+                    <th mat-header-cell *matHeaderCellDef> Año </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="element.anio" type="number" min="0">
+                        </mat-form-field>
+                    </td>
+                </ng-container>
 
-            <mat-card>
-                <mat-card-content>
-                    <table mat-table #tablaIPC [dataSource]="ipcDataSource" class="mat-elevation-z8">
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.anio" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
+                <ng-container matColumnDef="IPCProyectado">
+                    <th mat-header-cell *matHeaderCellDef> IPC Proyectado </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="element.ipc" type="number" min="0">
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnasIPC"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnasIPC;"></tr>
+            </table>
 
-                        <ng-container matColumnDef="IPCProyectado">
-                            <th mat-header-cell *matHeaderCellDef> IPC Proyectado </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.ipc" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasIPC"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasIPC;"></tr>
-                    </table>
-                </mat-card-content>
-            </mat-card>
-
-            <button mat-button (click)="onSiguienteIPC()">Siguiente</button>
+            <button mat-button (click)="onSiguienteIPC()" class="btn" >Siguiente</button>
+            <h2>Tramos de sueldo</h2>
             <div *ngIf=" this.mostrarReajustes == true">
 
-                <table mat-table #tablaIPC [dataSource]="tramosDataSource" class="mat-elevation-z8">
-                    <ng-container matColumnDef="Nombre">
-                        <th mat-header-cell *matHeaderCellDef> Nombre tramo </th>
-                        <td mat-cell *matCellDef="let element">
-                            <mat-form-field>
-                                <input matInput [(ngModel)]="element.tramo">
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
+                <table mat-table #tablaIPC [dataSource]="tramosDataSource" class="mat-elevation-z2">
 
                     <ng-container matColumnDef="inicio">
                         <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
@@ -77,14 +62,76 @@
                         <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
                         <td mat-cell *matCellDef="let element">
                             <mat-form-field>
-                                <input matInput [(ngModel)]="element.fin" type="number" min="0">
+                                <input matInput [(ngModel)]="element.final" type="number" min="0">
                             </mat-form-field>
                         </td>
                     </ng-container>
+
+                    <ng-container matColumnDef="eliminar">
+                        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                        <td class="eliminar" mat-cell *matCellDef="let element">
+                            <mat-icon class="delete" (click)="deleteTramo(element)">delete</mat-icon>
+                        </td>
+                    </ng-container>
+
                     <tr mat-header-row *matHeaderRowDef="columnasTramos"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnasTramos;"></tr>
                 </table>
+                <div class="btn-agregar-tramo" style="margin-left: 20%;margin-top: 1%; width: 10%;">
+                    <button mat-button (click)="onAgregarTramo()">Agregar tramo</button>
+                </div>
+                <button mat-button (click)="onAceptarTramo()" class="btn" >Aceptar</button>
+            </div>
 
+           
+
+            <div *ngIf=" this.mostrarReajustes == true">
+
+                <h2>Definición de reajustes</h2>
+                
+                <table mat-table #tablaIPC [dataSource]="reajusteDataSource" style="width: 60%;">
+                    <ng-container matColumnDef="Pos">
+                        <th mat-header-cell *matHeaderCellDef> Tramo </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.pos}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="inicio">
+                        <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.inicio}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="fin">
+                        <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.final}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="año">
+                        <th mat-header-cell *matHeaderCellDef> Año </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.anio}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="reajuste">
+                        <th mat-header-cell *matHeaderCellDef> Valor reajuste </th>
+                        <td mat-cell *matCellDef="let element">
+                            <mat-form-field>
+                                <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                            </mat-form-field>
+                        </td>
+                    </ng-container>
+
+
+                    <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
+                </table>
+                <div style="margin-top: 5%;"></div>
+                <mat-divider>
+                </mat-divider>
 
             </div>
             <!---Tabla ipc-->

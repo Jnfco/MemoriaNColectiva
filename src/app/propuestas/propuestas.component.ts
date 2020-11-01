@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-propuestas',
@@ -26,15 +28,18 @@ export class PropuestasComponent implements OnInit {
   public columnasIPC: string[] = ["Año", "IPCProyectado"];
   public reajusteColumns: any[] = [];
   public ipcDataSource: MatTableDataSource<any>;
-  public reajusteDisplayedColumns:string[]=[];
+  public reajusteDisplayedColumns: string[] = [];
   public reajusteDataSource: MatTableDataSource<any>;
-  public reajustes:any[]=[];
+  public reajustes: any[] = [];
 
   public tramosDataSource: MatTableDataSource<any>;
-  public tramos:any[]=[];
-  public columnasTramos: string[]=["Nombre","inicio","fin"]
+  public tramos: any[] = [];
+  public columnasTramos: string[] = ["inicio", "fin", "eliminar"]
+  public columnasReajustes: string[] = ["Pos", "inicio", "fin","año" ,"reajuste"]
 
-  constructor() { }
+  public listaAños:any[]=[];
+
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
@@ -46,7 +51,7 @@ export class PropuestasComponent implements OnInit {
     var fechaHoy = new Date(Date.now());
     var añoACtual = moment(fechaHoy).format("YYYY");
     var añoI = Number(añoACtual) + 1;
-
+    this.listaAños =[];
     for (let i = 0; i < this.vigenciaFormControl.value; i++) {
 
 
@@ -57,7 +62,7 @@ export class PropuestasComponent implements OnInit {
       }
 
       this.ipcs.push(ipc);
-
+      this.listaAños.push(añoI);
       añoI++;
     }
     this.ipcDataSource = new MatTableDataSource<any>(this.ipcs);
@@ -91,6 +96,17 @@ export class PropuestasComponent implements OnInit {
   }
   onSiguienteIPC() {
     this.mostrarReajustes = true;
+    console.log("valores ipc: ", this.ipcs)
+    this.tramos = [];
+
+    var tramo = {
+      nombre: "",
+      inicio: 0,
+      final: 0
+    }
+
+    this.tramos.push(tramo);
+    this.tramosDataSource = new MatTableDataSource<any>(this.tramos);
     /*
     for (let i = 0; i < this.ipcs.length; i++) {
 
@@ -110,4 +126,65 @@ export class PropuestasComponent implements OnInit {
 
 
   }
+
+  onAgregarTramo() {
+
+    let tramo = {
+      pos:1,
+      inicio: "",
+      final: ""
+    }
+
+
+
+    this.tramos.push(tramo);
+    this.tramosDataSource = new MatTableDataSource<any>(this.tramos);
+  }
+  deleteTramo(elm) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.tramosDataSource.data = this.tramosDataSource.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.tramos.indexOf(elm);
+        this.tramos.splice(index, 1);
+
+      }
+    });
+  }
+
+  onAceptarTramo() {
+    
+this.reajustes = [];
+    for (let i = 0; i < this.listaAños.length; i++) {
+      
+      for (let j = 0; j< this.tramos.length; j++) {
+       
+        var reajuste = {
+          pos:j+1,
+          inicio: this.tramos[j].inicio,
+          final:this.tramos[j].final,
+          anio:this.listaAños[i],
+          reajuste:""
+        }
+        this.reajustes.push(reajuste);
+
+      }
+    }
+    console.log("reajuste tabla: ",this.reajustes)
+    this.reajusteDataSource = new MatTableDataSource<any>(this.reajustes);
+  }
+
 }
