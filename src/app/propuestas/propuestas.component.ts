@@ -34,10 +34,28 @@ export class PropuestasComponent implements OnInit {
 
   public tramosDataSource: MatTableDataSource<any>;
   public tramos: any[] = [];
-  public columnasTramos: string[] = ["inicio", "fin", "eliminar"]
-  public columnasReajustes: string[] = ["Pos", "inicio", "fin","año" ,"reajuste"]
+  public columnasTramos: string[] = ["inicio", "fin", "eliminar"];
+  public columnasReajustes: string[] = ["Pos", "inicio", "fin", "año", "reajuste"];
+  public columnasCategorias: string[] = ["Nombre", "Cantidad miembros", "sueldo base", "eliminar"];
+  public columnasCategoriasTrabajadores: string[] = ["Nombre", "Cantidad miembros", "sueldo base", "eliminar"];
 
-  public listaAños:any[]=[];
+  public listaAños: any[] = [];
+
+  public tramosGuardados:boolean;
+
+  //categorías
+  public categoriasAdminDataSource: MatTableDataSource<any>;
+  public categoriasAdmin: any[] = [];
+  //categorias trabajadores
+  public categoriasTrabajadoresDataSource: MatTableDataSource<any>;
+  public categoriasTrabajadores: any[] = [];
+
+  //generación de la propuesta
+  //Prpuesta Administrativo
+  public propuestaGenerada:boolean=false;
+  public columnasPropuestaAdminSindicato: string[] = ["Nombre", "Cantidad miembros", "sueldo base", "Año","Reajuste","Mes1","IPC Marzo","Mes2"];
+  public propuestaAdminSindicatoDataSource: MatTableDataSource<any>;
+  public propuestaAdminSindicato: any[] =[];
 
   constructor(private dialog: MatDialog) { }
 
@@ -51,7 +69,7 @@ export class PropuestasComponent implements OnInit {
     var fechaHoy = new Date(Date.now());
     var añoACtual = moment(fechaHoy).format("YYYY");
     var añoI = Number(añoACtual) + 1;
-    this.listaAños =[];
+    this.listaAños = [];
     for (let i = 0; i < this.vigenciaFormControl.value; i++) {
 
 
@@ -66,6 +84,26 @@ export class PropuestasComponent implements OnInit {
       añoI++;
     }
     this.ipcDataSource = new MatTableDataSource<any>(this.ipcs);
+
+
+    // inicializar la tabla de tramos
+    this.mostrarReajustes = true;
+    console.log("valores ipc: ", this.ipcs)
+    this.tramos = [];
+
+    var tramo = {
+      nombre: "",
+      inicio: 0,
+      final: 0
+    }
+
+    this.tramos.push(tramo);
+    this.tramosDataSource = new MatTableDataSource<any>(this.tramos);
+
+
+    //Se llama a la funcion para crear y rellenar la tabla de categorias
+    this.crearTablaCategoriasAdmin();
+    this.crearTablaCategoriasTrabajadores();
 
     //primero inicializar los arreglos
     //this.displayedColumns = [];
@@ -95,18 +133,7 @@ export class PropuestasComponent implements OnInit {
 
   }
   onSiguienteIPC() {
-    this.mostrarReajustes = true;
-    console.log("valores ipc: ", this.ipcs)
-    this.tramos = [];
-
-    var tramo = {
-      nombre: "",
-      inicio: 0,
-      final: 0
-    }
-
-    this.tramos.push(tramo);
-    this.tramosDataSource = new MatTableDataSource<any>(this.tramos);
+   
     /*
     for (let i = 0; i < this.ipcs.length; i++) {
 
@@ -130,7 +157,7 @@ export class PropuestasComponent implements OnInit {
   onAgregarTramo() {
 
     let tramo = {
-      pos:1,
+      pos: 1,
       inicio: "",
       final: ""
     }
@@ -166,25 +193,174 @@ export class PropuestasComponent implements OnInit {
   }
 
   onAceptarTramo() {
-    
-this.reajustes = [];
+
+    this.reajustes = [];
     for (let i = 0; i < this.listaAños.length; i++) {
-      
-      for (let j = 0; j< this.tramos.length; j++) {
-       
+
+      for (let j = 0; j < this.tramos.length; j++) {
+
         var reajuste = {
-          pos:j+1,
+          pos: j + 1,
           inicio: this.tramos[j].inicio,
-          final:this.tramos[j].final,
-          anio:this.listaAños[i],
-          reajuste:""
+          final: this.tramos[j].final,
+          anio: this.listaAños[i],
+          reajuste: ""
         }
         this.reajustes.push(reajuste);
 
       }
     }
-    console.log("reajuste tabla: ",this.reajustes)
+    console.log("reajuste tabla: ", this.reajustes)
     this.reajusteDataSource = new MatTableDataSource<any>(this.reajustes);
+    this.tramosGuardados = true;
+  }
+
+  deleteCategoriasAdmin(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.categoriasAdminDataSource.data = this.categoriasAdminDataSource.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.categoriasAdmin.indexOf(elm);
+        this.categoriasAdmin.splice(index, 1);
+
+      }
+    });
+
+  }
+
+  crearTablaCategoriasAdmin(){
+    this.categoriasAdmin = [];
+
+    var categoria = {
+      nombre:"",
+      cantidadMiembros: 0,
+      sueldoBase: 0
+    }
+
+    this.categoriasAdmin.push(categoria);
+
+    this.categoriasAdminDataSource = new MatTableDataSource<any>(this.categoriasAdmin);
+
+  }
+
+  onAgregarCategoriaAdmin(){
+    
+    var categoria = {
+      nombre:"",
+      cantidadMiembros: 0,
+      sueldoBase: 0
+    }
+
+    this.categoriasAdmin.push(categoria);
+
+    this.categoriasAdminDataSource = new MatTableDataSource<any>(this.categoriasAdmin);
+
+  }
+
+
+
+//categorias para trabajadores
+
+deleteCategoriasTrabajadores(elm) {
+
+  const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+    data: {
+      message: '¿Está seguro que quiere quitar esta fila?',
+      buttonText: {
+        ok: 'Aceptar',
+        cancel: 'Cancelar'
+      }
+    }
+  });
+
+  console.log("elemento: ", elm)
+  dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (confirmed) {
+      console.log("elemento a borrar: ", elm)
+      this.categoriasTrabajadoresDataSource.data = this.categoriasTrabajadoresDataSource.data
+        .filter(i => i !== elm)
+        .map((i, idx) => (i.position = (idx + 1), i));
+      const index: number = this.categoriasTrabajadores.indexOf(elm);
+      this.categoriasTrabajadores.splice(index, 1);
+
+    }
+  });
+
+}
+
+crearTablaCategoriasTrabajadores(){
+  this.categoriasTrabajadores = [];
+
+  var categoria = {
+    nombre:"",
+    cantidadMiembros: 0,
+    sueldoBase: 0
+  }
+
+  this.categoriasTrabajadores.push(categoria);
+
+  this.categoriasTrabajadoresDataSource = new MatTableDataSource<any>(this.categoriasTrabajadores);
+
+}
+
+onAgregarCategoriaTrabajadores(){
+  
+  var categoria = {
+    nombre:"",
+    cantidadMiembros: 0,
+    sueldoBase: 0
+  }
+
+  this.categoriasTrabajadores.push(categoria);
+
+  this.categoriasTrabajadoresDataSource = new MatTableDataSource<any>(this.categoriasTrabajadores);
+
+}
+
+
+  generarPropuestaSindicato(){
+    this.propuestaGenerada = true;
+    this.crearTablaPropuestaAdminSindicato();
+
+  }
+
+  crearTablaPropuestaAdminSindicato (){
+console.log("creando tabla propuesta")
+    this.propuestaAdminSindicato = [];
+    for (let i = 0; i < this.listaAños.length; i++) {
+
+      var propuesta= {
+        nombre:"",
+        cantidadMiembros: 0,
+        sueldoBase: 0,
+        anio: this.listaAños[i],
+        reajuste:0,
+        mes1:0,
+        ipcMarzo:0,
+        mes2:0
+      }
+      this.propuestaAdminSindicato.push(propuesta);
+      
+    }
+    
+
+    
+    console.log("lista propuestas: ",this.propuestaAdminSindicato)
+    this.propuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.propuestaAdminSindicato);
   }
 
 }
