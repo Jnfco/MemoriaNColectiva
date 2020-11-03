@@ -105,6 +105,7 @@ import { ModalAgregarEventoFundacionComponent } from './modal-agregar-evento-fun
 import { ModalDetalleEventoSindicatoComponent } from './modal-detalle-evento-sindicato/modal-detalle-evento-sindicato.component';
 import { ModalDetalleEventoFundacionComponent } from './modal-detalle-evento-fundacion/modal-detalle-evento-fundacion.component';
 import { PropuestasComponent } from './propuestas/propuestas.component';
+import {MatStepperModule} from '@angular/material/stepper';
 
 
 FullCalendarModule.registerPlugins([
@@ -204,7 +205,8 @@ FullCalendarModule.registerPlugins([
     MatDatepickerModule,
     MatNativeDateModule,
     NgxMaterialTimepickerModule,
-    EditorModule
+    EditorModule,
+    MatStepperModule
   ],
   providers: [DocumentService,
     AuthService, MatDatepickerModule,
