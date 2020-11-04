@@ -108,6 +108,7 @@ import { PropuestasComponent } from './propuestas/propuestas.component';
 import {MatStepperModule} from '@angular/material/stepper';
 
 
+
 FullCalendarModule.registerPlugins([
   dayGridPlugin,
   timeGridPlugin,
