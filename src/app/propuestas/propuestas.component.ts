@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
 
 @Component({
   selector: 'app-propuestas',
@@ -31,14 +32,20 @@ export class PropuestasComponent implements OnInit {
   public ipcDataSource: MatTableDataSource<any>;
   public reajusteDisplayedColumns: string[] = [];
 
+  public singleTramoAdminSindicatoSelected: boolean;
+  public singleTramoTrabajadoresSindicatoSelected: boolean;
 
   //Tramos administrativos sindicato
+  public tramosAdminSindicatoList: any[] = [{ opcion: "Un tramo" }, { opcion: "Más de un tramo" }];
+  public tramoAdminSelected: string;
   public tramosAdminSindicatoDataSource: MatTableDataSource<any>;
   public tramosAdminSindicato: any[] = [];
   public columnasTramosAdminSindicato: string[] = ["inicio", "fin", "eliminar"];
   public tramosAdminSindicatoGuardados: boolean;
 
   //Tramos trabajadores sindicato
+  public tramosTrabajadoresSindicatoList: any[] = [{ opcion: "Un tramo" }, { opcion: "Más de un tramo" }];
+  public tramoTrabajadoresSindicatoSelected: string;
   public tramosTrabajadoresSindicatoDataSource: MatTableDataSource<any>;
   public tramosTrabajadoresSindicato: any[] = [];
   public columnasTramosTrabajadoresSindicato: string[] = ["inicio", "fin", "eliminar"];
@@ -46,14 +53,20 @@ export class PropuestasComponent implements OnInit {
 
 
   public columnasReajustes: string[] = ["Pos", "inicio", "fin", "año", "reajuste"];
+  public columnasReajustesSingle: string[] = ["año", "reajuste"];
 
   //Reajustes administrativos sindicato
   public reajusteAdminSindicatoDataSource: MatTableDataSource<any>;
   public reajustesAdminSindicato: any[] = [];
 
+  public reajustesAdminSindicatoSingleDataSource: MatTableDataSource<any>;
+  public reajustesAdminSindicatoSingle: any[] = [];
+
   //Reajustes trabajadores sindicato
   public reajusteTrabajadoresSindicatoDataSource: MatTableDataSource<any>;
   public reajustesTrabajadoresSindicato: any[] = [];
+  public reajustesTrabajadoresSindicatoSingleDataSource: MatTableDataSource<any>;
+  public reajustesTrabajadoresSindicatoSingle: any[] = [];
 
   public columnasCategorias: string[] = ["Nombre", "Cantidad miembros", "sueldo base", "eliminar"];
   public columnasCategoriasTrabajadores: string[] = ["Nombre", "Cantidad miembros", "sueldo base", "eliminar"];
@@ -189,6 +202,39 @@ export class PropuestasComponent implements OnInit {
     this.tramosAdminSindicato.push(tramo);
     this.tramosAdminSindicatoDataSource = new MatTableDataSource<any>(this.tramosAdminSindicato);
   }
+
+  selectTramoAdminSindicato() {
+
+
+    if (this.tramoAdminSelected == "Un tramo") {
+
+      this.singleTramoAdminSindicatoSelected = true;
+
+
+    }
+    else {
+      this.singleTramoAdminSindicatoSelected = false;
+    }
+
+
+  }
+
+  selectTramoTrabajadoresSindicato() {
+
+
+    if (this.tramoTrabajadoresSindicatoSelected == "Un tramo") {
+
+      this.singleTramoTrabajadoresSindicatoSelected = true;
+
+
+    }
+    else {
+      this.singleTramoTrabajadoresSindicatoSelected = false;
+    }
+
+
+  }
+
   /**
    * Funcion para agregar una columna a la tabla tramos de trabajadores desde sindicato
    */
@@ -278,6 +324,8 @@ export class PropuestasComponent implements OnInit {
     //inicializacion de arreglos de reajustes sindicato
     this.reajustesAdminSindicato = [];
     this.reajustesTrabajadoresSindicato = [];
+    this.reajustesAdminSindicatoSingle = [];
+    this.reajustesTrabajadoresSindicatoSingle = [];
 
     //Validación para tramos de los administrativos
 
@@ -290,6 +338,14 @@ export class PropuestasComponent implements OnInit {
       }
 
     }
+    console.log("single tramo admin sindicato selected:", this.singleTramoAdminSindicatoSelected)
+    if (this.singleTramoAdminSindicatoSelected == true) {
+
+      this.tramosAdminSindicatoGuardados = true;
+
+    }
+
+
     console.log("tramos guardados: ", this.tramosAdminSindicatoGuardados)
     if (this.tramosAdminSindicatoGuardados == true) {
       for (let i = 0; i < this.ipcs.length; i++) {
@@ -305,24 +361,42 @@ export class PropuestasComponent implements OnInit {
         console.log("paso 2 completo")
         this.paso2Completo = true;
 
-        //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
-        for (let i = 0; i < this.listaAños.length; i++) {
+        if (this.singleTramoAdminSindicatoSelected == true) {
 
-          for (let j = 0; j < this.tramosAdminSindicato.length; j++) {
+          for (let i = 0; i < this.listaAños.length; i++) {
 
-            var reajuste = {
-              pos: j + 1,
-              inicio: this.tramosAdminSindicato[j].inicio,
-              final: this.tramosAdminSindicato[j].final,
+            var reajusteSingle = {
               anio: this.listaAños[i],
               reajuste: ""
             }
-            this.reajustesAdminSindicato.push(reajuste);
+            this.reajustesAdminSindicatoSingle.push(reajusteSingle);
 
           }
+          this.reajustesAdminSindicatoSingleDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicatoSingle);
+
         }
-        console.log("reajuste tabla: ", this.reajustesAdminSindicato)
-        this.reajusteAdminSindicatoDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicato);
+        else {
+          //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
+          for (let i = 0; i < this.listaAños.length; i++) {
+
+            for (let j = 0; j < this.tramosAdminSindicato.length; j++) {
+
+              var reajuste = {
+                pos: j + 1,
+                inicio: this.tramosAdminSindicato[j].inicio,
+                final: this.tramosAdminSindicato[j].final,
+                anio: this.listaAños[i],
+                reajuste: ""
+              }
+              this.reajustesAdminSindicato.push(reajuste);
+
+            }
+          }
+          console.log("reajuste tabla: ", this.reajustesAdminSindicato)
+          this.reajusteAdminSindicatoDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicato);
+        }
+
+
       }
       else {
         this.paso2Completo = false;
@@ -343,31 +417,53 @@ export class PropuestasComponent implements OnInit {
         }
 
       }
+      if (this.singleTramoTrabajadoresSindicatoSelected == true) {
+        this.tramosTrabajadoresSindicatoGuardados = true;
+
+      }
       console.log("tramos guardados: ", this.tramosTrabajadoresSindicatoGuardados)
       if (this.tramosTrabajadoresSindicatoGuardados == true) {
 
         console.log("paso 2 completo")
         this.paso2CompletoCompleto = true;
-        for (let i = 0; i < this.listaAños.length; i++) {
 
-          for (let j = 0; j < this.tramosTrabajadoresSindicato.length; j++) {
+        if (this.singleTramoTrabajadoresSindicatoSelected) {
 
-            var reajuste = {
-              pos: j + 1,
-              inicio: this.tramosTrabajadoresSindicato[j].inicio,
-              final: this.tramosTrabajadoresSindicato[j].final,
+          for (let i = 0; i < this.listaAños.length; i++) {
+
+            var reajusteSingle = {
               anio: this.listaAños[i],
               reajuste: ""
             }
-            this.reajustesTrabajadoresSindicato.push(reajuste);
+            this.reajustesTrabajadoresSindicatoSingle.push(reajusteSingle);
 
           }
+          this.reajustesTrabajadoresSindicatoSingleDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicatoSingle);
+
+
         }
-        console.log("reajuste tabla: ", this.reajustesTrabajadoresSindicato)
-        this.reajusteTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicato);
+        else {
 
+          //se crean los reajustes para los trabajadores desde sindicato
+          for (let i = 0; i < this.listaAños.length; i++) {
 
+            for (let j = 0; j < this.tramosTrabajadoresSindicato.length; j++) {
 
+              var reajuste = {
+                pos: j + 1,
+                inicio: this.tramosTrabajadoresSindicato[j].inicio,
+                final: this.tramosTrabajadoresSindicato[j].final,
+                anio: this.listaAños[i],
+                reajuste: ""
+              }
+              this.reajustesTrabajadoresSindicato.push(reajuste);
+
+            }
+          }
+          console.log("reajuste tabla: ", this.reajustesTrabajadoresSindicato)
+          this.reajusteTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicato);
+
+        }
 
       }
       else {
@@ -375,8 +471,6 @@ export class PropuestasComponent implements OnInit {
       }
 
     }
-
-
 
   }
 
@@ -537,7 +631,15 @@ export class PropuestasComponent implements OnInit {
     }
 
     //Llamado a las funciones para el calculo de los datos de la propuesta
-    this.calculoReajusteAño(this.propuestaAdminSindicato, this.reajustesAdminSindicato);
+    console.log("single tramo admin sindicato selected: ",this.singleTramoAdminSindicatoSelected)
+    if (this.singleTramoAdminSindicatoSelected == true) {
+      console.log("entrando en calculo...");
+      this.calculoReajusteSimple(this.propuestaAdminSindicato, this.reajustesAdminSindicatoSingle);
+    }
+    else {
+      this.calculoReajusteAño(this.propuestaAdminSindicato, this.reajustesAdminSindicato);
+    }
+
     this.calculoMes1(this.propuestaAdminSindicato);
     this.calculoIPCMarzo(this.propuestaAdminSindicato, this.ipcs);
     this.calculoMes2(this.propuestaAdminSindicato);
@@ -574,8 +676,17 @@ export class PropuestasComponent implements OnInit {
 
     }
 
+    console.log("single tramo trabajadores sindicato selected: ", this.singleTramoTrabajadoresSindicatoSelected)
 
-    this.calculoReajusteAño(this.propuestaTrabajadorSindicato, this.reajustesTrabajadoresSindicato);
+    if (this.singleTramoTrabajadoresSindicatoSelected == true) {
+
+      this.calculoReajusteSimple(this.propuestaTrabajadorSindicato, this.reajustesTrabajadoresSindicatoSingle);
+    }
+    else {
+      this.calculoReajusteAño(this.propuestaTrabajadorSindicato, this.reajustesTrabajadoresSindicato);
+    }
+
+
     this.calculoMes1(this.propuestaTrabajadorSindicato)
     this.calculoIPCMarzo(this.propuestaTrabajadorSindicato, this.ipcs);
     this.calculoMes2(this.propuestaTrabajadorSindicato);
@@ -610,6 +721,23 @@ export class PropuestasComponent implements OnInit {
     }
     console.log("nueva propuesta con reajustes: ", propuesta)
 
+  }
+
+  calculoReajusteSimple(propuesta: any[], reajuste: any[]) {
+    console.log("a punto de calcular..");
+    for (let i = 0; i < propuesta.length; i++) {
+      for (let j = 0; j < reajuste.length; j++) {
+
+        if (propuesta[i].anio == reajuste[j].anio) {
+
+          propuesta[i].reajuste = propuesta[i].sueldoBase * (reajuste[j].reajuste / 100);
+          console.log("valor reajuste en reajustes: ",reajuste[j].reajuste)
+          console.log("propuesta: ",propuesta);
+        }
+
+      }
+
+    }
   }
 
 

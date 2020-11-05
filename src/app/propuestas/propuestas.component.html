@@ -53,90 +53,118 @@
         <button mat-button (click)="onSiguienteIPC()" class="btn" style="margin-top: 2%;">Siguiente</button>
         -->
 
-                <div *ngIf=" this.mostrarReajustes == true" >
+                <div *ngIf=" this.mostrarReajustes == true">
 
                     <!---Tabla tramos administrativo desde sindicato-->
                     <h2 style="margin-top: 2%;">Tramos de sueldo</h2>
-                    <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;flex-grow: 10px;">
+                    <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
 
                         <div>
 
 
                             <h4 style="margin-top: 2%;">Administrativos</h4>
-                            <table mat-table #tablaIPC *ngIf="mostrarForms == true"
-                                [dataSource]="tramosAdminSindicatoDataSource" class="mat-elevation-z2">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Cantidad mínima de tramos</mat-label>
+                                <mat-select [(ngModel)]="tramoAdminSelected" name="tramosAdminSindicatoList">
+                                    <mat-option (click)="selectTramoAdminSindicato()"
+                                        *ngFor="let tramo of tramosAdminSindicatoList" [value]="tramo.opcion">
+                                        {{tramo.opcion}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div *ngIf="singleTramoAdminSindicatoSelected == false">
+                                <table mat-table #tablaIPC [dataSource]="tramosAdminSindicatoDataSource"
+                                    class="mat-elevation-z2">
 
-                                <ng-container matColumnDef="inicio">
-                                    <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        <mat-form-field>
-                                            <input matInput [(ngModel)]="element.inicio" type="number" min="0">
-                                        </mat-form-field>
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="fin">
-                                    <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        <mat-form-field>
-                                            <input matInput [(ngModel)]="element.final" type="number" min="0">
-                                        </mat-form-field>
-                                    </td>
-                                </ng-container>
+                                    <ng-container matColumnDef="inicio">
+                                        <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.inicio" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="fin">
+                                        <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.final" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
 
-                                <ng-container matColumnDef="eliminar">
-                                    <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
-                                    <td class="eliminar" mat-cell *matCellDef="let element">
-                                        <mat-icon class="delete" (click)="deleteTramoAdminSindicato(element)">delete
-                                        </mat-icon>
-                                    </td>
-                                </ng-container>
+                                    <ng-container matColumnDef="eliminar">
+                                        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                                        <td class="eliminar" mat-cell *matCellDef="let element">
+                                            <mat-icon class="delete" (click)="deleteTramoAdminSindicato(element)">delete
+                                            </mat-icon>
+                                        </td>
+                                    </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="columnasTramosAdminSindicato"></tr>
-                                <tr mat-row *matRowDef="let row; columns: columnasTramosAdminSindicato;"></tr>
-                            </table>
-                            <div style="display: flex;margin-bottom: 1%;">
-                                <button mat-button class="btn-agregar-tramo" style="margin-left: 10%;margin-top: 1%;"
-                                    (click)="onAgregarTramoAdminSindicato()">+</button>
+                                    <tr mat-header-row *matHeaderRowDef="columnasTramosAdminSindicato"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasTramosAdminSindicato;"></tr>
+                                </table>
+                                <div style="display: flex;margin-bottom: 1%;">
+                                    <button mat-button class="btn-agregar-tramo"
+                                        style="margin-left: 10%;margin-top: 1%;"
+                                        (click)="onAgregarTramoAdminSindicato()">+</button>
 
+                                </div>
                             </div>
                         </div>
                         <div>
                             <h4 style="margin-top: 2%;">Trabajadores</h4>
-                            <table mat-table #tablaIPC *ngIf="mostrarForms == true"
-                                [dataSource]="tramosTrabajadoresSindicatoDataSource" class="mat-elevation-z2">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Cantidad mínima de tramos</mat-label>
+                                <mat-select [(ngModel)]="tramoTrabajadoresSindicatoSelected"
+                                    name="tramosTrabajadoresSindicatoList">
+                                    <mat-option (click)="selectTramoTrabajadoresSindicato()"
+                                        *ngFor="let tramo of tramosTrabajadoresSindicatoList" [value]="tramo.opcion">
+                                        {{tramo.opcion}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
 
-                                <ng-container matColumnDef="inicio">
-                                    <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        <mat-form-field>
-                                            <input matInput [(ngModel)]="element.inicio" type="number" min="0">
-                                        </mat-form-field>
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="fin">
-                                    <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        <mat-form-field>
-                                            <input matInput [(ngModel)]="element.final" type="number" min="0">
-                                        </mat-form-field>
-                                    </td>
-                                </ng-container>
+                            <div *ngIf="singleTramoTrabajadoresSindicatoSelected == false">
+                                <table mat-table #tablaIPC [dataSource]="tramosTrabajadoresSindicatoDataSource"
+                                    class="mat-elevation-z2">
 
-                                <ng-container matColumnDef="eliminar">
-                                    <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
-                                    <td class="eliminar" mat-cell *matCellDef="let element">
-                                        <mat-icon class="delete" (click)="deleteTramoTrabajadoresSindicato(element)">
-                                            delete</mat-icon>
-                                    </td>
-                                </ng-container>
+                                    <ng-container matColumnDef="inicio">
+                                        <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.inicio" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="fin">
+                                        <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.final" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="columnasTramosTrabajadoresSindicato"></tr>
-                                <tr mat-row *matRowDef="let row; columns: columnasTramosTrabajadoresSindicato;"></tr>
-                            </table>
-                            <div style="display: flex;margin-bottom: 1%;">
-                                <button mat-button class="btn-agregar-tramo" style="margin-left: 10%;margin-top: 1%;"
-                                    (click)="onAgregarTramoTrabajadoresSindicato()">+</button>
+                                    <ng-container matColumnDef="eliminar">
+                                        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                                        <td class="eliminar" mat-cell *matCellDef="let element">
+                                            <mat-icon class="delete"
+                                                (click)="deleteTramoTrabajadoresSindicato(element)">
+                                                delete</mat-icon>
+                                        </td>
+                                    </ng-container>
 
+                                    <tr mat-header-row *matHeaderRowDef="columnasTramosTrabajadoresSindicato"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasTramosTrabajadoresSindicato;">
+                                    </tr>
+                                </table>
+                                <div style="display: flex;margin-bottom: 1%;">
+                                    <button mat-button class="btn-agregar-tramo"
+                                        style="margin-left: 10%;margin-top: 1%;"
+                                        (click)="onAgregarTramoTrabajadoresSindicato()">+</button>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -156,90 +184,149 @@
                     <h2>Definición de reajustes</h2>
                     <!--Tabla para definir los reajustes de los administrativos del sindicato-->
                     <h4>Administrativos</h4>
-                    <table mat-table #tablaIPC [dataSource]="reajusteAdminSindicatoDataSource" style="width: 60%;">
-                        <ng-container matColumnDef="Pos">
-                            <th mat-header-cell *matHeaderCellDef> Tramo </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.pos}}
-                            </td>
-                        </ng-container>
+                    <div *ngIf="singleTramoAdminSindicatoSelected == false">
+                        <table mat-table #tablaIPC [dataSource]="reajusteAdminSindicatoDataSource" style="width: 60%;">
+                            <ng-container matColumnDef="Pos">
+                                <th mat-header-cell *matHeaderCellDef> Tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.pos}}
+                                </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="inicio">
-                            <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.inicio}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="fin">
-                            <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.final}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="año">
-                            <th mat-header-cell *matHeaderCellDef> Año </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
+                            <ng-container matColumnDef="inicio">
+                                <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.inicio}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="fin">
+                                <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.final}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="reajuste">
-                            <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
 
 
-                        <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
-                    </table>
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
+                        </table>
+                    </div>
 
+                    <!---Tabla de reajuste para administrativo en caso de que solo tenga un tramo-->
+                    <div *ngIf="this.singleTramoAdminSindicatoSelected == true">
+
+                        <table mat-table #tablaIPC [dataSource]="reajustesAdminSindicatoSingleDataSource"
+                            style="width: 60%;">
+
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustesSingle"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustesSingle;"></tr>
+                        </table>
+
+                    </div>
                     <!--Tabla para definir los reajustes de los trabajadores del sindicato-->
                     <h4>Trabajadores</h4>
-                    <table mat-table #tablaIPC [dataSource]="reajusteTrabajadoresSindicatoDataSource"
-                        style="width: 60%;">
-                        <ng-container matColumnDef="Pos">
-                            <th mat-header-cell *matHeaderCellDef> Tramo </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.pos}}
-                            </td>
-                        </ng-container>
+                    <div *ngIf="this.singleTramoTrabajadoresSindicatoSelected == false">
+                        <table mat-table #tablaIPC [dataSource]="reajusteTrabajadoresSindicatoDataSource"
+                            style="width: 60%;">
+                            <ng-container matColumnDef="Pos">
+                                <th mat-header-cell *matHeaderCellDef> Tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.pos}}
+                                </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="inicio">
-                            <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.inicio}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="fin">
-                            <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.final}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="año">
-                            <th mat-header-cell *matHeaderCellDef> Año </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
+                            <ng-container matColumnDef="inicio">
+                                <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.inicio}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="fin">
+                                <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.final}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="reajuste">
-                            <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
 
 
-                        <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
-                    </table>
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
+                        </table>
+
+                    </div>
+
+                    <div *ngIf="this.singleTramoTrabajadoresSindicatoSelected == true">
+                        <table mat-table #tablaIPC [dataSource]="reajustesTrabajadoresSindicatoSingleDataSource"
+                            style="width: 60%;">
+
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustesSingle"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustesSingle;"></tr>
+                        </table>
+                    </div>
 
                     <div style="margin-top: 5%;"></div>
 
@@ -385,7 +472,7 @@
                         <ng-container matColumnDef="sueldo base">
                             <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.sueldoBase}}
+                                {{element.sueldoBase | thousandSeparator}}
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="Año">
@@ -397,27 +484,27 @@
                         <ng-container matColumnDef="Reajuste">
                             <th mat-header-cell *matHeaderCellDef> reajuste </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.reajuste}}
+                                {{element.reajuste | thousandSeparator}}
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="Mes1">
                             <th mat-header-cell *matHeaderCellDef> Enero - Febrero </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.mes1}}
+                                {{element.mes1 | thousandSeparator}}
                             </td>
                         </ng-container>
 
                         <ng-container matColumnDef="IPC Marzo">
                             <th mat-header-cell *matHeaderCellDef> IPC Marzo </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.ipcMarzo}}
+                                {{element.ipcMarzo | thousandSeparator}}
                             </td>
                         </ng-container>
 
                         <ng-container matColumnDef="Mes2">
                             <th mat-header-cell *matHeaderCellDef> Marzo - Diciembre </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.mes2}}
+                                {{element.mes2 | thousandSeparator}}
                             </td>
                         </ng-container>
 
@@ -449,7 +536,8 @@
                         <ng-container matColumnDef="sueldo base">
                             <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.sueldoBase}}
+                                 <!--output '-3' / unlike '-2' by Math.round()-->
+                                {{element.sueldoBase | thousandSeparator}}
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="Año">
@@ -461,27 +549,27 @@
                         <ng-container matColumnDef="Reajuste">
                             <th mat-header-cell *matHeaderCellDef> reajuste </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.reajuste}}
+                                {{element.reajuste | thousandSeparator}}
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="Mes1">
                             <th mat-header-cell *matHeaderCellDef> Enero - Febrero </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.mes1}}
+                                {{element.mes1 | thousandSeparator}}
                             </td>
                         </ng-container>
 
                         <ng-container matColumnDef="IPC Marzo">
                             <th mat-header-cell *matHeaderCellDef> IPC Marzo </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.ipcMarzo}}
+                                {{element.ipcMarzo | thousandSeparator}}
                             </td>
                         </ng-container>
 
                         <ng-container matColumnDef="Mes2">
                             <th mat-header-cell *matHeaderCellDef> Marzo - Diciembre </th>
                             <td mat-cell *matCellDef="let element">
-                                {{element.mes2}}
+                                {{element.mes2 | thousandSeparator}}
                             </td>
                         </ng-container>
 

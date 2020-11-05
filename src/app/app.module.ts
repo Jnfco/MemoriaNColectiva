@@ -106,6 +106,7 @@ import { ModalDetalleEventoSindicatoComponent } from './modal-detalle-evento-sin
 import { ModalDetalleEventoFundacionComponent } from './modal-detalle-evento-fundacion/modal-detalle-evento-fundacion.component';
 import { PropuestasComponent } from './propuestas/propuestas.component';
 import {MatStepperModule} from '@angular/material/stepper';
+import { ThousandSeparatorPipe } from './custom-pipes/thousand-separator.pipe';
 
 
 
@@ -166,7 +167,8 @@ FullCalendarModule.registerPlugins([
     ModalAgregarEventoFundacionComponent,
     ModalDetalleEventoSindicatoComponent,
     ModalDetalleEventoFundacionComponent,
-    PropuestasComponent
+    PropuestasComponent,
+    ThousandSeparatorPipe
 
 
   ],
