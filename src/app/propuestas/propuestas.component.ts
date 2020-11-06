@@ -1,10 +1,14 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { datoPropuesta } from '../shared/Interfaces/Propuesta';
+import * as firebase from 'firebase';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { PropuestaService } from '../services/propuesta.service';
 
 
 @Component({
@@ -85,13 +89,13 @@ export class PropuestasComponent implements OnInit {
   //generación de la propuesta sindicato
   //Prpuesta Administrativo
   public propuestaGenerada: boolean = false;
-  public columnasPropuestaAdminSindicato: string[] = ["Año", "Nombre", "Cantidad miembros", "sueldo base", "Reajuste", "Mes1", "IPC Marzo", "Mes2"];
+  public columnasPropuestaAdminSindicato: string[] = ["Año", "Nombre" ,"sueldo base", "Reajuste", "Mes1", "IPC Marzo", "Mes2"];
   public propuestaAdminSindicatoDataSource: MatTableDataSource<any>;
   public propuestaAdminSindicato: any[] = [];
 
   //Propuesta trabajador
   public propuestaTGenerada: boolean = false;
-  public columnasPropuestaTrabajadorSindicato: string[] = ["Año", "Nombre", "Cantidad miembros", "sueldo base", "Reajuste", "Mes1", "IPC Marzo", "Mes2"];
+  public columnasPropuestaTrabajadorSindicato: string[] = ["Año", "Nombre", "sueldo base", "Reajuste", "Mes1", "IPC Marzo", "Mes2"];
   public propuestaTrabajadorSindicatoDataSource: MatTableDataSource<any>;
   public propuestaTrabajadorSindicato: any[] = [];
 
@@ -106,10 +110,34 @@ export class PropuestasComponent implements OnInit {
   public paso2CompletoCompleto: boolean = false;
   public paso3Completo: boolean = false;
 
+  //Atributos para obtener el id del sindicato del usuario conectado
+  public userId: any;
+  public idSindicato: string;
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder) { }
+
+  //Resumen y comparativa de las propuestas
+
+  //Propuesta de sindicato
+
+  public resumenPropuestaAdminSindicatoDataSource: MatTableDataSource<any>;
+  public resumenPropuestaTrabajadoresSindicatoDataSource: MatTableDataSource<any>;
+  public columnasPropuestaSindicato: string[] =["Categoria","cantMiembros","Año","Sueldo"];
+
+  //Elementos para el resumen de sindicato
+
+  public resumenPropuestaAdminSindicato: any [];
+  public resumenPropuestaTrabajadoresSindicato: any [];
+  
+
+  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder,public db: AngularFirestore,private propSvc:PropuestaService) { }
 
   ngOnInit(): void {
+    this.userId = firebase.auth().currentUser.uid;
+    this.getIdSindicato();
+    setTimeout(()=>{
+      this.generarResumen();
+    },1000)
+
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
     });
@@ -631,7 +659,7 @@ export class PropuestasComponent implements OnInit {
     }
 
     //Llamado a las funciones para el calculo de los datos de la propuesta
-    console.log("single tramo admin sindicato selected: ",this.singleTramoAdminSindicatoSelected)
+    console.log("single tramo admin sindicato selected: ", this.singleTramoAdminSindicatoSelected)
     if (this.singleTramoAdminSindicatoSelected == true) {
       console.log("entrando en calculo...");
       this.calculoReajusteSimple(this.propuestaAdminSindicato, this.reajustesAdminSindicatoSingle);
@@ -731,8 +759,8 @@ export class PropuestasComponent implements OnInit {
         if (propuesta[i].anio == reajuste[j].anio) {
 
           propuesta[i].reajuste = propuesta[i].sueldoBase * (reajuste[j].reajuste / 100);
-          console.log("valor reajuste en reajustes: ",reajuste[j].reajuste)
-          console.log("propuesta: ",propuesta);
+          console.log("valor reajuste en reajustes: ", reajuste[j].reajuste)
+          console.log("propuesta: ", propuesta);
         }
 
       }
@@ -773,6 +801,158 @@ export class PropuestasComponent implements OnInit {
       propuestas[i].mes2 = propuestas[i].mes1 + propuestas[i].ipcMarzo;
 
     }
+  }
+
+  guardarPropuestaSindicato() {
+
+    //crear propuesta de administrativos para guardar
+    var datosPropuestaAdmin: datoPropuesta[] = [];
+    var datosPropuestaTrab: datoPropuesta[] = [];
+    var fechaHoy = new Date(Date.now());
+    var añoACtual = moment(fechaHoy).format("YYYY");
+    var añoI = Number(añoACtual);
+
+    //añadir datos para el año actual con las categorias
+
+    for (let i = 0; i < this.categoriasAdmin.length; i++) {
+      
+      var datoAño0AdminSindicato:datoPropuesta = {
+        categoria:this.categoriasAdmin[i].nombre,
+        anio:añoI,
+        cantMiembros:this.categoriasAdmin[i].cantidadMiembros,
+        ipc:0,
+        mes1:0,
+        mes2:this.categoriasAdmin[i].sueldoBase,
+        reajuste:0,
+        sueldoBase:0
+
+      }
+      datosPropuestaAdmin.push(datoAño0AdminSindicato);
+      
+    }
+
+    //Datos despues del año actual para la propuesta
+    for (let i = 0; i < this.propuestaAdminSindicato.length; i++) {
+
+
+      var datoPropuestaA: datoPropuesta = {
+
+        anio: this.propuestaAdminSindicato[i].anio,
+        categoria: this.propuestaAdminSindicato[i].nombre,
+        cantMiembros: this.propuestaAdminSindicato[i].cantidadMiembros,
+        sueldoBase: this.propuestaAdminSindicato[i].sueldoBase,
+        mes1: this.propuestaAdminSindicato[i].mes1,
+        ipc: this.propuestaAdminSindicato[i].ipcMarzo,
+        mes2: this.propuestaAdminSindicato[i].mes2,
+        reajuste: this.propuestaAdminSindicato[i].reajuste
+      }
+      datosPropuestaAdmin.push(datoPropuestaA);
+
+
+    }
+
+    //datos para propuesta de trabajadores 
+
+//datos para el año actual en la propuesta
+    for (let i = 0; i < this.categoriasTrabajadores.length; i++) {
+      
+      var datoAño0TrabajadorSindicato:datoPropuesta = {
+        categoria:this.categoriasTrabajadores[i].nombre,
+        anio:añoI,
+        cantMiembros:this.categoriasTrabajadores[i].cantidadMiembros,
+        ipc:0,
+        mes1:0,
+        mes2:this.categoriasTrabajadores[i].sueldoBase,
+        reajuste:0,
+        sueldoBase:0
+
+      }
+      datosPropuestaTrab.push(datoAño0TrabajadorSindicato);
+      
+    }
+
+    //Datos despues del año actual para la propuesta
+    for (let i = 0; i < this.propuestaTrabajadorSindicato.length; i++) {
+
+      var datoPropuestaT: datoPropuesta = {
+
+        anio: this.propuestaTrabajadorSindicato[i].anio,
+        categoria: this.propuestaTrabajadorSindicato[i].nombre,
+        cantMiembros: this.propuestaTrabajadorSindicato[i].cantidadMiembros,
+        sueldoBase: this.propuestaTrabajadorSindicato[i].sueldoBase,
+        mes1: this.propuestaTrabajadorSindicato[i].mes1,
+        ipc: this.propuestaTrabajadorSindicato[i].ipcMarzo,
+        mes2: this.propuestaTrabajadorSindicato[i].mes2,
+        reajuste: this.propuestaTrabajadorSindicato[i].reajuste
+      }
+      datosPropuestaTrab.push(datoPropuestaT);
+    }
+    
+
+    //llamar al servicio para crear la propuesta en la basae de datos
+    this.propSvc.guardarPropuestaSindicato(this.idSindicato,datosPropuestaAdmin,datosPropuestaTrab,this.idSindicato);
+
+  }
+
+  getIdSindicato() {
+
+    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
+
+      if (snapshotChanges.data().isAdmin == true) {
+
+        this.idSindicato = this.userId;
+
+      }
+      else {
+        this.idSindicato = snapshotChanges.data().idOrg;
+      }
+    })
+  }
+
+  //Funciones para el resumen y comparativas de las propuestas
+
+
+  generarResumen(){
+
+    this.resumenPropuestaAdminSindicato = [];
+    this.resumenPropuestaTrabajadoresSindicato = [];
+
+console.log("id sindicato:",this.idSindicato)
+    //añadir datos al resumen del admin desde sindicato
+    this.db.collection("Propuesta").doc(this.idSindicato).get().subscribe((snapshotChanges)=>{
+
+      if(snapshotChanges.exists){
+
+          snapshotChanges.data().datosAdminPropuesta.forEach(element => {
+
+            var datoResumen = {
+              anio: element.anio,
+              categoria:element.categoria,
+              cantMiembros:element.cantMiembros,
+              sueldo:element.mes2
+            }
+            this.resumenPropuestaAdminSindicato.push(datoResumen);
+            
+          });
+
+          this.resumenPropuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminSindicato);
+
+          snapshotChanges.data().datosTrabPropuesta.forEach(element => {
+
+            var datoResumenT = {
+              anio: element.anio,
+              categoria:element.categoria,
+              cantMiembros:element.cantMiembros,
+              sueldo:element.mes2
+            }
+            this.resumenPropuestaTrabajadoresSindicato.push(datoResumenT);
+            
+          });
+          this.resumenPropuestaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresSindicato);
+
+      }
+    })
+
   }
 
 }

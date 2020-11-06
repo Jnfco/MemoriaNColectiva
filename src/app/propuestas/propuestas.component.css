@@ -13,3 +13,20 @@ background-color: #730800;
     ::ng-deep .mat-step-header .mat-step-icon-selected{
       background-color:  #730800; 
    }
+   .th-center{
+    text-align: center;
+}
+
+
+
+.mat-row {
+  height: auto;
+}
+
+.mat-cell {
+  padding: 8px 8px 8px 0;
+}
+
+.tablas-propuestas{
+  width: 100%;
+}
