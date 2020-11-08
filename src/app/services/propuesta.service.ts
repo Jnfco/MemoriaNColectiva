@@ -11,12 +11,15 @@ export class PropuestaService {
 
 
 
-  guardarPropuestaSindicato(idSindicato:string,datosPropAdmin:datoPropuesta[],datosPropTrab:datoPropuesta[],id:string){
+  guardarPropuestaSindicato(idSindicato:string,datosPropAdmin:datoPropuesta[],datosPropTrab:datoPropuesta[],id:string,añosVigencia:number[],categoriasAdmin:string[],categoriasTrab:string[]){
 
     var propuesta: Propuesta ={
       idSindicato:idSindicato,
       datosAdminPropuesta:datosPropAdmin,
-      datosTrabPropuesta:datosPropTrab
+      datosTrabPropuesta:datosPropTrab,
+      aniosVigencia:añosVigencia,
+      categoriasAdmin: categoriasAdmin,
+      categoriasTrab:categoriasTrab
     }
 
     const propuestaRef:AngularFirestoreDocument<any> = this.db.doc(

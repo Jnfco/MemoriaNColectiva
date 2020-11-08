@@ -15,5 +15,8 @@ export class Propuesta {
     idSindicato: string;
     datosAdminPropuesta: datoPropuesta[];
     datosTrabPropuesta: datoPropuesta[];
+    aniosVigencia: number[];
+    categoriasAdmin:string[];
+    categoriasTrab:string[];
 }
 
