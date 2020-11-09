@@ -28,5 +28,14 @@ background-color: #730800;
 }
 
 .tablas-propuestas{
+  
+  width: 20%;
+}
+
+.trabajadores-tabla{
+  width: 20%;
+}
+
+.tablas-resumen{
   width: 100%;
 }

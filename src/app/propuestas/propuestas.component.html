@@ -590,15 +590,595 @@
 
         </div>
     </mat-tab>
-    <mat-tab label="Propuesta Empresa"></mat-tab>
+    <mat-tab label="Propuesta Empresa">
+        <mat-horizontal-stepper linear=true>
+            <ng-template matStepperIcon="edit">
+                <mat-icon>done</mat-icon>
+            </ng-template>
+            <mat-step label="Definición de años vigencia" [completed]="vigenciaEmpresaFormControl.valid">
+
+                <mat-card-header style="margin-top: 2%;">
+                    <mat-card-title>Años de vigencia contrato</mat-card-title>
+                </mat-card-header>
+                <form>
+                    <!--
+            <mat-form-field>
+                <mat-label>Nombre cargo</mat-label>
+
+                <input matInput placeholder="Cargo" name="Cargo" [formControl]="administrativoFormControl">
+            </mat-form-field>
+            -->
+                    <mat-form-field style="margin-left: 7%;">
+
+                        <input type="number" matInput [formControl]="vigenciaEmpresaFormControl" min="0" required>
+                    </mat-form-field>
+                    <button style="margin-left: 5%;" class="btn" mat-flat-button (click)="onAceptarDatosEmpresa()"
+                        matStepperNext>Aceptar</button>
+                </form>
+
+            </mat-step>
+            <mat-step label="IPC proyectado y definición de tramos" [completed]="paso2CompletoEmpresa== true ">
+                <h2>IPC Proyectado</h2>
+                <table mat-table #tablaIPC [dataSource]="ipcDataSourceEmpresa" class="mat-elevation-z2">
+                    <ng-container matColumnDef="Año">
+                        <th mat-header-cell *matHeaderCellDef> Año </th>
+                        <td mat-cell *matCellDef="let element">
+                            <mat-form-field>
+                                <input matInput [(ngModel)]="element.anio" type="number" min="0">
+                            </mat-form-field>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="IPCProyectado">
+                        <th mat-header-cell *matHeaderCellDef> IPC Proyectado %</th>
+                        <td mat-cell *matCellDef="let element">
+                            <mat-form-field>
+                                <input matInput [(ngModel)]="element.proyeccion" type="number" min="0" required>
+                            </mat-form-field>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="columnasIPC"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnasIPC;"></tr>
+                </table>
+                <!--
+        <button mat-button (click)="onSiguienteIPC()" class="btn" style="margin-top: 2%;">Siguiente</button>
+        -->
+
+                <div *ngIf=" this.mostrarReajustesEmpresa == true">
+
+                    <!---Tabla tramos administrativo desde sindicato-->
+                    <h2 style="margin-top: 2%;">Tramos de sueldo</h2>
+                    <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
+
+                        <div>
+
+
+                            <h4 style="margin-top: 2%;">Administrativos</h4>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Cantidad mínima de tramos</mat-label>
+                                <mat-select [(ngModel)]="tramoAdminSelectedEmpresa" name="tramosAdminEmpresaList">
+                                    <mat-option (click)="selectTramoAdminEmpresa()"
+                                        *ngFor="let tramo of tramosAdminEmpresaList" [value]="tramo.opcion">
+                                        {{tramo.opcion}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div *ngIf="singleTramoAdminEmpresaSelected == false">
+                                <table mat-table #tablaIPC [dataSource]="tramosAdminEmpresaDataSource"
+                                    class="mat-elevation-z2">
+
+                                    <ng-container matColumnDef="inicio">
+                                        <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.inicio" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="fin">
+                                        <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.final" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="eliminar">
+                                        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                                        <td class="eliminar" mat-cell *matCellDef="let element">
+                                            <mat-icon class="delete" (click)="deleteTramoAdminEmpresa(element)">delete
+                                            </mat-icon>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="columnasTramosAdminEmpresa"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasTramosAdminEmpresa;"></tr>
+                                </table>
+                                <div style="display: flex;margin-bottom: 1%;">
+                                    <button mat-button class="btn-agregar-tramo"
+                                        style="margin-left: 10%;margin-top: 1%;"
+                                        (click)="onAgregarTramoAdminEmpresa()">+</button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="margin-top: 2%;">Trabajadores</h4>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Cantidad mínima de tramos</mat-label>
+                                <mat-select [(ngModel)]="tramoTrabajadoresEmpresaSelected"
+                                    name="tramosTrabajadoresEmpresaList">
+                                    <mat-option (click)="selectTramoTrabajadoresEmpresa()"
+                                        *ngFor="let tramo of tramosTrabajadoresEmpresaList" [value]="tramo.opcion">
+                                        {{tramo.opcion}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <div *ngIf="singleTramoTrabajadoresEmpresaSelected == false">
+                                <table mat-table #tablaIPC [dataSource]="tramosTrabajadoresEmpresaDataSource"
+                                    class="mat-elevation-z2">
+
+                                    <ng-container matColumnDef="inicio">
+                                        <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.inicio" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="fin">
+                                        <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="element.final" type="number" min="0">
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="eliminar">
+                                        <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                                        <td class="eliminar" mat-cell *matCellDef="let element">
+                                            <mat-icon class="delete"
+                                                (click)="deleteTramoTrabajadoresEmpresa(element)">
+                                                delete</mat-icon>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="columnasTramosTrabajadoresEmpresa"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasTramosTrabajadoresEmpresa;">
+                                    </tr>
+                                </table>
+                                <div style="display: flex;margin-bottom: 1%;">
+                                    <button mat-button class="btn-agregar-tramo"
+                                        style="margin-left: 10%;margin-top: 1%;"
+                                        (click)="onAgregarTramoTrabajadoresEmpresa()">+</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button mat-button (click)="onGuardarPaso2Empresa()" style="margin-top: 1%; margin-left: 1%;"
+                        class="btn">Guardar datos</button>
+                    <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                            matStepperPrevious>Anterior</button>
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                            matStepperNext>Siguiente</button>
+                    </div>
+                </div>
+            </mat-step>
+            <mat-step label="Cálculo de propuesta" [completed]="this.paso3CompletoEmpresa == true">
+                <div *ngIf="this.tramosAdminEmpresaGuardados == true" style="margin-top: 5%;">
+
+                    <h2>Definición de reajustes</h2>
+                    <!--Tabla para definir los reajustes de los administrativos del sindicato-->
+                    <h4>Administrativos</h4>
+                    <div *ngIf="singleTramoAdminEmpresaSelected == false">
+                        <table mat-table #tablaIPC [dataSource]="reajusteAdminEmpresaDataSource" style="width: 60%;">
+                            <ng-container matColumnDef="Pos">
+                                <th mat-header-cell *matHeaderCellDef> Tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.pos}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="inicio">
+                                <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.inicio | thousandSeparator}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="fin">
+                                <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.final | thousandSeparator}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
+                        </table>
+                    </div>
+
+                    <!---Tabla de reajuste para administrativo en caso de que solo tenga un tramo-->
+                    <div *ngIf="this.singleTramoAdminEmpresaSelected == true">
+
+                        <table mat-table #tablaIPC [dataSource]="reajustesAdminEmpresaSingleDataSource"
+                            style="width: 60%;">
+
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustesSingle"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustesSingle;"></tr>
+                        </table>
+
+                    </div>
+                    <!--Tabla para definir los reajustes de los trabajadores del sindicato-->
+                    <h4>Trabajadores</h4>
+                    <div *ngIf="this.singleTramoTrabajadoresEmpresaSelected == false">
+                        <table mat-table #tablaIPC [dataSource]="reajusteTrabajadoresEmpresaDataSource"
+                            style="width: 60%;">
+                            <ng-container matColumnDef="Pos">
+                                <th mat-header-cell *matHeaderCellDef> Tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.pos}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="inicio">
+                                <th mat-header-cell *matHeaderCellDef> Inicio tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.inicio | thousandSeparator}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="fin">
+                                <th mat-header-cell *matHeaderCellDef> Fin tramo </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.final | thousandSeparator}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustes"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustes;"></tr>
+                        </table>
+
+                    </div>
+
+                    <div *ngIf="this.singleTramoTrabajadoresEmpresaSelected == true">
+                        <table mat-table #tablaIPC [dataSource]="reajustesTrabajadoresEmpresaSingleDataSource"
+                            style="width: 60%;">
+
+                            <ng-container matColumnDef="año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reajuste">
+                                <th mat-header-cell *matHeaderCellDef> Valor reajuste % </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-form-field>
+                                        <input matInput [(ngModel)]="element.reajuste" type="number" min="0">
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+
+                            <tr mat-header-row *matHeaderRowDef="columnasReajustesSingle"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasReajustesSingle;"></tr>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 5%;"></div>
+
+
+                </div>
+                <div *ngIf=" this.tramosAdminEmpresaGuardados == true">
+
+                    <h2>Cálculo de la propuesta</h2>
+
+                    <h4>Administrativos</h4>
+
+                    <table mat-table #tablaIPC [dataSource]="categoriasAdminDataSourceEmpresa" style="width: 60%;">
+
+
+                        <ng-container matColumnDef="Nombre">
+                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="element.nombre">
+
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Cantidad miembros">
+                            <th mat-header-cell *matHeaderCellDef> Cantidad miembros </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="element.cantidadMiembros" type="number" min="0">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="sueldo base">
+                            <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="element.sueldoBase" type="number" min="0">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="eliminar">
+                            <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                            <td class="eliminar" mat-cell *matCellDef="let element">
+                                <mat-icon class="delete" (click)="deleteCategoriasAdminEmpresa(element)">delete</mat-icon>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnasCategorias"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasCategorias;"></tr>
+                    </table>
+                    <div style="margin-left: 20%;margin-top: 1%; width: 10%;">
+                        <button mat-button class="btn" (click)="onAgregarCategoriaAdminEmpresa()">+</button>
+
+                    </div>
+
+
+                    <!---Tabla para la propuesta de los trabajadores-->
+
+                    <h4>Trabajadores</h4>
+
+
+                    <table mat-table #tablaIPC [dataSource]="categoriasTrabajadoresDataSourceEmpresa" style="width: 60%;">
+
+
+                        <ng-container matColumnDef="Nombre">
+                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="element.nombre">
+
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Cantidad miembros">
+                            <th mat-header-cell *matHeaderCellDef> Cantidad miembros </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="element.cantidadMiembros" type="number" min="0">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="sueldo base">
+                            <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="element.sueldoBase" type="number" min="0">
+                                </mat-form-field>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="eliminar">
+                            <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
+                            <td class="eliminar" mat-cell *matCellDef="let element">
+                                <mat-icon class="delete" (click)="deleteCategoriasTrabajadoresEmpresa(element)">delete
+                                </mat-icon>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnasCategoriasTrabajadores"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasCategoriasTrabajadores;"></tr>
+                    </table>
+                    <div style="margin-left: 20%;margin-top: 1%; width: 10%;">
+                        <button mat-button class="btn" (click)="onAgregarCategoriaTrabajadoresEmpresa()">+</button>
+
+                    </div>
+
+                    <div style="margin-bottom: 5%;">
+                        <button mat-button (click)="generarPropuestaEmpresa()"
+                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar datos</button>
+                    </div>
+
+                    <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                            matStepperPrevious>Anterior</button>
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                            matStepperNext>Siguiente</button>
+                    </div>
+
+                </div>
+
+            </mat-step>
+            <mat-step label="Propuesta generada" completed=false>
+                <div *ngIf="this.propuestaGeneradaEmpresa == true" style="margin-bottom: 10%;">
+                    <!---Tabla propuesta para los administrativos desde el sindicato-->
+                    <h2 style="margin-top: 2%;">Propuesta Administrativos</h2>
+                    <table mat-table #tablaIPC [dataSource]="propuestaAdminEmpresaDataSource" style="width: 60%;">
+
+                        <ng-container matColumnDef="Nombre">
+                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.nombre}}
+                            </td>
+                        </ng-container>
+
+
+                        <ng-container matColumnDef="sueldo base">
+                            <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.sueldoBase | thousandSeparator}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Año">
+                            <th mat-header-cell *matHeaderCellDef> Año </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.anio}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Reajuste">
+                            <th mat-header-cell *matHeaderCellDef> reajuste </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.reajuste | thousandSeparator}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Mes1">
+                            <th mat-header-cell *matHeaderCellDef> Enero - Febrero </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.mes1 | thousandSeparator}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="IPC Marzo">
+                            <th mat-header-cell *matHeaderCellDef> IPC Marzo </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.ipcMarzo | thousandSeparator}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Mes2">
+                            <th mat-header-cell *matHeaderCellDef> Marzo - Diciembre </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.mes2 | thousandSeparator}}
+                            </td>
+                        </ng-container>
+
+
+
+                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaAdminEmpresa"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaAdminEmpresa;"></tr>
+                    </table>
+
+                    <!--Tabla de la propuesta de los trabajadores por parte del sindicato-->
+                    <h2 style="margin-top: 2%;">Propuesta Trabajadores</h2>
+
+                    <table mat-table #tablaIPC [dataSource]="propuestaTrabajadorEmpresaDataSource"
+                        style="width: 60%;">
+
+                        <ng-container matColumnDef="Nombre">
+                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.nombre}}
+                            </td>
+                        </ng-container>
+
+
+                        <ng-container matColumnDef="sueldo base">
+                            <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
+                            <td mat-cell *matCellDef="let element">
+                                <!--output '-3' / unlike '-2' by Math.round()-->
+                                {{element.sueldoBase | thousandSeparator}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Año">
+                            <th mat-header-cell *matHeaderCellDef> Año </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.anio}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Reajuste">
+                            <th mat-header-cell *matHeaderCellDef> reajuste </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.reajuste | thousandSeparator}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Mes1">
+                            <th mat-header-cell *matHeaderCellDef> Enero - Febrero </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.mes1 | thousandSeparator}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="IPC Marzo">
+                            <th mat-header-cell *matHeaderCellDef> IPC Marzo </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.ipcMarzo | thousandSeparator}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Mes2">
+                            <th mat-header-cell *matHeaderCellDef> Marzo - Diciembre </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.mes2 | thousandSeparator}}
+                            </td>
+                        </ng-container>
+
+
+
+                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaTrabajadorEmpresa"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaTrabajadorEmpresa;"></tr>
+                    </table>
+                </div>
+                <div>
+                    <button mat-button class="btn" (click)="guardarPropuestaEmpresa()">Finalizar y guardar
+                        propuesta</button>
+                </div>
+            </mat-step>
+
+        </mat-horizontal-stepper>
+
+
+
+    </mat-tab>
     <mat-tab label="Resumen y comparativa propuestas">
         <div style="margin-top: 2%;">
             <h2>Resumen propuesta del sindicato</h2>
             <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
                 <div style="margin-top: 5%;">
                     <h4>Administrativos</h4>
-                    <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                        [dataSource]="resumenPropuestaAdminSindicatoDataSource" class="mat-elevation-z2">
+                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                        [dataSource]="resumenPropuestaAdminSindicatoDataSource">
                         <ng-container matColumnDef="Categoria">
                             <th mat-header-cell *matHeaderCellDef> Categoría </th>
                             <td mat-cell *matCellDef="let element">
@@ -631,8 +1211,8 @@
                 </div>
                 <div>
                     <h4>Trabajadores</h4>
-                    <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                        [dataSource]="resumenPropuestaTrabajadoresSindicatoDataSource" class="mat-elevation-z2">
+                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                        [dataSource]="resumenPropuestaTrabajadoresSindicatoDataSource">
                         <ng-container matColumnDef="Categoria">
                             <th mat-header-cell *matHeaderCellDef> Categoría </th>
                             <td mat-cell *matCellDef="let element">
@@ -641,7 +1221,7 @@
                         </ng-container>
 
                         <ng-container matColumnDef="cantMiembros">
-                            <th mat-header-cell *matHeaderCellDef> Cantidad de miembros</th>
+                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
                             <td mat-cell *matCellDef="let element">
                                 {{element.cantMiembros}}
                             </td>
@@ -665,11 +1245,43 @@
                 </div>
 
 
-                <!--Tablas comparativas del sindicato -->
-                <div>
-                    <h4>Administrativo</h4>
-                    <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                        [dataSource]="comparativaAdminSindicatoDataSource" class="mat-elevation-z2">
+
+
+            </div>
+            <!--Tablas comparativas del sindicato -->
+
+            <div style="margin-bottom: 10%;margin-top: 2%;">
+                <h2>Datos comparativa</h2>
+                <h3>Sindicato</h3>
+                <h4>Administrativo</h4>
+                <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                    [dataSource]="comparativaAdminSindicatoDataSource">
+                    <ng-container matColumnDef="Año">
+                        <th mat-header-cell *matHeaderCellDef> Año </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.anio}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Categoria">
+                        <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.categoria}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Incremento">
+                        <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.incremento}}
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
+                </table>
+                <div style="margin-top: 3%;">
+                    <h4>Trabajadores</h4>
+                    <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
+                        [dataSource]="comparativaTrabajadoresSindicatoDataSource">
                         <ng-container matColumnDef="Año">
                             <th mat-header-cell *matHeaderCellDef> Año </th>
                             <td mat-cell *matCellDef="let element">
@@ -692,9 +1304,144 @@
                         <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
                         <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!---Resumen y comparativa de la empresa-->
+        <div style="margin-top: 2%;">
+            <h2>Resumen propuesta de la empresa</h2>
+            <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
+                <div style="margin-top: 5%;">
+                    <h4>Administrativos</h4>
+                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                        [dataSource]="resumenPropuestaAdminEmpresaDataSource">
+                        <ng-container matColumnDef="Categoria">
+                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.categoria}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="cantMiembros">
+                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.cantMiembros}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Año">
+                            <th mat-header-cell *matHeaderCellDef> Año</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.anio}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Sueldo">
+                            <th mat-header-cell *matHeaderCellDef> Sueldo</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.sueldo | thousandSeparator}}
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaEmpresa"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaEmpresa;"></tr>
+                    </table>
+
+                </div>
+                <div>
+                    <h4>Trabajadores</h4>
+                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                        [dataSource]="resumenPropuestaTrabajadoresEmpresaDataSource">
+                        <ng-container matColumnDef="Categoria">
+                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.categoria}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="cantMiembros">
+                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.cantMiembros}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Año">
+                            <th mat-header-cell *matHeaderCellDef> Año</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.anio}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Sueldo">
+                            <th mat-header-cell *matHeaderCellDef> Sueldo</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.sueldo | thousandSeparator}}
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaEmpresa"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaEmpresa;"></tr>
+                    </table>
 
                 </div>
 
+
+
+
+            </div>
+            <!--Tablas comparativas de la empresa -->
+
+            <div style="margin-bottom: 10%;margin-top: 2%;">
+                <h2>Datos comparativa</h2>
+                <h3>Sindicato</h3>
+                <h4>Administrativo</h4>
+                <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                    [dataSource]="comparativaAdminEmpresaDataSource">
+                    <ng-container matColumnDef="Año">
+                        <th mat-header-cell *matHeaderCellDef> Año </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.anio}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Categoria">
+                        <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.categoria}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Incremento">
+                        <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.incremento}}
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
+                </table>
+                <div style="margin-top: 3%;">
+                    <h4>Trabajadores</h4>
+                    <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
+                        [dataSource]="comparativaTrabajadoresEmpresaDataSource">
+                        <ng-container matColumnDef="Año">
+                            <th mat-header-cell *matHeaderCellDef> Año </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.anio}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Categoria">
+                            <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.categoria}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Incremento">
+                            <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.incremento}}
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
+                    </table>
+                </div>
             </div>
         </div>
     </mat-tab>

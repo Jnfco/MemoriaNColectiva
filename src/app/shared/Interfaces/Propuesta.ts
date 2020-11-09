@@ -16,7 +16,12 @@ export class Propuesta {
     datosAdminPropuesta: datoPropuesta[];
     datosTrabPropuesta: datoPropuesta[];
     aniosVigencia: number[];
-    categoriasAdmin:string[];
-    categoriasTrab:string[];
+    categoriasAdminSindicato:string[];
+    categoriasTrabSindicato:string[];
+    categoriasAdminEmpresa:string[];
+    categoriasTrabEmpresa:string[];
+    esSindicato:boolean;
+    datosAdminEmpresaPropuesta:datoPropuesta[];
+    datosTrabEmpresaPropuesta:datoPropuesta[];
 }
 
