@@ -4,7 +4,7 @@
             <ng-template matStepperIcon="edit">
                 <mat-icon>done</mat-icon>
             </ng-template>
-            <mat-step label="Definición de años vigencia" [completed]="vigenciaFormControl.valid">
+            <mat-step label="Definición de años vigencia" [completed]="vigenciaFormControl.valid && vigenciaFormControl.value >0">
 
                 <mat-card-header style="margin-top: 2%;">
                     <mat-card-title>Años de vigencia contrato</mat-card-title>
@@ -166,7 +166,7 @@
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn" (click)="onGuardarPaso2()"
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn" [disabled] ="this.paso2Completo == false"
                             matStepperNext>Siguiente</button>
                     </div>
                 </div>
@@ -588,7 +588,7 @@
             <ng-template matStepperIcon="edit">
                 <mat-icon>done</mat-icon>
             </ng-template>
-            <mat-step label="Definición de años vigencia" [completed]="vigenciaEmpresaFormControl.valid">
+            <mat-step label="Definición de años vigencia" [completed]="vigenciaEmpresaFormControl.valid && vigenciaEmpresaFormControl.value >0">
 
                 <mat-card-header style="margin-top: 2%;">
                     <mat-card-title>Años de vigencia contrato</mat-card-title>
@@ -756,7 +756,7 @@
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn" [disabled]="this.paso2CompletoEmpresa == false"
                             matStepperNext>Siguiente</button>
                     </div>
                 </div>

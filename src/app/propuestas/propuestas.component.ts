@@ -276,7 +276,7 @@ export class PropuestasComponent implements OnInit {
   public listaDeAñosEmpresa: string[] = [];
 
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService,private snackbar: MatSnackBar) { }
+  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
@@ -304,70 +304,75 @@ export class PropuestasComponent implements OnInit {
 
   onAceptarDatos() {
 
-    if(!this.vigenciaFormControl.valid){
+    
+    if (!this.vigenciaFormControl.valid || this.vigenciaFormControl.value == 0) {
 
-      this.snackbar.open("No se han ingresado años para la vigencia del contrato",'',{
+      this.snackbar.open("No se han ingresado años válidos para la vigencia del contrato", '', {
         duration: 3000,
-        verticalPosition:'bottom'
+        verticalPosition: 'bottom'
       });
 
 
     }
-    this.mostrarForms = true;
-    this.ipcs = [];
-    //Encontrar el año actual
-    var fechaHoy = new Date(Date.now());
-    var añoACtual = moment(fechaHoy).format("YYYY");
-    var añoI = Number(añoACtual) + 1;
-    this.listaAños = [];
-    for (let i = 0; i < this.vigenciaFormControl.value; i++) {
+    else {
+
+      this.mostrarForms = true;
+      this.ipcs = [];
+      //Encontrar el año actual
+      var fechaHoy = new Date(Date.now());
+      var añoACtual = moment(fechaHoy).format("YYYY");
+      var añoI = Number(añoACtual) + 1;
+      this.listaAños = [];
+      for (let i = 0; i < this.vigenciaFormControl.value; i++) {
 
 
 
-      var ipc = {
-        anio: añoI,
-        proyeccion: 0
+        var ipc = {
+          anio: añoI,
+          proyeccion: 0
+        }
+
+        this.ipcs.push(ipc);
+        this.listaAños.push(añoI);
+        añoI++;
+      }
+      this.ipcDataSource = new MatTableDataSource<any>(this.ipcs);
+
+      this.mostrarReajustes = true;
+      // inicializar la tabla de tramos administrativos sindicato
+
+      console.log("valores ipc: ", this.ipcs)
+      this.tramosAdminSindicato = [];
+
+      var tramo = {
+        nombre: "",
+        inicio: 0,
+        final: 0
       }
 
-      this.ipcs.push(ipc);
-      this.listaAños.push(añoI);
-      añoI++;
+      this.tramosAdminSindicato.push(tramo);
+      this.tramosAdminSindicatoDataSource = new MatTableDataSource<any>(this.tramosAdminSindicato);
+
+      // inicializar la tabla de tramos Trabajadores sindicato
+      this.tramosTrabajadoresSindicato = [];
+
+      var tramo = {
+        nombre: "",
+        inicio: 0,
+        final: 0
+      }
+
+      this.tramosTrabajadoresSindicato.push(tramo);
+      this.tramosTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.tramosTrabajadoresSindicato);
+
+
+
+
+      //Se llama a la funcion para crear y rellenar la tabla de categorias
+      this.crearTablaCategoriasAdmin();
+      this.crearTablaCategoriasTrabajadores();
+
     }
-    this.ipcDataSource = new MatTableDataSource<any>(this.ipcs);
-
-    this.mostrarReajustes = true;
-    // inicializar la tabla de tramos administrativos sindicato
-
-    console.log("valores ipc: ", this.ipcs)
-    this.tramosAdminSindicato = [];
-
-    var tramo = {
-      nombre: "",
-      inicio: 0,
-      final: 0
-    }
-
-    this.tramosAdminSindicato.push(tramo);
-    this.tramosAdminSindicatoDataSource = new MatTableDataSource<any>(this.tramosAdminSindicato);
-
-    // inicializar la tabla de tramos Trabajadores sindicato
-    this.tramosTrabajadoresSindicato = [];
-
-    var tramo = {
-      nombre: "",
-      inicio: 0,
-      final: 0
-    }
-
-    this.tramosTrabajadoresSindicato.push(tramo);
-    this.tramosTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.tramosTrabajadoresSindicato);
-
-
-
-
-    //Se llama a la funcion para crear y rellenar la tabla de categorias
-    this.crearTablaCategoriasAdmin();
-    this.crearTablaCategoriasTrabajadores();
 
 
 
@@ -503,7 +508,7 @@ export class PropuestasComponent implements OnInit {
    */
   onGuardarPaso2() {
 
-    this.ipcsCompletados = true;
+    //this.ipcsCompletados = true;
 
     this.tramosAdminSindicatoGuardados = true;
     this.tramosTrabajadoresSindicatoGuardados = true;
@@ -514,149 +519,160 @@ export class PropuestasComponent implements OnInit {
     this.reajustesAdminSindicatoSingle = [];
     this.reajustesTrabajadoresSindicatoSingle = [];
 
-    //Validación para tramos de los administrativos
+    this.paso2Completo = true;
 
-    for (let i = 0; i < this.tramosAdminSindicato.length; i++) {
+    //Primero validar la tabla de ipcs
 
-      if (this.tramosAdminSindicato.length == 0 || this.tramosAdminSindicato[i].inicio == null || this.tramosAdminSindicato[i].final == null || this.tramosAdminSindicato[i].final == 0) {
+    for (let i = 0; i < this.ipcs.length; i++) {
+      console.log("proyeccion ipc: ", this.ipcs[i])
+      if (this.ipcs[i].proyeccion <= 0 || this.ipcs[i].proyeccion == null) {
 
-        this.tramosAdminSindicatoGuardados = false;
-
-      }
-
-    }
-    console.log("single tramo admin sindicato selected:", this.singleTramoAdminSindicatoSelected)
-    if (this.singleTramoAdminSindicatoSelected == true) {
-
-      this.tramosAdminSindicatoGuardados = true;
-
-    }
-
-
-    console.log("tramos guardados: ", this.tramosAdminSindicatoGuardados)
-    if (this.tramosAdminSindicatoGuardados == true) {
-      for (let i = 0; i < this.ipcs.length; i++) {
-        console.log("proyeccion ipc: ", this.ipcs[i])
-        if (this.ipcs[i].proyeccion <= 0) {
-
-          this.ipcsCompletados = false;
-        }
-
-      }
-      console.log("ipcs completados: ", this.ipcsCompletados)
-      if (this.ipcsCompletados == true && this.tramosAdminSindicatoGuardados == true) {
-        console.log("paso 2 completo")
-        this.paso2Completo = true;
-
-        if (this.singleTramoAdminSindicatoSelected == true) {
-
-          for (let i = 0; i < this.listaAños.length; i++) {
-
-            var reajusteSingle = {
-              anio: this.listaAños[i],
-              reajuste: ""
-            }
-            this.reajustesAdminSindicatoSingle.push(reajusteSingle);
-
-          }
-          this.reajustesAdminSindicatoSingleDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicatoSingle);
-
-        }
-        else {
-          //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
-          for (let i = 0; i < this.listaAños.length; i++) {
-
-            for (let j = 0; j < this.tramosAdminSindicato.length; j++) {
-
-              var reajuste = {
-                pos: j + 1,
-                inicio: this.tramosAdminSindicato[j].inicio,
-                final: this.tramosAdminSindicato[j].final,
-                anio: this.listaAños[i],
-                reajuste: ""
-              }
-              this.reajustesAdminSindicato.push(reajuste);
-
-            }
-          }
-          console.log("reajuste tabla: ", this.reajustesAdminSindicato)
-          this.reajusteAdminSindicatoDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicato);
-        }
-
-
-      }
-      else {
         this.paso2Completo = false;
       }
 
+    }
+    //Validar el largo
+    if (this.ipcs.length == 0) {
+
+      this.paso2Completo = false;
 
     }
 
+    // se verifica si es que se ha seleccionado o no una opcion para los tramos 
+    if (this.singleTramoAdminSindicatoSelected == undefined || this.singleTramoTrabajadoresSindicatoSelected == undefined) {
+      this.paso2Completo = false;
 
-    //validacion para tramos de trabajadores desde sindicato 
-    if (this.paso2Completo == true) {
+    }
+    //Validación para tramos de los administrativos
+    //primero se pregunta si es un tramo multi o simple
+    //si es simple entonces se hacen las comprobaciones correspondiente, en caso contrario se saltan
+    if (this.singleTramoAdminSindicatoSelected == false) {
+
+      if (this.tramosAdminSindicato.length == 0) {
+        this.paso2Completo = false;
+      }
+
+      for (let i = 0; i < this.tramosAdminSindicato.length; i++) {
+
+        if (this.tramosAdminSindicato[i].inicio == null || this.tramosAdminSindicato[i].final == null || this.tramosAdminSindicato[i].final == 0) {
+
+          this.paso2Completo = false;
+
+        }
+
+      }
+    }
+
+
+    //Ahora se realizan las mismas validaciones para el caso de los tramos de los trabajadores 
+
+    //primero se pregunta si es un tramo multi o simple
+    //si es simple entonces se hacen las comprobaciones correspondiente, en caso contrario se saltan
+    if (this.singleTramoTrabajadoresSindicatoSelected == false) {
+
+      if (this.tramosTrabajadoresSindicato.length == 0) {
+        this.paso2Completo = false;
+      }
+
       for (let i = 0; i < this.tramosTrabajadoresSindicato.length; i++) {
 
-        if (this.tramosTrabajadoresSindicato.length == 0 || this.tramosTrabajadoresSindicato[i].inicio == null || this.tramosTrabajadoresSindicato[i].final == null || this.tramosTrabajadoresSindicato[i].final == 0) {
+        if (this.tramosTrabajadoresSindicato[i].inicio == null || this.tramosTrabajadoresSindicato[i].final == null || this.tramosTrabajadoresSindicato[i].final == 0) {
 
-          this.tramosTrabajadoresSindicatoGuardados = false;
+          this.paso2Completo = false;
 
         }
 
       }
-      if (this.singleTramoTrabajadoresSindicatoSelected == true) {
-        this.tramosTrabajadoresSindicatoGuardados = true;
+    }
 
-      }
-      console.log("tramos guardados: ", this.tramosTrabajadoresSindicatoGuardados)
-      if (this.tramosTrabajadoresSindicatoGuardados == true) {
+    //Luego de verificar los campos se procede a crear las tablas siguientes 
+    //primero se pregunta si es que los campos fueron ya completados
+    if (this.paso2Completo == true) {
 
-        console.log("paso 2 completo")
-        this.paso2CompletoCompleto = true;
+      //Luego se pregunta si el tramo de admin es uno o mas
 
-        if (this.singleTramoTrabajadoresSindicatoSelected) {
+      if (this.singleTramoAdminSindicatoSelected == true) {
 
-          for (let i = 0; i < this.listaAños.length; i++) {
+        for (let i = 0; i < this.listaAños.length; i++) {
 
-            var reajusteSingle = {
-              anio: this.listaAños[i],
-              reajuste: ""
-            }
-            this.reajustesTrabajadoresSindicatoSingle.push(reajusteSingle);
-
+          var reajusteSingle = {
+            anio: this.listaAños[i],
+            reajuste: ""
           }
-          this.reajustesTrabajadoresSindicatoSingleDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicatoSingle);
-
+          this.reajustesAdminSindicatoSingle.push(reajusteSingle);
 
         }
-        else {
-
-          //se crean los reajustes para los trabajadores desde sindicato
-          for (let i = 0; i < this.listaAños.length; i++) {
-
-            for (let j = 0; j < this.tramosTrabajadoresSindicato.length; j++) {
-
-              var reajuste = {
-                pos: j + 1,
-                inicio: this.tramosTrabajadoresSindicato[j].inicio,
-                final: this.tramosTrabajadoresSindicato[j].final,
-                anio: this.listaAños[i],
-                reajuste: ""
-              }
-              this.reajustesTrabajadoresSindicato.push(reajuste);
-
-            }
-          }
-          console.log("reajuste tabla: ", this.reajustesTrabajadoresSindicato)
-          this.reajusteTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicato);
-
-        }
+        this.reajustesAdminSindicatoSingleDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicatoSingle);
 
       }
       else {
-        this.paso2Completo = false;
+        //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
+        for (let i = 0; i < this.listaAños.length; i++) {
+
+          for (let j = 0; j < this.tramosAdminSindicato.length; j++) {
+
+            var reajuste = {
+              pos: j + 1,
+              inicio: this.tramosAdminSindicato[j].inicio,
+              final: this.tramosAdminSindicato[j].final,
+              anio: this.listaAños[i],
+              reajuste: ""
+            }
+            this.reajustesAdminSindicato.push(reajuste);
+
+          }
+        }
+        this.reajusteAdminSindicatoDataSource = new MatTableDataSource<any>(this.reajustesAdminSindicato);
       }
 
+      //Luego se crean las tablas para los trabajadores
+      //Validando primero si es que es tramo simple o multi
+
+      if (this.singleTramoTrabajadoresSindicatoSelected) {
+
+        for (let i = 0; i < this.listaAños.length; i++) {
+
+          var reajusteSingle = {
+            anio: this.listaAños[i],
+            reajuste: ""
+          }
+          this.reajustesTrabajadoresSindicatoSingle.push(reajusteSingle);
+
+        }
+        this.reajustesTrabajadoresSindicatoSingleDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicatoSingle);
+
+
+      }
+      else {
+
+        //se crean los reajustes para los trabajadores desde sindicato
+        for (let i = 0; i < this.listaAños.length; i++) {
+
+          for (let j = 0; j < this.tramosTrabajadoresSindicato.length; j++) {
+
+            var reajuste = {
+              pos: j + 1,
+              inicio: this.tramosTrabajadoresSindicato[j].inicio,
+              final: this.tramosTrabajadoresSindicato[j].final,
+              anio: this.listaAños[i],
+              reajuste: ""
+            }
+            this.reajustesTrabajadoresSindicato.push(reajuste);
+
+          }
+        }
+        console.log("reajuste tabla: ", this.reajustesTrabajadoresSindicato)
+        this.reajusteTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresSindicato);
+
+      }
+
+    }
+    //Si no se completa el paso 2 correctamente, entonces se muestra el mensaje de que faltan datos
+    else {
+      this.snackbar.open("No se puede avanzar al siguiente paso, porfavor revise los datos faltantes", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
     }
 
   }
@@ -1349,67 +1365,70 @@ export class PropuestasComponent implements OnInit {
 
 
   //A continuacion estarán los métodos correspondientes a la propuesta del lado de la empresa
-
-
   onAceptarDatosEmpresa() {
 
-    this.mostrarFormsEmpresa = true;
-    this.ipcsEmpresa = [];
-    //Encontrar el año actual
-    var fechaHoy = new Date(Date.now());
-    var añoACtual = moment(fechaHoy).format("YYYY");
-    var añoI = Number(añoACtual) + 1;
-    this.listaAñosEmpresa = [];
-    for (let i = 0; i < this.vigenciaEmpresaFormControl.value; i++) {
+    if (!this.vigenciaEmpresaFormControl.valid || this.vigenciaEmpresaFormControl.value == 0) {
 
+      this.snackbar.open("No se han ingresado años válidos para la vigencia del contrato", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
 
+    }
+    else {
+      this.mostrarFormsEmpresa = true;
+      this.ipcsEmpresa = [];
+      //Encontrar el año actual
+      var fechaHoy = new Date(Date.now());
+      var añoACtual = moment(fechaHoy).format("YYYY");
+      var añoI = Number(añoACtual) + 1;
+      this.listaAñosEmpresa = [];
+      for (let i = 0; i < this.vigenciaEmpresaFormControl.value; i++) {
 
-      var ipc = {
-        anio: añoI,
-        proyeccion: 0
+        var ipc = {
+          anio: añoI,
+          proyeccion: 0
+        }
+
+        this.ipcsEmpresa.push(ipc);
+        this.listaAñosEmpresa.push(añoI);
+        añoI++;
+      }
+      this.ipcDataSourceEmpresa = new MatTableDataSource<any>(this.ipcsEmpresa);
+
+      this.mostrarReajustesEmpresa = true;
+      // inicializar la tabla de tramos administrativos empresa
+
+      console.log("valores ipc: ", this.ipcsEmpresa)
+      this.tramosAdminEmpresa = [];
+
+      var tramo = {
+        nombre: "",
+        inicio: 0,
+        final: 0
       }
 
-      this.ipcsEmpresa.push(ipc);
-      this.listaAñosEmpresa.push(añoI);
-      añoI++;
+      this.tramosAdminEmpresa.push(tramo);
+      this.tramosAdminEmpresaDataSource = new MatTableDataSource<any>(this.tramosAdminEmpresa);
+
+      // inicializar la tabla de tramos Trabajadores empresa
+      this.tramosTrabajadoresEmpresa = [];
+
+      var tramo = {
+        nombre: "",
+        inicio: 0,
+        final: 0
+      }
+
+      this.tramosTrabajadoresEmpresa.push(tramo);
+      this.tramosTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.tramosTrabajadoresEmpresa);
+
+
+      //Se llama a la funcion para crear y rellenar la tabla de categorias
+      this.crearTablaCategoriasAdminEmpresa();
+      this.crearTablaCategoriasTrabajadoresEmpresa();
+
     }
-    this.ipcDataSourceEmpresa = new MatTableDataSource<any>(this.ipcsEmpresa);
-
-    this.mostrarReajustesEmpresa = true;
-    // inicializar la tabla de tramos administrativos empresa
-
-    console.log("valores ipc: ", this.ipcsEmpresa)
-    this.tramosAdminEmpresa = [];
-
-    var tramo = {
-      nombre: "",
-      inicio: 0,
-      final: 0
-    }
-
-    this.tramosAdminEmpresa.push(tramo);
-    this.tramosAdminEmpresaDataSource = new MatTableDataSource<any>(this.tramosAdminEmpresa);
-
-    // inicializar la tabla de tramos Trabajadores empresa
-    this.tramosTrabajadoresEmpresa = [];
-
-    var tramo = {
-      nombre: "",
-      inicio: 0,
-      final: 0
-    }
-
-    this.tramosTrabajadoresEmpresa.push(tramo);
-    this.tramosTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.tramosTrabajadoresEmpresa);
-
-
-
-
-    //Se llama a la funcion para crear y rellenar la tabla de categorias
-    this.crearTablaCategoriasAdminEmpresa();
-    this.crearTablaCategoriasTrabajadoresEmpresa();
-
-
 
   }
 
@@ -1417,8 +1436,6 @@ export class PropuestasComponent implements OnInit {
   * Funcion para guardar el estado del segundo paso en el calculo de propuestas, por el lado de la empresa
   */
   onGuardarPaso2Empresa() {
-
-    this.ipcsCompletadosEmpresa = true;
 
     this.tramosAdminEmpresaGuardados = true;
     this.tramosTrabajadoresEmpresaGuardados = true;
@@ -1429,149 +1446,160 @@ export class PropuestasComponent implements OnInit {
     this.reajustesAdminEmpresaSingle = [];
     this.reajustesTrabajadoresEmpresaSingle = [];
 
-    //Validación para tramos de los administrativos
+    this.paso2CompletoEmpresa = true;
 
-    for (let i = 0; i < this.tramosAdminEmpresa.length; i++) {
+    //Primero validar la tabla de ipcs
 
-      if (this.tramosAdminEmpresa.length == 0 || this.tramosAdminEmpresa[i].inicio == null || this.tramosAdminEmpresa[i].final == null || this.tramosAdminEmpresa[i].final == 0) {
+    for (let i = 0; i < this.ipcsEmpresa.length; i++) {
+      console.log("proyeccion ipc: ", this.ipcsEmpresa[i])
+      if (this.ipcsEmpresa[i].proyeccion <= 0 || this.ipcsEmpresa[i].proyeccion == null) {
 
-        this.tramosAdminEmpresaGuardados = false;
-
-      }
-
-    }
-    console.log("single tramo admin sindicato selected:", this.singleTramoAdminEmpresaSelected)
-    if (this.singleTramoAdminEmpresaSelected == true) {
-
-      this.tramosAdminEmpresaGuardados = true;
-
-    }
-
-
-    console.log("tramos guardados: ", this.tramosAdminEmpresaGuardados)
-    if (this.tramosAdminEmpresaGuardados == true) {
-      for (let i = 0; i < this.ipcsEmpresa.length; i++) {
-        console.log("proyeccion ipc: ", this.ipcsEmpresa[i])
-        if (this.ipcsEmpresa[i].proyeccion <= 0) {
-
-          this.ipcsCompletadosEmpresa = false;
-        }
-
-      }
-      console.log("ipcs completados: ", this.ipcsCompletadosEmpresa)
-      if (this.ipcsCompletadosEmpresa == true && this.tramosAdminEmpresaGuardados == true) {
-        console.log("paso 2 completo")
-        this.paso2CompletoEmpresa = true;
-
-        if (this.singleTramoAdminEmpresaSelected == true) {
-
-          for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
-
-            var reajusteSingle = {
-              anio: this.listaAñosEmpresa[i],
-              reajuste: ""
-            }
-            this.reajustesAdminEmpresaSingle.push(reajusteSingle);
-
-          }
-          this.reajustesAdminEmpresaSingleDataSource = new MatTableDataSource<any>(this.reajustesAdminEmpresaSingle);
-
-        }
-        else {
-          //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
-          for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
-
-            for (let j = 0; j < this.tramosAdminEmpresa.length; j++) {
-
-              var reajuste = {
-                pos: j + 1,
-                inicio: this.tramosAdminEmpresa[j].inicio,
-                final: this.tramosAdminEmpresa[j].final,
-                anio: this.listaAñosEmpresa[i],
-                reajuste: ""
-              }
-              this.reajustesAdminEmpresa.push(reajuste);
-
-            }
-          }
-          console.log("reajuste tabla: ", this.reajustesAdminEmpresa)
-          this.reajusteAdminEmpresaDataSource = new MatTableDataSource<any>(this.reajustesAdminEmpresa);
-        }
-
-
-      }
-      else {
         this.paso2CompletoEmpresa = false;
       }
 
+    }
+    //Validar el largo
+    if (this.ipcsEmpresa.length == 0) {
+
+      this.paso2CompletoEmpresa = false;
 
     }
 
+    // se verifica si es que se ha seleccionado o no una opcion para los tramos 
+    if (this.singleTramoAdminEmpresaSelected == undefined || this.singleTramoTrabajadoresEmpresaSelected == undefined) {
+      this.paso2CompletoEmpresa = false;
 
-    //validacion para tramos de trabajadores desde sindicato 
-    if (this.paso2CompletoEmpresa == true) {
+    }
+    //Validación para tramos de los administrativos
+    //primero se pregunta si es un tramo multi o simple
+    //si es simple entonces se hacen las comprobaciones correspondiente, en caso contrario se saltan
+    if (this.singleTramoAdminEmpresaSelected == false) {
+
+      if (this.tramosAdminEmpresa.length == 0) {
+        this.paso2CompletoEmpresa = false;
+      }
+
+      for (let i = 0; i < this.tramosAdminEmpresa.length; i++) {
+
+        if (this.tramosAdminEmpresa[i].inicio == null || this.tramosAdminEmpresa[i].final == null || this.tramosAdminEmpresa[i].final == 0) {
+
+          this.paso2CompletoEmpresa = false;
+
+        }
+
+      }
+    }
+
+
+    //Ahora se realizan las mismas validaciones para el caso de los tramos de los trabajadores 
+
+    //primero se pregunta si es un tramo multi o simple
+    //si es simple entonces se hacen las comprobaciones correspondiente, en caso contrario se saltan
+    if (this.singleTramoTrabajadoresEmpresaSelected == false) {
+
+      if (this.tramosTrabajadoresEmpresa.length == 0) {
+        this.paso2CompletoEmpresa = false;
+      }
+
       for (let i = 0; i < this.tramosTrabajadoresEmpresa.length; i++) {
 
-        if (this.tramosTrabajadoresEmpresa.length == 0 || this.tramosTrabajadoresEmpresa[i].inicio == null || this.tramosTrabajadoresEmpresa[i].final == null || this.tramosTrabajadoresEmpresa[i].final == 0) {
+        if (this.tramosTrabajadoresEmpresa[i].inicio == null || this.tramosTrabajadoresEmpresa[i].final == null || this.tramosTrabajadoresEmpresa[i].final == 0) {
 
-          this.tramosTrabajadoresEmpresaGuardados = false;
+          this.paso2CompletoEmpresa = false;
 
         }
 
       }
-      if (this.singleTramoTrabajadoresEmpresaSelected == true) {
-        this.tramosTrabajadoresEmpresaGuardados = true;
+    }
 
-      }
-      console.log("tramos guardados: ", this.tramosTrabajadoresEmpresaGuardados)
-      if (this.tramosTrabajadoresEmpresaGuardados == true) {
+    //Luego de verificar los campos se procede a crear las tablas siguientes 
+    //primero se pregunta si es que los campos fueron ya completados
+    if (this.paso2CompletoEmpresa == true) {
 
-        console.log("paso 2 completo")
-        this.paso2CompletoCompletoEmpresa = true;
+      //Luego se pregunta si el tramo de admin es uno o mas
 
-        if (this.singleTramoTrabajadoresEmpresaSelected) {
+      if (this.singleTramoAdminEmpresaSelected == true) {
 
-          for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
 
-            var reajusteSingle = {
-              anio: this.listaAñosEmpresa[i],
-              reajuste: ""
-            }
-            this.reajustesTrabajadoresEmpresaSingle.push(reajusteSingle);
-
+          var reajusteSingle = {
+            anio: this.listaAñosEmpresa[i],
+            reajuste: ""
           }
-          this.reajustesTrabajadoresEmpresaSingleDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresEmpresaSingle);
-
+          this.reajustesAdminEmpresaSingle.push(reajusteSingle);
 
         }
-        else {
-
-          //se crean los reajustes para los trabajadores desde sindicato
-          for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
-
-            for (let j = 0; j < this.tramosTrabajadoresEmpresa.length; j++) {
-
-              var reajuste = {
-                pos: j + 1,
-                inicio: this.tramosTrabajadoresEmpresa[j].inicio,
-                final: this.tramosTrabajadoresEmpresa[j].final,
-                anio: this.listaAñosEmpresa[i],
-                reajuste: ""
-              }
-              this.reajustesTrabajadoresEmpresa.push(reajuste);
-
-            }
-          }
-          console.log("reajuste tabla: ", this.reajustesTrabajadoresEmpresa)
-          this.reajusteTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresEmpresa);
-
-        }
+        this.reajustesAdminEmpresaSingleDataSource = new MatTableDataSource<any>(this.reajustesAdminEmpresaSingle);
 
       }
       else {
-        this.paso2CompletoEmpresa = false;
+        //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
+        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+
+          for (let j = 0; j < this.tramosAdminEmpresa.length; j++) {
+
+            var reajuste = {
+              pos: j + 1,
+              inicio: this.tramosAdminEmpresa[j].inicio,
+              final: this.tramosAdminEmpresa[j].final,
+              anio: this.listaAñosEmpresa[i],
+              reajuste: ""
+            }
+            this.reajustesAdminEmpresa.push(reajuste);
+
+          }
+        }
+        this.reajusteAdminEmpresaDataSource = new MatTableDataSource<any>(this.reajustesAdminEmpresa);
       }
 
+      //Luego se crean las tablas para los trabajadores
+      //Validando primero si es que es tramo simple o multi
+
+      if (this.singleTramoTrabajadoresEmpresaSelected) {
+
+        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+
+          var reajusteSingle = {
+            anio: this.listaAñosEmpresa[i],
+            reajuste: ""
+          }
+          this.reajustesTrabajadoresEmpresaSingle.push(reajusteSingle);
+
+        }
+        this.reajustesTrabajadoresEmpresaSingleDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresEmpresaSingle);
+
+
+      }
+      else {
+
+        //se crean los reajustes para los trabajadores desde sindicato
+        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+
+          for (let j = 0; j < this.tramosTrabajadoresEmpresa.length; j++) {
+
+            var reajuste = {
+              pos: j + 1,
+              inicio: this.tramosTrabajadoresEmpresa[j].inicio,
+              final: this.tramosTrabajadoresEmpresa[j].final,
+              anio: this.listaAñosEmpresa[i],
+              reajuste: ""
+            }
+            this.reajustesTrabajadoresEmpresa.push(reajuste);
+
+          }
+        }
+        console.log("reajuste tabla: ", this.reajustesTrabajadoresEmpresa)
+        this.reajusteTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresEmpresa);
+
+      }
+
+    }
+    //Si no se completa el paso 2 correctamente, entonces se muestra el mensaje de que faltan datos
+    else {
+      this.snackbar.open("No se puede avanzar al siguiente paso, porfavor revise los datos faltantes", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
     }
 
   }
