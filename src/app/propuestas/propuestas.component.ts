@@ -11,6 +11,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { PropuestaService } from '../services/propuesta.service';
 import { snapshotChanges } from '@angular/fire/database';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -26,8 +27,8 @@ export class PropuestasComponent implements OnInit {
 
   //Booleanos para mostrar u ocultar tablas
 
-  public cargarSindicato:boolean;
-  public cargarEmpresa:boolean;
+  public cargarSindicato: boolean;
+  public cargarEmpresa: boolean;
   public listaAuxCatAdminSindicato = [];
   public listaAuxCatTrabSindicato = [];
   public listaAuxCatAdminEmpresa = [];
@@ -104,7 +105,7 @@ export class PropuestasComponent implements OnInit {
   public propuestaAdminSindicatoDataSource: MatTableDataSource<any>;
   public propuestaAdminSindicato: any[] = [];
   public datosPropuestaAdmin: datoPropuesta[] = [];
-  
+
 
   //Propuesta trabajador
   public propuestaTGenerada: boolean = false;
@@ -275,7 +276,7 @@ export class PropuestasComponent implements OnInit {
   public listaDeAñosEmpresa: string[] = [];
 
 
-  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService) { }
+  constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService,private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
@@ -286,12 +287,12 @@ export class PropuestasComponent implements OnInit {
 
     }, 1500)
 
-    setTimeout(()=>{
-      
+    setTimeout(() => {
+
       this.generarComparativaSindicato();
       this.generarComparativaEmpresa();
-    },2000)
-   
+    }, 2000)
+
 
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
@@ -303,6 +304,15 @@ export class PropuestasComponent implements OnInit {
 
   onAceptarDatos() {
 
+    if(!this.vigenciaFormControl.valid){
+
+      this.snackbar.open("No se han ingresado años para la vigencia del contrato",'',{
+        duration: 3000,
+        verticalPosition:'bottom'
+      });
+
+
+    }
     this.mostrarForms = true;
     this.ipcs = [];
     //Encontrar el año actual
@@ -1038,8 +1048,8 @@ export class PropuestasComponent implements OnInit {
     }
 
     // Se crean listas auxiliares para guardar los nombres de las categorias de admin y trabajadores
-     this.listaAuxCatAdminSindicato = [];
-     this.listaAuxCatTrabSindicato = [];
+    this.listaAuxCatAdminSindicato = [];
+    this.listaAuxCatTrabSindicato = [];
 
     // Se recorre las categorias admin y trabajadores y se agrega el nombre a las listas auxiliares
     for (let i = 0; i < this.categoriasAdmin.length; i++) {
@@ -1058,7 +1068,7 @@ export class PropuestasComponent implements OnInit {
     //Generar id aleatoria
 
     //llamar al servicio para crear la propuesta en la basae de datos
-    this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdmin, this.datosPropuestaTrab,this.idSindicato, this.listaAños, this.listaAuxCatAdminSindicato, this.listaAuxCatTrabSindicato, true,this.datosPropuestaAdminEmpresa,this.datosPropuestaTrabEmpresa,this.categoriasAdminEmpresa,this.categoriasTrabajadoresEmpresa);
+    this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdmin, this.datosPropuestaTrab, this.idSindicato, this.listaAños, this.listaAuxCatAdminSindicato, this.listaAuxCatTrabSindicato, true);
 
   }
 
@@ -1084,45 +1094,48 @@ export class PropuestasComponent implements OnInit {
 
     this.resumenPropuestaAdminSindicato = [];
     this.resumenPropuestaTrabajadoresSindicato = [];
-
+    var idSindicatoPropuestaA = this.idSindicato + "A";
     console.log("id sindicato:", this.idSindicato)
     //añadir datos al resumen del admin desde sindicato
-    this.db.collection("Propuesta").doc(this.idSindicato).get().subscribe((snapshotChanges) => {
+
+    this.db.collection("Propuesta").doc(idSindicatoPropuestaA).get().subscribe((snapshotChanges) => {
+
 
       if (snapshotChanges.exists) {
+        snapshotChanges.data().datosAdminPropuesta.forEach(element => {
 
-        
-          snapshotChanges.data().datosAdminPropuesta.forEach(element => {
+          var datoResumen = {
+            anio: element.anio,
+            categoria: element.categoria,
+            cantMiembros: element.cantMiembros,
+            sueldo: element.mes2
+          }
+          this.resumenPropuestaAdminSindicato.push(datoResumen);
 
-            var datoResumen = {
-              anio: element.anio,
-              categoria: element.categoria,
-              cantMiembros: element.cantMiembros,
-              sueldo: element.mes2
-            }
-            this.resumenPropuestaAdminSindicato.push(datoResumen);
+        });
 
-          });
+        this.resumenPropuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminSindicato);
 
-          this.resumenPropuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminSindicato);
+        snapshotChanges.data().datosTrabPropuesta.forEach(element => {
 
-          snapshotChanges.data().datosTrabPropuesta.forEach(element => {
+          var datoResumenT = {
+            anio: element.anio,
+            categoria: element.categoria,
+            cantMiembros: element.cantMiembros,
+            sueldo: element.mes2
+          }
+          this.resumenPropuestaTrabajadoresSindicato.push(datoResumenT);
 
-            var datoResumenT = {
-              anio: element.anio,
-              categoria: element.categoria,
-              cantMiembros: element.cantMiembros,
-              sueldo: element.mes2
-            }
-            this.resumenPropuestaTrabajadoresSindicato.push(datoResumenT);
+        });
+        this.resumenPropuestaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresSindicato);
 
-          });
-          this.resumenPropuestaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresSindicato);
-        
 
 
       }
-    })
+
+
+    });
+
 
   }
 
@@ -1130,178 +1143,179 @@ export class PropuestasComponent implements OnInit {
 
     this.comparativaAdminSindicato = [];
     this.comparativaTrabajadoresSindicato = [];
+    var idSindicatoA = this.idSindicato + "A";
 
     //buscar la lista de las categorias y el año
-    this.db.collection("Propuesta").doc(this.idSindicato).get().subscribe((snapshotChanges) => {
+
+
+    this.db.collection("Propuesta").doc(idSindicatoA).get().subscribe((snapshotChanges) => {
+
+
 
       if (snapshotChanges.exists) {
+        this.listaDeCategoriasAdmin = snapshotChanges.data().categoriasAdmin;
+        this.listaDeCategoriasTrab = snapshotChanges.data().categoriasTrab;
 
-       
-          this.listaDeCategoriasAdmin = snapshotChanges.data().categoriasAdminSindicato;
-          this.listaDeCategoriasTrab = snapshotChanges.data().categoriasTrabSindicato;
-       
-          this.listaDeAños = snapshotChanges.data().aniosVigencia;
-          var catAdmin;
-          var catsAdmin: any[] = [];
-          var sueldos: any[] = [];
+        this.listaDeAños = snapshotChanges.data().aniosVigencia;
+        var catAdmin;
+        var catsAdmin: any[] = [];
+        var sueldos: any[] = [];
 
-          //Calcular los incrementos de los administrativos
-          //Primero se crea una lista con las categorias y sus sueldos asociados
-          for (let i = 0; i < this.listaDeCategoriasAdmin.length; i++) {
-            sueldos = [];
-            catAdmin = [];
-
-        
-            for (let j = 0; j < this.resumenPropuestaAdminSindicato.length; j++) {
-
-              if (this.listaDeCategoriasAdmin[i] == this.resumenPropuestaAdminSindicato[j].categoria) {
-                var sueldoAño = {
-                  anio: this.resumenPropuestaAdminSindicato[j].anio,
-                  sueldo: this.resumenPropuestaAdminSindicato[j].sueldo
-                }
-            
-                sueldos.push(sueldoAño);
+        //Calcular los incrementos de los administrativos
+        //Primero se crea una lista con las categorias y sus sueldos asociados
+        for (let i = 0; i < this.listaDeCategoriasAdmin.length; i++) {
+          sueldos = [];
+          catAdmin = [];
 
 
+          for (let j = 0; j < this.resumenPropuestaAdminSindicato.length; j++) {
+
+            if (this.listaDeCategoriasAdmin[i] == this.resumenPropuestaAdminSindicato[j].categoria) {
+              var sueldoAño = {
+                anio: this.resumenPropuestaAdminSindicato[j].anio,
+                sueldo: this.resumenPropuestaAdminSindicato[j].sueldo
               }
 
-            }
+              sueldos.push(sueldoAño);
 
-            catAdmin = {
-              categoria: this.listaDeCategoriasAdmin[i],
-              sueldos: sueldos
-
-            }
-            catsAdmin.push(catAdmin)
-        
-
-          }
-
-          //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
-          //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
-          //Para el primer valor siempre se considera que será de un incremento 0, condición especial
-     
-          for (let i = 0; i < catsAdmin.length; i++) {
-          
-            for (let j = 0; j < catsAdmin[i].sueldos.length; j++) {
-
-        
-              if (j == 0) {
-
-                var comparativaAdmin = {
-                  categoria: catsAdmin[i].categoria,
-                  anio: catsAdmin[i].sueldos[j].anio,
-                  incremento: 0
-                }
-            
-
-                this.comparativaAdminSindicato.push(comparativaAdmin);
-               
-
-              }
-              else {
-                var comparativaAdmin = {
-
-                  categoria: catsAdmin[i].categoria,
-                  anio: catsAdmin[i].sueldos[j].anio,
-                  incremento: catsAdmin[i].sueldos[j].sueldo - catsAdmin[i].sueldos[j - 1].sueldo
-                }
-                this.comparativaAdminSindicato.push(comparativaAdmin);
-              }
 
             }
 
           }
 
-          //Luego se agregan los datos a la tabla de comparativa del sindicato
-
-          this.comparativaAdminSindicatoDataSource = new MatTableDataSource<any>(this.comparativaAdminSindicato);
-
-    
-          //Ahora se repite el proceso para la comparativa de los trabajadores
-
-
-
-          var catTrab;
-          var catsTrab: any[] = [];
-          var sueldos: any[] = [];
-
-          //Calcular los incrementos de los administrativos
-          //Primero se crea una lista con las categorias y sus sueldos asociados
-          for (let i = 0; i < this.listaDeCategoriasTrab.length; i++) {
-            sueldos = [];
-            catTrab = [];
-
-            for (let j = 0; j < this.resumenPropuestaTrabajadoresSindicato.length; j++) {
-
-              if (this.listaDeCategoriasTrab[i] == this.resumenPropuestaTrabajadoresSindicato[j].categoria) {
-
-                var sueldoAño = {
-                  anio: this.resumenPropuestaTrabajadoresSindicato[j].anio,
-                  sueldo: this.resumenPropuestaTrabajadoresSindicato[j].sueldo
-                }
-
-                sueldos.push(sueldoAño);
-            
-
-
-              }
-
-            }
-
-            catTrab = {
-              categoria: this.listaDeCategoriasTrab[i],
-              sueldos: sueldos
-
-            }
-            catsTrab.push(catTrab)
+          catAdmin = {
+            categoria: this.listaDeCategoriasAdmin[i],
+            sueldos: sueldos
 
           }
+          catsAdmin.push(catAdmin)
 
-     
-          //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
-          //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
-          //Para el primer valor siempre se considera que será de un incremento 0, condición especial
 
-          for (let i = 0; i < catsTrab.length; i++) {
+        }
 
-            for (let j = 0; j < catsTrab[i].sueldos.length; j++) {
+        //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
+        //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
+        //Para el primer valor siempre se considera que será de un incremento 0, condición especial
 
-              if (j == 0) {
+        for (let i = 0; i < catsAdmin.length; i++) {
 
-                var comparativaTrab = {
-                  categoria: catsTrab[i].categoria,
-                  anio: catsTrab[i].sueldos[j].anio,
-                  incremento: 0
-                }
+          for (let j = 0; j < catsAdmin[i].sueldos.length; j++) {
 
-                this.comparativaTrabajadoresSindicato.push(comparativaTrab);
 
-              }
-              else {
-                var comparativaTrab = {
+            if (j == 0) {
 
-                  categoria: catsTrab[i].categoria,
-                  anio: catsTrab[i].sueldos[j].anio,
-                  incremento: catsTrab[i].sueldos[j].sueldo - catsTrab[i].sueldos[j - 1].sueldo
-                }
-                this.comparativaTrabajadoresSindicato.push(comparativaTrab);
+              var comparativaAdmin = {
+                categoria: catsAdmin[i].categoria,
+                anio: catsAdmin[i].sueldos[j].anio,
+                incremento: 0
               }
 
+
+              this.comparativaAdminSindicato.push(comparativaAdmin);
+
+
+            }
+            else {
+              var comparativaAdmin = {
+
+                categoria: catsAdmin[i].categoria,
+                anio: catsAdmin[i].sueldos[j].anio,
+                incremento: catsAdmin[i].sueldos[j].sueldo - catsAdmin[i].sueldos[j - 1].sueldo
+              }
+              this.comparativaAdminSindicato.push(comparativaAdmin);
             }
 
           }
 
-          //Luego se agregan los datos a la tabla de comparativa del sindicato
-      
-          this.comparativaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresSindicato);
-        
+        }
+
+        //Luego se agregan los datos a la tabla de comparativa del sindicato
+
+        this.comparativaAdminSindicatoDataSource = new MatTableDataSource<any>(this.comparativaAdminSindicato);
 
 
+        //Ahora se repite el proceso para la comparativa de los trabajadores
+
+
+
+        var catTrab;
+        var catsTrab: any[] = [];
+        var sueldos: any[] = [];
+
+        //Calcular los incrementos de los administrativos
+        //Primero se crea una lista con las categorias y sus sueldos asociados
+        for (let i = 0; i < this.listaDeCategoriasTrab.length; i++) {
+          sueldos = [];
+          catTrab = [];
+
+          for (let j = 0; j < this.resumenPropuestaTrabajadoresSindicato.length; j++) {
+
+            if (this.listaDeCategoriasTrab[i] == this.resumenPropuestaTrabajadoresSindicato[j].categoria) {
+
+              var sueldoAño = {
+                anio: this.resumenPropuestaTrabajadoresSindicato[j].anio,
+                sueldo: this.resumenPropuestaTrabajadoresSindicato[j].sueldo
+              }
+
+              sueldos.push(sueldoAño);
+
+
+
+            }
+
+          }
+
+          catTrab = {
+            categoria: this.listaDeCategoriasTrab[i],
+            sueldos: sueldos
+
+          }
+          catsTrab.push(catTrab)
+
+        }
+
+
+        //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
+        //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
+        //Para el primer valor siempre se considera que será de un incremento 0, condición especial
+
+        for (let i = 0; i < catsTrab.length; i++) {
+
+          for (let j = 0; j < catsTrab[i].sueldos.length; j++) {
+
+            if (j == 0) {
+
+              var comparativaTrab = {
+                categoria: catsTrab[i].categoria,
+                anio: catsTrab[i].sueldos[j].anio,
+                incremento: 0
+              }
+
+              this.comparativaTrabajadoresSindicato.push(comparativaTrab);
+
+            }
+            else {
+              var comparativaTrab = {
+
+                categoria: catsTrab[i].categoria,
+                anio: catsTrab[i].sueldos[j].anio,
+                incremento: catsTrab[i].sueldos[j].sueldo - catsTrab[i].sueldos[j - 1].sueldo
+              }
+              this.comparativaTrabajadoresSindicato.push(comparativaTrab);
+            }
+
+          }
+
+        }
+
+        //Luego se agregan los datos a la tabla de comparativa del sindicato
+
+        this.comparativaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresSindicato);
       }
-    })
 
 
+
+    });
 
   }
 
@@ -1313,23 +1327,23 @@ export class PropuestasComponent implements OnInit {
     if (tab === "Resumen y comparativa propuestas") {
       setTimeout(() => {
         this.generarResumen();
-       
+
       }, 1000)
       setTimeout(() => {
         this.generarResumenEmpresa();
-       
+
       }, 1000)
       setTimeout(() => {
         this.generarComparativaSindicato();
-       
+
       }, 1000)
       setTimeout(() => {
         this.generarComparativaEmpresa();
-       
+
       }, 1000)
-     
-      
-      
+
+
+
     }
   }
 
@@ -2006,7 +2020,7 @@ export class PropuestasComponent implements OnInit {
 
     // Se crean listas auxiliares para guardar los nombres de las categorias de admin y trabajadores
     this.listaAuxCatAdminEmpresa = [];
-    this.listaAuxCatTrabEmpresa= [];
+    this.listaAuxCatTrabEmpresa = [];
 
     // Se recorre las categorias admin y trabajadores y se agrega el nombre a las listas auxiliares
     for (let i = 0; i < this.categoriasAdminEmpresa.length; i++) {
@@ -2024,7 +2038,7 @@ export class PropuestasComponent implements OnInit {
     }
 
     //llamar al servicio para crear la propuesta en la basae de datos
-    this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdmin, this.datosPropuestaTrab, this.idSindicato, this.listaAñosEmpresa, this.listaAuxCatAdminEmpresa, this.listaAuxCatTrabEmpresa, false,this.datosPropuestaAdminEmpresa,this.datosPropuestaTrabEmpresa,this.categoriasAdminEmpresa,this.categoriasTrabajadoresEmpresa);
+    this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdminEmpresa, this.datosPropuestaTrabEmpresa, this.idSindicato, this.listaAñosEmpresa, this.listaAuxCatAdminEmpresa, this.listaAuxCatTrabEmpresa, false);
 
   }
 
@@ -2035,46 +2049,47 @@ export class PropuestasComponent implements OnInit {
 
     this.resumenPropuestaAdminEmpresa = [];
     this.resumenPropuestaTrabajadoresEmpresa = [];
+    var idSindicatoB = this.idSindicato + "B";
 
     console.log("id sindicato:", this.idSindicato)
     //añadir datos al resumen del admin desde sindicato
-    this.db.collection("Propuesta").doc(this.idSindicato).get().subscribe((snapshotChanges) => {
+
+    this.db.collection("Propuesta").doc(idSindicatoB).get().subscribe((snapshotChanges) => {
 
       if (snapshotChanges.exists) {
 
-  console.log("datoadminempresapropuesta: ",snapshotChanges.data())        
-          snapshotChanges.data().datosAdminEmpresaPropuesta.forEach(element => {
+        snapshotChanges.data().datosAdminPropuesta.forEach(element => {
 
-            var datoResumen = {
-              anio: element.anio,
-              categoria: element.categoria,
-              cantMiembros: element.cantMiembros,
-              sueldo: element.mes2
-            }
-            console.log("dato resumen: ",datoResumen)
-            this.resumenPropuestaAdminEmpresa.push(datoResumen);
+          var datoResumen = {
+            anio: element.anio,
+            categoria: element.categoria,
+            cantMiembros: element.cantMiembros,
+            sueldo: element.mes2
+          }
+          console.log("dato resumen: ", datoResumen)
+          this.resumenPropuestaAdminEmpresa.push(datoResumen);
 
-          });
+        });
 
-          this.resumenPropuestaAdminEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminEmpresa);
+        this.resumenPropuestaAdminEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminEmpresa);
 
-          snapshotChanges.data().datosTrabEmpresaPropuesta.forEach(element => {
+        snapshotChanges.data().datosTrabPropuesta.forEach(element => {
 
-            var datoResumenT = {
-              anio: element.anio,
-              categoria: element.categoria,
-              cantMiembros: element.cantMiembros,
-              sueldo: element.mes2
-            }
-            this.resumenPropuestaTrabajadoresEmpresa.push(datoResumenT);
+          var datoResumenT = {
+            anio: element.anio,
+            categoria: element.categoria,
+            cantMiembros: element.cantMiembros,
+            sueldo: element.mes2
+          }
+          this.resumenPropuestaTrabajadoresEmpresa.push(datoResumenT);
 
-          });
-          this.resumenPropuestaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresEmpresa);
-        
-
-
+        });
+        this.resumenPropuestaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresEmpresa);
       }
-    })
+
+
+    });
+
 
   }
 
@@ -2083,178 +2098,183 @@ export class PropuestasComponent implements OnInit {
 
     this.comparativaAdminEmpresa = [];
     this.comparativaTrabajadoresEmpresa = [];
+    var idSindicatoB = this.idSindicato + "B";
 
     //buscar la lista de las categorias y el año
-    this.db.collection("Propuesta").doc(this.idSindicato).get().subscribe((snapshotChanges) => {
+
+    this.db.collection("Propuesta").doc(idSindicatoB).get().subscribe((snapshotChanges) => {
+
+
 
       if (snapshotChanges.exists) {
+        this.listaDeCategoriasAdminEmpresa = snapshotChanges.data().categoriasAdmin;
+        this.listaDeCategoriasTrabEmpresa = snapshotChanges.data().categoriasTrab;
+        this.listaDeAñosEmpresa = snapshotChanges.data().aniosVigencia;
+        var catAdmin;
+        var catsAdmin: any[] = [];
+        var sueldos: any[] = [];
 
-        
+        //Calcular los incrementos de los administrativos
+        //Primero se crea una lista con las categorias y sus sueldos asociados
+        for (let i = 0; i < this.listaDeCategoriasAdminEmpresa.length; i++) {
+          sueldos = [];
+          catAdmin = [];
 
-          this.listaDeCategoriasAdminEmpresa = snapshotChanges.data().categoriasAdminEmpresa;
-          this.listaDeCategoriasTrabEmpresa = snapshotChanges.data().categoriasTrabEmpresa;
-          this.listaDeAñosEmpresa = snapshotChanges.data().aniosVigencia;
-          var catAdmin;
-          var catsAdmin: any[] = [];
-          var sueldos: any[] = [];
+          for (let j = 0; j < this.resumenPropuestaAdminEmpresa.length; j++) {
 
-          //Calcular los incrementos de los administrativos
-          //Primero se crea una lista con las categorias y sus sueldos asociados
-          for (let i = 0; i < this.listaDeCategoriasAdminEmpresa.length; i++) {
-            sueldos = [];
-            catAdmin = [];
-
-            for (let j = 0; j < this.resumenPropuestaAdminEmpresa.length; j++) {
-
-              if (this.listaDeCategoriasAdminEmpresa[i] == this.resumenPropuestaAdminEmpresa[j].categoria) {
-                console.log("categoria encontrada: ", this.resumenPropuestaAdminEmpresa[j].categoria)
-                console.log("ahora se agregará el sueldo ", this.resumenPropuestaAdminEmpresa[j].sueldo + "a la categoría " + this.listaDeCategoriasAdminEmpresa[i]);
-                var sueldoAño = {
-                  anio: this.resumenPropuestaAdminEmpresa[j].anio,
-                  sueldo: this.resumenPropuestaAdminEmpresa[j].sueldo
-                }
-
-                sueldos.push(sueldoAño);
-                console.log("sueldo: ", sueldos)
-
-
+            if (this.listaDeCategoriasAdminEmpresa[i] == this.resumenPropuestaAdminEmpresa[j].categoria) {
+              console.log("categoria encontrada: ", this.resumenPropuestaAdminEmpresa[j].categoria)
+              console.log("ahora se agregará el sueldo ", this.resumenPropuestaAdminEmpresa[j].sueldo + "a la categoría " + this.listaDeCategoriasAdminEmpresa[i]);
+              var sueldoAño = {
+                anio: this.resumenPropuestaAdminEmpresa[j].anio,
+                sueldo: this.resumenPropuestaAdminEmpresa[j].sueldo
               }
 
-            }
+              sueldos.push(sueldoAño);
+              console.log("sueldo: ", sueldos)
 
-            catAdmin = {
-              categoria: this.listaDeCategoriasAdminEmpresa[i],
-              sueldos: sueldos
-
-            }
-            catsAdmin.push(catAdmin)
-
-          }
-          console.log("Lista categorias con sueldo: ", catsAdmin);
-
-          //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
-          //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
-          //Para el primer valor siempre se considera que será de un incremento 0, condición especial
-
-          for (let i = 0; i < catsAdmin.length; i++) {
-
-            for (let j = 0; j < catsAdmin[i].sueldos.length; j++) {
-
-              if (j == 0) {
-
-                var comparativaAdmin = {
-                  categoria: catsAdmin[i].categoria,
-                  anio: catsAdmin[i].sueldos[j].anio,
-                  incremento: 0
-                }
-
-                this.comparativaAdminEmpresa.push(comparativaAdmin);
-
-              }
-              else {
-                var comparativaAdmin = {
-
-                  categoria: catsAdmin[i].categoria,
-                  anio: catsAdmin[i].sueldos[j].anio,
-                  incremento: catsAdmin[i].sueldos[j].sueldo - catsAdmin[i].sueldos[j - 1].sueldo
-                }
-                this.comparativaAdminEmpresa.push(comparativaAdmin);
-              }
 
             }
 
           }
 
-          //Luego se agregan los datos a la tabla de comparativa del sindicato
-
-          this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
-
-          //console.log("Datos comparativa admin: ", this.comparativaAdminSindicato)
-
-          //Ahora se repite el proceso para la comparativa de los trabajadores
-
-
-
-          var catTrab;
-          var catsTrab: any[] = [];
-          var sueldos: any[] = [];
-
-          //Calcular los incrementos de los administrativos
-          //Primero se crea una lista con las categorias y sus sueldos asociados
-          for (let i = 0; i < this.listaDeCategoriasTrabEmpresa.length; i++) {
-            sueldos = [];
-            catTrab = [];
-
-            for (let j = 0; j < this.resumenPropuestaTrabajadoresEmpresa.length; j++) {
-
-              if (this.listaDeCategoriasTrabEmpresa[i] == this.resumenPropuestaTrabajadoresEmpresa[j].categoria) {
-
-                var sueldoAño = {
-                  anio: this.resumenPropuestaTrabajadoresEmpresa[j].anio,
-                  sueldo: this.resumenPropuestaTrabajadoresEmpresa[j].sueldo
-                }
-
-                sueldos.push(sueldoAño);
-                console.log("sueldo: ", sueldos)
-
-
-              }
-
-            }
-
-            catTrab = {
-              categoria: this.listaDeCategoriasTrabEmpresa[i],
-              sueldos: sueldos
-
-            }
-            catsTrab.push(catTrab)
+          catAdmin = {
+            categoria: this.listaDeCategoriasAdminEmpresa[i],
+            sueldos: sueldos
 
           }
+          catsAdmin.push(catAdmin)
 
-          console.log("categorias trab: ", catsTrab)
-          //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
-          //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
-          //Para el primer valor siempre se considera que será de un incremento 0, condición especial
+        }
+        console.log("Lista categorias con sueldo: ", catsAdmin);
 
-          for (let i = 0; i < catsTrab.length; i++) {
+        //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
+        //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
+        //Para el primer valor siempre se considera que será de un incremento 0, condición especial
 
-            for (let j = 0; j < catsTrab[i].sueldos.length; j++) {
+        for (let i = 0; i < catsAdmin.length; i++) {
 
-              if (j == 0) {
+          for (let j = 0; j < catsAdmin[i].sueldos.length; j++) {
 
-                var comparativaTrab = {
-                  categoria: catsTrab[i].categoria,
-                  anio: catsTrab[i].sueldos[j].anio,
-                  incremento: 0
-                }
+            if (j == 0) {
 
-                this.comparativaTrabajadoresEmpresa.push(comparativaTrab);
-
-              }
-              else {
-                var comparativaTrab = {
-
-                  categoria: catsTrab[i].categoria,
-                  anio: catsTrab[i].sueldos[j].anio,
-                  incremento: catsTrab[i].sueldos[j].sueldo - catsTrab[i].sueldos[j - 1].sueldo
-                }
-                this.comparativaTrabajadoresEmpresa.push(comparativaTrab);
+              var comparativaAdmin = {
+                categoria: catsAdmin[i].categoria,
+                anio: catsAdmin[i].sueldos[j].anio,
+                incremento: 0
               }
 
+              this.comparativaAdminEmpresa.push(comparativaAdmin);
+
+            }
+            else {
+              var comparativaAdmin = {
+
+                categoria: catsAdmin[i].categoria,
+                anio: catsAdmin[i].sueldos[j].anio,
+                incremento: catsAdmin[i].sueldos[j].sueldo - catsAdmin[i].sueldos[j - 1].sueldo
+              }
+              this.comparativaAdminEmpresa.push(comparativaAdmin);
             }
 
           }
 
-          //Luego se agregan los datos a la tabla de comparativa del sindicato
-          console.log("comparativa trabajadores: ", this.comparativaTrabajadoresEmpresa)
-          this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
+        }
 
-        
+        //Luego se agregan los datos a la tabla de comparativa del sindicato
+
+        this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
+
+        //console.log("Datos comparativa admin: ", this.comparativaAdminSindicato)
+
+        //Ahora se repite el proceso para la comparativa de los trabajadores
 
 
+
+        var catTrab;
+        var catsTrab: any[] = [];
+        var sueldos: any[] = [];
+
+        //Calcular los incrementos de los administrativos
+        //Primero se crea una lista con las categorias y sus sueldos asociados
+        for (let i = 0; i < this.listaDeCategoriasTrabEmpresa.length; i++) {
+          sueldos = [];
+          catTrab = [];
+
+          for (let j = 0; j < this.resumenPropuestaTrabajadoresEmpresa.length; j++) {
+
+            if (this.listaDeCategoriasTrabEmpresa[i] == this.resumenPropuestaTrabajadoresEmpresa[j].categoria) {
+
+              var sueldoAño = {
+                anio: this.resumenPropuestaTrabajadoresEmpresa[j].anio,
+                sueldo: this.resumenPropuestaTrabajadoresEmpresa[j].sueldo
+              }
+
+              sueldos.push(sueldoAño);
+              console.log("sueldo: ", sueldos)
+
+
+            }
+
+          }
+
+          catTrab = {
+            categoria: this.listaDeCategoriasTrabEmpresa[i],
+            sueldos: sueldos
+
+          }
+          catsTrab.push(catTrab)
+
+        }
+
+        console.log("categorias trab: ", catsTrab)
+        //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
+        //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
+        //Para el primer valor siempre se considera que será de un incremento 0, condición especial
+
+        for (let i = 0; i < catsTrab.length; i++) {
+
+          for (let j = 0; j < catsTrab[i].sueldos.length; j++) {
+
+            if (j == 0) {
+
+              var comparativaTrab = {
+                categoria: catsTrab[i].categoria,
+                anio: catsTrab[i].sueldos[j].anio,
+                incremento: 0
+              }
+
+              this.comparativaTrabajadoresEmpresa.push(comparativaTrab);
+
+            }
+            else {
+              var comparativaTrab = {
+
+                categoria: catsTrab[i].categoria,
+                anio: catsTrab[i].sueldos[j].anio,
+                incremento: catsTrab[i].sueldos[j].sueldo - catsTrab[i].sueldos[j - 1].sueldo
+              }
+              this.comparativaTrabajadoresEmpresa.push(comparativaTrab);
+            }
+
+          }
+
+        }
+
+        //Luego se agregan los datos a la tabla de comparativa del sindicato
+        console.log("comparativa trabajadores: ", this.comparativaTrabajadoresEmpresa)
+        this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
 
       }
-    })
+
+
+
+
+    });
+
+
+
+
 
 
 

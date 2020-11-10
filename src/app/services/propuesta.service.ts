@@ -11,21 +11,23 @@ export class PropuestaService {
 
 
 
-  guardarPropuesta(idSindicato:string,datosPropAdmin:datoPropuesta[],datosPropTrab:datoPropuesta[],id:string,añosVigencia:number[],categoriasAdminSindicato:string[],categoriasTrabSindicato:string[],esSindicato:boolean,
-    datosPropAdminEmpresa:datoPropuesta[],datosPropTrabEmpresa:datoPropuesta[],categoriasAdminEmpresa:string[],categoriasTrabEmpresa:string[]){
+  guardarPropuesta(idSindicato:string,datosPropAdmin:datoPropuesta[],datosPropTrab:datoPropuesta[],id:string,añosVigencia:number[],categoriasAdmin:string[],categoriasTrab:string[],esSindicato:boolean){
 
+    if(esSindicato == true){
+      id= idSindicato + "A";
+    }
+    else{
+      id = idSindicato + "B";
+    }
+    
     var propuesta: Propuesta ={
       idSindicato:idSindicato,
       datosAdminPropuesta:datosPropAdmin,
       datosTrabPropuesta:datosPropTrab,
       aniosVigencia:añosVigencia,
-      categoriasAdminSindicato: categoriasAdminSindicato,
-      categoriasTrabSindicato:categoriasTrabSindicato,
-      categoriasAdminEmpresa: categoriasAdminEmpresa,
-      categoriasTrabEmpresa:categoriasTrabEmpresa,
-      esSindicato:esSindicato,
-      datosAdminEmpresaPropuesta:datosPropAdminEmpresa,
-      datosTrabEmpresaPropuesta:datosPropTrabEmpresa
+      categoriasAdmin: categoriasAdmin,
+      categoriasTrab:categoriasTrab,
+      esSindicato:esSindicato
     }
 
     console.log("propuesta a agregar: ",propuesta)

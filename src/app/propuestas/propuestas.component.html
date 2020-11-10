@@ -10,13 +10,6 @@
                     <mat-card-title>Años de vigencia contrato</mat-card-title>
                 </mat-card-header>
                 <form>
-                    <!--
-            <mat-form-field>
-                <mat-label>Nombre cargo</mat-label>
-
-                <input matInput placeholder="Cargo" name="Cargo" [formControl]="administrativoFormControl">
-            </mat-form-field>
-            -->
                     <mat-form-field style="margin-left: 7%;">
 
                         <input type="number" matInput [formControl]="vigenciaFormControl" min="0" required>
@@ -169,11 +162,11 @@
                         </div>
                     </div>
                     <button mat-button (click)="onGuardarPaso2()" style="margin-top: 1%; margin-left: 1%;"
-                        class="btn">Guardar datos</button>
+                        class="btn">Guardar paso 2</button>
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn" (click)="onGuardarPaso2()"
                             matStepperNext>Siguiente</button>
                     </div>
                 </div>
@@ -437,7 +430,7 @@
 
                     <div style="margin-bottom: 5%;">
                         <button mat-button (click)="generarPropuestaSindicato()"
-                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar datos</button>
+                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar paso 3</button>
                     </div>
 
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
@@ -740,8 +733,7 @@
                                     <ng-container matColumnDef="eliminar">
                                         <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
                                         <td class="eliminar" mat-cell *matCellDef="let element">
-                                            <mat-icon class="delete"
-                                                (click)="deleteTramoTrabajadoresEmpresa(element)">
+                                            <mat-icon class="delete" (click)="deleteTramoTrabajadoresEmpresa(element)">
                                                 delete</mat-icon>
                                         </td>
                                     </ng-container>
@@ -760,7 +752,7 @@
                         </div>
                     </div>
                     <button mat-button (click)="onGuardarPaso2Empresa()" style="margin-top: 1%; margin-left: 1%;"
-                        class="btn">Guardar datos</button>
+                        class="btn">Guardar paso 2</button>
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
@@ -962,7 +954,8 @@
                         <ng-container matColumnDef="eliminar">
                             <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
                             <td class="eliminar" mat-cell *matCellDef="let element">
-                                <mat-icon class="delete" (click)="deleteCategoriasAdminEmpresa(element)">delete</mat-icon>
+                                <mat-icon class="delete" (click)="deleteCategoriasAdminEmpresa(element)">delete
+                                </mat-icon>
                             </td>
                         </ng-container>
 
@@ -980,7 +973,8 @@
                     <h4>Trabajadores</h4>
 
 
-                    <table mat-table #tablaIPC [dataSource]="categoriasTrabajadoresDataSourceEmpresa" style="width: 60%;">
+                    <table mat-table #tablaIPC [dataSource]="categoriasTrabajadoresDataSourceEmpresa"
+                        style="width: 60%;">
 
 
                         <ng-container matColumnDef="Nombre">
@@ -1027,8 +1021,8 @@
                     </div>
 
                     <div style="margin-bottom: 5%;">
-                        <button mat-button (click)="generarPropuestaEmpresa()"
-                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar datos</button>
+                        <button mat-button (click)="generarPropuestaEmpresa()" style="margin-top: 1%; margin-left: 1%;"
+                            class="btn">Guardar paso 3</button>
                     </div>
 
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
@@ -1103,8 +1097,7 @@
                     <!--Tabla de la propuesta de los trabajadores por parte del sindicato-->
                     <h2 style="margin-top: 2%;">Propuesta Trabajadores</h2>
 
-                    <table mat-table #tablaIPC [dataSource]="propuestaTrabajadorEmpresaDataSource"
-                        style="width: 60%;">
+                    <table mat-table #tablaIPC [dataSource]="propuestaTrabajadorEmpresaDataSource" style="width: 60%;">
 
                         <ng-container matColumnDef="Nombre">
                             <th mat-header-cell *matHeaderCellDef> Categoría </th>
@@ -1248,68 +1241,7 @@
 
 
             </div>
-            <!--Tablas comparativas del sindicato -->
-
-            <div style="margin-bottom: 10%;margin-top: 2%;">
-                <h2>Datos comparativa</h2>
-                <h3>Sindicato</h3>
-                <h4>Administrativo</h4>
-                <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                    [dataSource]="comparativaAdminSindicatoDataSource">
-                    <ng-container matColumnDef="Año">
-                        <th mat-header-cell *matHeaderCellDef> Año </th>
-                        <td mat-cell *matCellDef="let element">
-                            {{element.anio}}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="Categoria">
-                        <th mat-header-cell *matHeaderCellDef> Categoria</th>
-                        <td mat-cell *matCellDef="let element">
-                            {{element.categoria}}
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="Incremento">
-                        <th mat-header-cell *matHeaderCellDef> Incremento </th>
-                        <td mat-cell *matCellDef="let element">
-                            {{element.incremento}}
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
-                    <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
-                </table>
-                <div style="margin-top: 3%;">
-                    <h4>Trabajadores</h4>
-                    <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
-                        [dataSource]="comparativaTrabajadoresSindicatoDataSource">
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoria</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Incremento">
-                            <th mat-header-cell *matHeaderCellDef> Incremento </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.incremento}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!---Resumen y comparativa de la empresa-->
-        <div style="margin-top: 2%;">
+            <!--REsumen de la empresa-->
             <h2>Resumen propuesta de la empresa</h2>
             <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
                 <div style="margin-top: 5%;">
@@ -1385,14 +1317,23 @@
 
 
             </div>
-            <!--Tablas comparativas de la empresa -->
 
-            <div style="margin-bottom: 10%;margin-top: 2%;">
-                <h2>Datos comparativa</h2>
+        </div>
+        <h2 style="margin-top: 5%;">Datos comparativa</h2>
+        <!--Tablas comparativas del sindicato -->
+        <!---Resumen y comparativa de la empresa-->
+        <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;margin-bottom: 10%;">
+
+
+            
+              
+
+            <div >
+                
                 <h3>Sindicato</h3>
                 <h4>Administrativo</h4>
                 <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                    [dataSource]="comparativaAdminEmpresaDataSource">
+                    [dataSource]="comparativaAdminSindicatoDataSource">
                     <ng-container matColumnDef="Año">
                         <th mat-header-cell *matHeaderCellDef> Año </th>
                         <td mat-cell *matCellDef="let element">
@@ -1412,13 +1353,42 @@
                             {{element.incremento}}
                         </td>
                     </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
-                    <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
+                    <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
                 </table>
                 <div style="margin-top: 3%;">
                     <h4>Trabajadores</h4>
                     <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
-                        [dataSource]="comparativaTrabajadoresEmpresaDataSource">
+                        [dataSource]="comparativaTrabajadoresSindicatoDataSource">
+                        <ng-container matColumnDef="Año">
+                            <th mat-header-cell *matHeaderCellDef> Año </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.anio}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Categoria">
+                            <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.categoria}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="Incremento">
+                            <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                            <td mat-cell *matCellDef="let element">
+                                {{element.incremento}}
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
+                    </table>
+                </div>
+            </div>
+                <div>
+                    <h3>Empresa</h3>
+                    <h4>Administrativo</h4>
+                    <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                        [dataSource]="comparativaAdminEmpresaDataSource">
                         <ng-container matColumnDef="Año">
                             <th mat-header-cell *matHeaderCellDef> Año </th>
                             <td mat-cell *matCellDef="let element">
@@ -1441,8 +1411,39 @@
                         <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
                         <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
                     </table>
+                    <div style="margin-top: 3%;">
+                        <h4>Trabajadores</h4>
+                        <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
+                            [dataSource]="comparativaTrabajadoresEmpresaDataSource">
+                            <ng-container matColumnDef="Año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="Categoria">
+                                <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.categoria}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="Incremento">
+                                <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.incremento}}
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
+                        </table>
+                    </div>
+
+
+
                 </div>
-            </div>
+            
+           
         </div>
     </mat-tab>
 </mat-tab-group>
