@@ -97,6 +97,8 @@ export class PropuestasFundacionComponent implements OnInit {
    public columnasIncremento:string[]= ["Categoria","Incremento total"]
    public columnasIncrementoEmpresa:string[]=["Categoria","Incremento total","Diferencia total"]
 
+   
+
   constructor(public db: AngularFirestore) { }
 
   ngOnInit(): void {
@@ -155,27 +157,6 @@ export class PropuestasFundacionComponent implements OnInit {
     console.log("valor seleccionado: ", sindicatoSeleccionado);
     this.idSindicato = sindicatoSeleccionado;
 
-    /*
-    this.resumenPropuestaAdminSindicato = [];
-    this.resumenPropuestaTrabajadoresSindicato = [];
-    this.resumenPropuestaAdminEmpresa = [];
-    this.resumenPropuestaTrabajadoresEmpresa = [];
-    
-    this.resumenPropuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminSindicato);
-    this.resumenPropuestaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresSindicato);
-    this.resumenPropuestaAdminEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminEmpresa);
-    this.resumenPropuestaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresEmpresa);
-
-    this.comparativaAdminSindicato = [];
-    this.comparativaTrabajadoresSindicato = [];
-    this.comparativaAdminEmpresa = [];
-    this.comparativaTrabajadoresEmpresa = [];
-
-    this.comparativaAdminSindicatoDataSource = new MatTableDataSource<any>(this.comparativaAdminSindicato);
-    this.comparativaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresSindicato);
-    this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
-    this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
-    */
 
     this.sindicatoSelected = true;
 

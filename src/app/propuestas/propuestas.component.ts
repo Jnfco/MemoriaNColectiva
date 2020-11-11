@@ -172,8 +172,6 @@ export class PropuestasComponent implements OnInit {
   public mostrarReajustesEmpresa: boolean;
   //public listaValoresIPC:any[] =[];
 
-  public ipcsEmpresa: any[] = [];
-  public columnasIPCEmpresa: string[] = ["Año", "IPCProyectado"];
   public reajusteColumnsEmpresa: any[] = [];
   public ipcDataSourceEmpresa: MatTableDataSource<any>;
   public reajusteDisplayedColumnsEmpresa: string[] = [];
@@ -212,16 +210,6 @@ export class PropuestasComponent implements OnInit {
   public reajustesTrabajadoresEmpresaSingle: any[] = [];
 
 
-  public listaAñosEmpresa: any[] = [];
-
-
-
-  //categorías
-  public categoriasAdminDataSourceEmpresa: MatTableDataSource<any>;
-  public categoriasAdminEmpresa: any[] = [];
-  //categorias trabajadores
-  public categoriasTrabajadoresDataSourceEmpresa: MatTableDataSource<any>;
-  public categoriasTrabajadoresEmpresa: any[] = [];
 
   //generación de la propuesta sindicato
   //Prpuesta Administrativo
@@ -294,6 +282,8 @@ export class PropuestasComponent implements OnInit {
 
   public columnasIncremento:string[]= ["Categoria","Incremento total"]
   public columnasIncrementoEmpresa:string[]=["Categoria","Incremento total","Diferencia total"]
+
+  public propuestaSindicatoGenerada:boolean=false;
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService, private snackbar: MatSnackBar) { }
 
@@ -1248,6 +1238,7 @@ export class PropuestasComponent implements OnInit {
       duration: 3000,
       verticalPosition: 'bottom'
     });
+    this.propuestaSindicatoGenerada = true;
   }
 
   getIdSindicato() {
@@ -1505,6 +1496,11 @@ export class PropuestasComponent implements OnInit {
     this.isLoading = true;
     const tab = event.tab.textLabel;
     console.log(tab);
+    if(tab == "Propuesta Empresa"){
+
+      this.onAceptarDatosEmpresa();
+
+    }
     if (tab === "Resumen y comparativa propuestas") {
       setTimeout(() => {
         this.generarResumen();
@@ -1533,39 +1529,15 @@ export class PropuestasComponent implements OnInit {
   //A continuacion estarán los métodos correspondientes a la propuesta del lado de la empresa
   onAceptarDatosEmpresa() {
 
-    if (!this.vigenciaEmpresaFormControl.valid || this.vigenciaEmpresaFormControl.value == 0) {
-
-      this.snackbar.open("No se han ingresado años válidos para la vigencia del contrato", '', {
-        duration: 3000,
-        verticalPosition: 'bottom'
-      });
-
-    }
-    else {
+   
       this.mostrarFormsEmpresa = true;
-      this.ipcsEmpresa = [];
-      //Encontrar el año actual
-      var fechaHoy = new Date(Date.now());
-      var añoACtual = moment(fechaHoy).format("YYYY");
-      var añoI = Number(añoACtual) + 1;
-      this.listaAñosEmpresa = [];
-      for (let i = 0; i < this.vigenciaEmpresaFormControl.value; i++) {
+     
 
-        var ipc = {
-          anio: añoI,
-          proyeccion: 0
-        }
-
-        this.ipcsEmpresa.push(ipc);
-        this.listaAñosEmpresa.push(añoI);
-        añoI++;
-      }
-      this.ipcDataSourceEmpresa = new MatTableDataSource<any>(this.ipcsEmpresa);
 
       this.mostrarReajustesEmpresa = true;
       // inicializar la tabla de tramos administrativos empresa
 
-      console.log("valores ipc: ", this.ipcsEmpresa)
+     
       this.tramosAdminEmpresa = [];
 
       var tramo = {
@@ -1590,11 +1562,7 @@ export class PropuestasComponent implements OnInit {
       this.tramosTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.tramosTrabajadoresEmpresa);
 
 
-      //Se llama a la funcion para crear y rellenar la tabla de categorias
-      this.crearTablaCategoriasAdminEmpresa();
-      this.crearTablaCategoriasTrabajadoresEmpresa();
-
-    }
+    
 
   }
 
@@ -1613,24 +1581,6 @@ export class PropuestasComponent implements OnInit {
     this.reajustesTrabajadoresEmpresaSingle = [];
 
     this.paso2CompletoEmpresa = true;
-
-    //Primero validar la tabla de ipcs
-
-    for (let i = 0; i < this.ipcsEmpresa.length; i++) {
-      console.log("proyeccion ipc: ", this.ipcsEmpresa[i])
-      if (this.ipcsEmpresa[i].proyeccion <= 0 || this.ipcsEmpresa[i].proyeccion == null) {
-
-        this.paso2CompletoEmpresa = false;
-      }
-
-    }
-    //Validar el largo
-    if (this.ipcsEmpresa.length == 0) {
-
-      this.paso2CompletoEmpresa = false;
-
-    }
-
     // se verifica si es que se ha seleccionado o no una opcion para los tramos 
     if (this.singleTramoAdminEmpresaSelected == undefined || this.singleTramoTrabajadoresEmpresaSelected == undefined) {
       this.paso2CompletoEmpresa = false;
@@ -1686,10 +1636,10 @@ export class PropuestasComponent implements OnInit {
 
       if (this.singleTramoAdminEmpresaSelected == true) {
 
-        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+        for (let i = 0; i < this.listaAños.length; i++) {
 
           var reajusteSingle = {
-            anio: this.listaAñosEmpresa[i],
+            anio: this.listaAños[i],
             reajuste: ""
           }
           this.reajustesAdminEmpresaSingle.push(reajusteSingle);
@@ -1700,7 +1650,7 @@ export class PropuestasComponent implements OnInit {
       }
       else {
         //Se crea el arreglo para la tabla de reajustes administrativos del sindicato
-        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+        for (let i = 0; i < this.listaAños.length; i++) {
 
           for (let j = 0; j < this.tramosAdminEmpresa.length; j++) {
 
@@ -1708,7 +1658,7 @@ export class PropuestasComponent implements OnInit {
               pos: j + 1,
               inicio: this.tramosAdminEmpresa[j].inicio,
               final: this.tramosAdminEmpresa[j].final,
-              anio: this.listaAñosEmpresa[i],
+              anio: this.listaAños[i],
               reajuste: ""
             }
             this.reajustesAdminEmpresa.push(reajuste);
@@ -1723,10 +1673,10 @@ export class PropuestasComponent implements OnInit {
 
       if (this.singleTramoTrabajadoresEmpresaSelected) {
 
-        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+        for (let i = 0; i < this.listaAños.length; i++) {
 
           var reajusteSingle = {
-            anio: this.listaAñosEmpresa[i],
+            anio: this.listaAños[i],
             reajuste: ""
           }
           this.reajustesTrabajadoresEmpresaSingle.push(reajusteSingle);
@@ -1739,7 +1689,7 @@ export class PropuestasComponent implements OnInit {
       else {
 
         //se crean los reajustes para los trabajadores desde sindicato
-        for (let i = 0; i < this.listaAñosEmpresa.length; i++) {
+        for (let i = 0; i < this.listaAños.length; i++) {
 
           for (let j = 0; j < this.tramosTrabajadoresEmpresa.length; j++) {
 
@@ -1747,7 +1697,7 @@ export class PropuestasComponent implements OnInit {
               pos: j + 1,
               inicio: this.tramosTrabajadoresEmpresa[j].inicio,
               final: this.tramosTrabajadoresEmpresa[j].final,
-              anio: this.listaAñosEmpresa[i],
+              anio: this.listaAños[i],
               reajuste: ""
             }
             this.reajustesTrabajadoresEmpresa.push(reajuste);
@@ -1902,125 +1852,7 @@ export class PropuestasComponent implements OnInit {
   }
 
 
-  //Funciones para las categorias de la empresa
 
-  deleteCategoriasAdminEmpresa(elm) {
-
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        message: '¿Está seguro que quiere quitar esta fila?',
-        buttonText: {
-          ok: 'Aceptar',
-          cancel: 'Cancelar'
-        }
-      }
-    });
-
-    console.log("elemento: ", elm)
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        console.log("elemento a borrar: ", elm)
-        this.categoriasAdminDataSourceEmpresa.data = this.categoriasAdminDataSourceEmpresa.data
-          .filter(i => i !== elm)
-          .map((i, idx) => (i.position = (idx + 1), i));
-        const index: number = this.categoriasAdminEmpresa.indexOf(elm);
-        this.categoriasAdminEmpresa.splice(index, 1);
-
-      }
-    });
-
-  }
-
-  crearTablaCategoriasAdminEmpresa() {
-    this.categoriasAdminEmpresa = [];
-
-    var categoria = {
-      nombre: "",
-      cantidadMiembros: 0,
-      sueldoBase: 0
-    }
-
-    this.categoriasAdminEmpresa.push(categoria);
-
-    this.categoriasAdminDataSourceEmpresa = new MatTableDataSource<any>(this.categoriasAdminEmpresa);
-
-  }
-
-  onAgregarCategoriaAdminEmpresa() {
-
-    var categoria = {
-      nombre: "",
-      cantidadMiembros: 0,
-      sueldoBase: 0
-    }
-
-    this.categoriasAdminEmpresa.push(categoria);
-
-    this.categoriasAdminDataSourceEmpresa = new MatTableDataSource<any>(this.categoriasAdminEmpresa);
-
-
-
-  }
-
-
-  //categorias para trabajadores
-
-  deleteCategoriasTrabajadoresEmpresa(elm) {
-
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        message: '¿Está seguro que quiere quitar esta fila?',
-        buttonText: {
-          ok: 'Aceptar',
-          cancel: 'Cancelar'
-        }
-      }
-    });
-
-    console.log("elemento: ", elm)
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        console.log("elemento a borrar: ", elm)
-        this.categoriasTrabajadoresDataSourceEmpresa.data = this.categoriasTrabajadoresDataSourceEmpresa.data
-          .filter(i => i !== elm)
-          .map((i, idx) => (i.position = (idx + 1), i));
-        const index: number = this.categoriasTrabajadoresEmpresa.indexOf(elm);
-        this.categoriasTrabajadoresEmpresa.splice(index, 1);
-
-      }
-    });
-
-  }
-
-  crearTablaCategoriasTrabajadoresEmpresa() {
-    this.categoriasTrabajadoresEmpresa = [];
-
-    var categoria = {
-      nombre: "",
-      cantidadMiembros: 0,
-      sueldoBase: 0
-    }
-
-    this.categoriasTrabajadoresEmpresa.push(categoria);
-
-    this.categoriasTrabajadoresDataSourceEmpresa = new MatTableDataSource<any>(this.categoriasTrabajadoresEmpresa);
-
-  }
-
-  onAgregarCategoriaTrabajadoresEmpresa() {
-
-    var categoria = {
-      nombre: "",
-      cantidadMiembros: 0,
-      sueldoBase: 0
-    }
-
-    this.categoriasTrabajadoresEmpresa.push(categoria);
-    console.log("categorias trabajadores: ", this.categoriasTrabajadoresEmpresa)
-
-    this.categoriasTrabajadoresDataSourceEmpresa = new MatTableDataSource<any>(this.categoriasTrabajadoresEmpresa);
-
-  }
 
   /**
    * Función para llamar a la creacion de las tablas de las propuestas de administrativos y trabajadores para la empresa
@@ -2066,24 +1898,7 @@ export class PropuestasComponent implements OnInit {
 
     //Luego se procede a validar la tabla de la propuesta del administrativo
 
-    //Se valida el largo de la tabla para el calculo
-    if (this.categoriasAdminEmpresa.length == 0) {
-
-      this.paso3CompletoEmpresa = false;
-
-    }
-
-    // Luego se valida que existan elementos y que sean mayores a 0 para el caso de los valores numéricos
-    for (let i = 0; i < this.categoriasAdminEmpresa.length; i++) {
-
-      if (this.categoriasAdminEmpresa[i].nombre == null || this.categoriasAdminEmpresa[i].cantidadMiembros == null || this.categoriasAdminEmpresa[i].sueldoBase == null ||
-        this.categoriasAdminEmpresa[i].nombre == "" || this.categoriasAdminEmpresa[i].cantidadMiembros == 0 || this.categoriasAdminEmpresa[i].sueldoBase == 0) {
-
-        this.paso3CompletoEmpresa = false;
-      }
-
-    }
-
+    
 
     //Ahora se escriben las validaciones para las tablas correspondientes a los trabajadores
 
@@ -2124,23 +1939,6 @@ export class PropuestasComponent implements OnInit {
 
     //Luego se procede a validar la tabla de la propuesta del administrativo
 
-    //Se valida el largo de la tabla para el calculo
-    if (this.categoriasTrabajadoresEmpresa.length == 0) {
-
-      this.paso3CompletoEmpresa = false;
-
-    }
-
-    // Luego se valida que existan elementos y que sean mayores a 0 para el caso de los valores numéricos
-    for (let i = 0; i < this.categoriasTrabajadoresEmpresa.length; i++) {
-
-      if (this.categoriasTrabajadoresEmpresa[i].nombre == null || this.categoriasTrabajadoresEmpresa[i].cantidadMiembros == null || this.categoriasTrabajadoresEmpresa[i].sueldoBase == null ||
-        this.categoriasTrabajadoresEmpresa[i].nombre == "" || this.categoriasTrabajadoresEmpresa[i].cantidadMiembros == 0 || this.categoriasTrabajadoresEmpresa[i].sueldoBase == 0) {
-
-        this.paso3CompletoEmpresa = false;
-      }
-
-    }
 
     //Finalmente luego de las validaciones, se comprueba si es que las tablas son válidas, en caso de serlo se generan las tablas que muestran la propuesta generada
 
@@ -2171,15 +1969,15 @@ export class PropuestasComponent implements OnInit {
   crearTablaPropuestaAdminEmpresa() {
     console.log("creando tabla propuesta")
     this.propuestaAdminEmpresa = [];
-    for (let i = 0; i < this.categoriasAdminEmpresa.length; i++) {
-      for (let j = 0; j < this.listaAñosEmpresa.length; j++) {
+    for (let i = 0; i < this.categoriasAdmin.length; i++) {
+      for (let j = 0; j < this.listaAños.length; j++) {
 
         var propuesta = {
           pos: i + 1,
-          nombre: this.categoriasAdminEmpresa[i].nombre,
-          cantidadMiembros: this.categoriasAdminEmpresa[i].cantidadMiembros,
-          sueldoBase: this.categoriasAdminEmpresa[i].sueldoBase,
-          anio: this.listaAñosEmpresa[j],
+          nombre: this.categoriasAdmin[i].nombre,
+          cantidadMiembros: this.categoriasAdmin[i].cantidadMiembros,
+          sueldoBase: this.categoriasAdmin[i].sueldoBase,
+          anio: this.listaAños[j],
           reajuste: 0,
           mes1: 0,
           ipcMarzo: 0,
@@ -2204,7 +2002,7 @@ export class PropuestasComponent implements OnInit {
     }
 
     this.calculoMes1(this.propuestaAdminEmpresa);
-    this.calculoIPCMarzo(this.propuestaAdminEmpresa, this.ipcsEmpresa);
+    this.calculoIPCMarzo(this.propuestaAdminEmpresa, this.ipcs);
     this.calculoMes2(this.propuestaAdminEmpresa);
 
 
@@ -2217,15 +2015,15 @@ export class PropuestasComponent implements OnInit {
   crearTablaPropuestaTrabajadoresEmpresa() {
     console.log("creando tabla propuesta")
     this.propuestaTrabajadorEmpresa = [];
-    for (let i = 0; i < this.categoriasTrabajadoresEmpresa.length; i++) {
-      for (let j = 0; j < this.listaAñosEmpresa.length; j++) {
+    for (let i = 0; i < this.categoriasTrabajadores.length; i++) {
+      for (let j = 0; j < this.listaAños.length; j++) {
 
         var propuesta = {
           pos: i + 1,
-          nombre: this.categoriasTrabajadoresEmpresa[i].nombre,
-          cantidadMiembros: this.categoriasTrabajadoresEmpresa[i].cantidadMiembros,
-          sueldoBase: this.categoriasTrabajadoresEmpresa[i].sueldoBase,
-          anio: this.listaAñosEmpresa[j],
+          nombre: this.categoriasTrabajadores[i].nombre,
+          cantidadMiembros: this.categoriasTrabajadores[i].cantidadMiembros,
+          sueldoBase: this.categoriasTrabajadores[i].sueldoBase,
+          anio: this.listaAños[j],
           reajuste: 0,
           mes1: 0,
           ipcMarzo: 0,
@@ -2251,7 +2049,7 @@ export class PropuestasComponent implements OnInit {
 
 
     this.calculoMes1(this.propuestaTrabajadorEmpresa)
-    this.calculoIPCMarzo(this.propuestaTrabajadorEmpresa, this.ipcsEmpresa);
+    this.calculoIPCMarzo(this.propuestaTrabajadorEmpresa, this.ipcs);
     this.calculoMes2(this.propuestaTrabajadorEmpresa);
 
     console.log("lista propuestas: ", this.propuestaTrabajadorEmpresa)
@@ -2273,15 +2071,15 @@ export class PropuestasComponent implements OnInit {
 
     //añadir datos para el año actual con las categorias
 
-    for (let i = 0; i < this.categoriasAdminEmpresa.length; i++) {
+    for (let i = 0; i < this.categoriasAdmin.length; i++) {
 
       var datoAño0AdminEmpresa: datoPropuesta = {
-        categoria: this.categoriasAdminEmpresa[i].nombre,
+        categoria: this.categoriasAdmin[i].nombre,
         anio: añoI,
-        cantMiembros: this.categoriasAdminEmpresa[i].cantidadMiembros,
+        cantMiembros: this.categoriasAdmin[i].cantidadMiembros,
         ipc: 0,
         mes1: 0,
-        mes2: this.categoriasAdminEmpresa[i].sueldoBase,
+        mes2: this.categoriasAdmin[i].sueldoBase,
         reajuste: 0,
         sueldoBase: 0
 
@@ -2313,15 +2111,15 @@ export class PropuestasComponent implements OnInit {
     //datos para propuesta de trabajadores 
 
     //datos para el año actual en la propuesta
-    for (let i = 0; i < this.categoriasTrabajadoresEmpresa.length; i++) {
+    for (let i = 0; i < this.categoriasTrabajadores.length; i++) {
 
       var datoAño0TrabajadorEmpresa: datoPropuesta = {
-        categoria: this.categoriasTrabajadoresEmpresa[i].nombre,
+        categoria: this.categoriasTrabajadores[i].nombre,
         anio: añoI,
-        cantMiembros: this.categoriasTrabajadoresEmpresa[i].cantidadMiembros,
+        cantMiembros: this.categoriasTrabajadores[i].cantidadMiembros,
         ipc: 0,
         mes1: 0,
-        mes2: this.categoriasTrabajadoresEmpresa[i].sueldoBase,
+        mes2: this.categoriasTrabajadores[i].sueldoBase,
         reajuste: 0,
         sueldoBase: 0
 
@@ -2352,22 +2150,22 @@ export class PropuestasComponent implements OnInit {
     this.listaAuxCatTrabEmpresa = [];
 
     // Se recorre las categorias admin y trabajadores y se agrega el nombre a las listas auxiliares
-    for (let i = 0; i < this.categoriasAdminEmpresa.length; i++) {
+    for (let i = 0; i < this.categoriasAdmin.length; i++) {
 
-      var cat = this.categoriasAdminEmpresa[i].nombre;
+      var cat = this.categoriasAdmin[i].nombre;
       this.listaAuxCatAdminEmpresa.push(cat)
 
     }
 
-    for (let i = 0; i < this.categoriasTrabajadoresEmpresa.length; i++) {
+    for (let i = 0; i < this.categoriasTrabajadores.length; i++) {
 
-      var cat2 = this.categoriasTrabajadoresEmpresa[i].nombre;
+      var cat2 = this.categoriasTrabajadores[i].nombre;
       this.listaAuxCatTrabEmpresa.push(cat2)
 
     }
 
     //llamar al servicio para crear la propuesta en la basae de datos
-    this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdminEmpresa, this.datosPropuestaTrabEmpresa, this.idSindicato, this.listaAñosEmpresa, this.listaAuxCatAdminEmpresa, this.listaAuxCatTrabEmpresa, false);
+    this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdminEmpresa, this.datosPropuestaTrabEmpresa, this.idSindicato, this.listaAños, this.listaAuxCatAdminEmpresa, this.listaAuxCatTrabEmpresa, false);
     this.snackbar.open("Propuesta de la empresa guardada, ahora puede proceder con la propuesta del sindicato o ver la pestaña resumen", '', {
       duration: 3000,
       verticalPosition: 'bottom'

@@ -589,58 +589,10 @@
             <ng-template matStepperIcon="edit">
                 <mat-icon>done</mat-icon>
             </ng-template>
-            <mat-step label="Definición de años vigencia"
-                [completed]="vigenciaEmpresaFormControl.valid && vigenciaEmpresaFormControl.value >0">
 
-                <mat-card-header style="margin-top: 2%;">
-                    <mat-card-title>Años de vigencia contrato</mat-card-title>
-                </mat-card-header>
-                <form>
-                    <!--
-            <mat-form-field>
-                <mat-label>Nombre cargo</mat-label>
-
-                <input matInput placeholder="Cargo" name="Cargo" [formControl]="administrativoFormControl">
-            </mat-form-field>
-            -->
-                    <mat-form-field style="margin-left: 7%;">
-
-                        <input type="number" matInput [formControl]="vigenciaEmpresaFormControl" min="0" required>
-                    </mat-form-field>
-                    <button style="margin-left: 5%;" class="btn" mat-flat-button (click)="onAceptarDatosEmpresa()"
-                        matStepperNext>Aceptar</button>
-                </form>
-
-            </mat-step>
-            <mat-step label="IPC proyectado y definición de tramos" [completed]="paso2CompletoEmpresa== true ">
-                <h2>IPC Proyectado</h2>
-                <table mat-table #tablaIPC [dataSource]="ipcDataSourceEmpresa" class="mat-elevation-z2">
-                    <ng-container matColumnDef="Año">
-                        <th mat-header-cell *matHeaderCellDef> Año </th>
-                        <td mat-cell *matCellDef="let element">
-                            <mat-form-field>
-                                <input matInput [(ngModel)]="element.anio" type="number" min="0">
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="IPCProyectado">
-                        <th mat-header-cell *matHeaderCellDef> IPC Proyectado %</th>
-                        <td mat-cell *matCellDef="let element">
-                            <mat-form-field>
-                                <input matInput [(ngModel)]="element.proyeccion" type="number" min="0" required>
-                            </mat-form-field>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="columnasIPC"></tr>
-                    <tr mat-row *matRowDef="let row; columns: columnasIPC;"></tr>
-                </table>
-                <!--
-        <button mat-button (click)="onSiguienteIPC()" class="btn" style="margin-top: 2%;">Siguiente</button>
-        -->
-
-                <div *ngIf=" this.mostrarReajustesEmpresa == true">
-
+            <mat-step label="Definición de tramos" [completed]="paso2CompletoEmpresa== true ">
+                <h2 *ngIf="this.propuestaSindicatoGenerada == false ">Para poder crear una propuesta de la empresa se debe crear primero la propuesta del sindicato</h2>
+                <div *ngIf="this.propuestaSindicatoGenerada == true">
                     <!---Tabla tramos administrativo desde sindicato-->
                     <h2 style="margin-top: 2%;">Tramos de sueldo</h2>
                     <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
@@ -762,8 +714,11 @@
                             [disabled]="this.paso2CompletoEmpresa == false" matStepperNext>Siguiente</button>
                     </div>
                 </div>
+
+
+
             </mat-step>
-            <mat-step label="Cálculo de propuesta" [completed]="this.paso3CompletoEmpresa == true">
+            <mat-step label="Definicion de reajustes y generación de propuesta" [completed]="this.paso3CompletoEmpresa == true">
                 <div *ngIf="this.tramosAdminEmpresaGuardados == true" style="margin-top: 5%;">
 
                     <h2>Definición de reajustes</h2>
@@ -917,123 +872,16 @@
 
 
                 </div>
-                <div *ngIf=" this.tramosAdminEmpresaGuardados == true">
 
-                    <h2>Cálculo de la propuesta</h2>
-
-                    <h4>Administrativos</h4>
-
-                    <table mat-table #tablaIPC [dataSource]="categoriasAdminDataSourceEmpresa" style="width: 60%;">
-
-
-                        <ng-container matColumnDef="Nombre">
-                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.nombre">
-
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Cantidad miembros">
-                            <th mat-header-cell *matHeaderCellDef> Cantidad miembros </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.cantidadMiembros" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="sueldo base">
-                            <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.sueldoBase" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="eliminar">
-                            <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
-                            <td class="eliminar" mat-cell *matCellDef="let element">
-                                <mat-icon class="delete" (click)="deleteCategoriasAdminEmpresa(element)">delete
-                                </mat-icon>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="columnasCategorias"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasCategorias;"></tr>
-                    </table>
-                    <div style="margin-left: 20%;margin-top: 1%; width: 10%;">
-                        <button mat-button class="btn" (click)="onAgregarCategoriaAdminEmpresa()">+</button>
-
-                    </div>
-
-
-                    <!---Tabla para la propuesta de los trabajadores-->
-
-                    <h4>Trabajadores</h4>
-
-
-                    <table mat-table #tablaIPC [dataSource]="categoriasTrabajadoresDataSourceEmpresa"
-                        style="width: 60%;">
-
-
-                        <ng-container matColumnDef="Nombre">
-                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.nombre">
-
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Cantidad miembros">
-                            <th mat-header-cell *matHeaderCellDef> Cantidad miembros </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.cantidadMiembros" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="sueldo base">
-                            <th mat-header-cell *matHeaderCellDef> Sueldo base </th>
-                            <td mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="element.sueldoBase" type="number" min="0">
-                                </mat-form-field>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="eliminar">
-                            <th style="width:15%;" mat-header-cell *matHeaderCellDef> </th>
-                            <td class="eliminar" mat-cell *matCellDef="let element">
-                                <mat-icon class="delete" (click)="deleteCategoriasTrabajadoresEmpresa(element)">delete
-                                </mat-icon>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="columnasCategoriasTrabajadores"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasCategoriasTrabajadores;"></tr>
-                    </table>
-                    <div style="margin-left: 20%;margin-top: 1%; width: 10%;">
-                        <button mat-button class="btn" (click)="onAgregarCategoriaTrabajadoresEmpresa()">+</button>
-
-                    </div>
-
-                    <div style="margin-bottom: 5%;">
-                        <button mat-button (click)="generarPropuestaEmpresa()" style="margin-top: 1%; margin-left: 1%;"
-                            class="btn">Guardar paso 3</button>
-                    </div>
-
-                    <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            [disabled]="this.paso3CompletoEmpresa == false" matStepperNext>Siguiente</button>
-                    </div>
-
+                <div style="margin-bottom: 5%;">
+                    <button mat-button (click)="generarPropuestaEmpresa()" style="margin-top: 1%; margin-left: 1%;"
+                        class="btn">Guardar paso 3</button>
+                </div>
+                <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
+                    <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                        matStepperPrevious>Anterior</button>
+                    <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                        [disabled]="this.paso3CompletoEmpresa == false" matStepperNext>Siguiente</button>
                 </div>
 
             </mat-step>
@@ -1167,9 +1015,12 @@
 
     </mat-tab>
     <mat-tab label="Resumen y comparativa propuestas" style="background-color: grey;">
-        <h1 *ngIf ="this.resumenSindicatoExists == false && this.comparativaExists == false && this.resumenEmpresaExists == false">Este sindicato no tiene una propuesta creada</h1>
+        <h1
+            *ngIf="this.resumenSindicatoExists == false && this.comparativaExists == false && this.resumenEmpresaExists == false">
+            Este sindicato no tiene una propuesta creada</h1>
         <!--Se crea un div contenedor para el resumen y el padding de los lados-->
-        <div  *ngIf="this.resumenSindicatoExists == true || this.comparativaExists == true || this.resumenEmpresaExists == true" fxLayout fxLayoutGap="10%" style="display: flex;flex-direction: row;">
+        <div *ngIf="this.resumenSindicatoExists == true || this.comparativaExists == true || this.resumenEmpresaExists == true"
+            fxLayout fxLayoutGap="10%" style="display: flex;flex-direction: row;">
 
             <!--Dentro de este div va el padding de la izquierda-->
             <div style="background-color:lightgray;width: 25%;height: auto;">
@@ -1178,9 +1029,10 @@
             <!--Dentro de este div van las tablas-->
             <div>
                 <div style="margin-top: 2%;">
-                    <h2 >Resumen propuesta del sindicato</h2>
+                    <h2>Resumen propuesta del sindicato</h2>
                     <h3 *ngIf="this.resumenSindicatoExists == false"> No hay datos de propuesta del sindicato</h3>
-                    <div *ngIf="this.resumenSindicatoExists == true" fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
+                    <div *ngIf="this.resumenSindicatoExists == true" fxLayout fxLayoutGap="20%"
+                        style="display: flex;flex-direction: row;">
                         <div style="margin-top: 5%;">
                             <h4>Administrativos</h4>
                             <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
@@ -1257,7 +1109,8 @@
                     <!--REsumen de la empresa-->
                     <h2 style="margin-top: 3%;">Resumen propuesta de la empresa</h2>
                     <h3 *ngIf="this.resumenEmpresaExists == false">No hay datos de propuesta de la empresa</h3>
-                    <div *ngIf="this.resumenEmpresaExists == true" fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
+                    <div *ngIf="this.resumenEmpresaExists == true" fxLayout fxLayoutGap="20%"
+                        style="display: flex;flex-direction: row;">
                         <div style="margin-top: 5%;">
                             <h3>Administrativos</h3>
                             <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
@@ -1334,10 +1187,12 @@
 
                 </div>
                 <h2 style="margin-top: 5%;">Datos comparativa</h2>
-                <h3 *ngIf="this.comparativaExists == false">Faltan datos de sindicato o empresa para generar la comparativa</h3>
+                <h3 *ngIf="this.comparativaExists == false">Faltan datos de sindicato o empresa para generar la
+                    comparativa</h3>
                 <!--Tablas comparativas del sindicato -->
                 <!---Resumen y comparativa de la empresa-->
-                <div *ngIf="this.comparativaExists == true" fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;margin-bottom: 10%;">
+                <div *ngIf="this.comparativaExists == true" fxLayout fxLayoutGap="20%"
+                    style="display: flex;flex-direction: row;margin-bottom: 10%;">
 
 
 
@@ -1371,27 +1226,27 @@
                             <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
                             <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
                         </table>
-                         <!---Tabla incremento admin-->
-                         <h3 style="margin-top: 2%;">Incremento total</h3>
-                         <div style="margin-top: 1%;">
+                        <!---Tabla incremento admin-->
+                        <h3 style="margin-top: 2%;">Incremento total</h3>
+                        <div style="margin-top: 1%;">
                             <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                            [dataSource]="incrementoTotalAdminSindicatoDataSource">
-                            <ng-container matColumnDef="Categoria">
-                                <th mat-header-cell *matHeaderCellDef> Categoria </th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.categoria}}
-                                </td>
-                            </ng-container>
+                                [dataSource]="incrementoTotalAdminSindicatoDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="Incremento total">
-                                <th mat-header-cell *matHeaderCellDef> Incremento total</th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.incrementoTotal}}
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
-                            <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
-                        </table>
+                                <ng-container matColumnDef="Incremento total">
+                                    <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.incrementoTotal}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                            </table>
                         </div>
                         <div style="margin-top: 3%;display: flex;flex-direction: column;">
                             <h4>Trabajadores</h4>
@@ -1421,29 +1276,29 @@
                             </table>
                             <h3 style="margin-top: 2%;">Incremento total</h3>
                             <div style="margin-top: 1%;">
-                               <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                               [dataSource]="incrementoTotalTrabSindicatoDataSource">
-                               <ng-container matColumnDef="Categoria">
-                                   <th mat-header-cell *matHeaderCellDef> Categoria </th>
-                                   <td mat-cell *matCellDef="let element">
-                                       {{element.categoria}}
-                                   </td>
-                               </ng-container>
-   
-                               <ng-container matColumnDef="Incremento total">
-                                   <th mat-header-cell *matHeaderCellDef> Incremento total</th>
-                                   <td mat-cell *matCellDef="let element">
-                                       {{element.incrementoTotal}}
-                                   </td>
-                               </ng-container>
-                               <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
-                               <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
-                           </table>
-                           </div>
-                            
+                                <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                                    [dataSource]="incrementoTotalTrabSindicatoDataSource">
+                                    <ng-container matColumnDef="Categoria">
+                                        <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.categoria}}
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="Incremento total">
+                                        <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.incrementoTotal}}
+                                        </td>
+                                    </ng-container>
+                                    <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                                </table>
+                            </div>
+
                         </div>
-                        
-                       
+
+
                     </div>
                     <div>
                         <h3>Empresa</h3>
@@ -1472,33 +1327,33 @@
                             <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
                             <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
                         </table>
-                         <!---Tabla incremento admin-->
-                         <h3 style="margin-top: 2%;">Incremento total</h3>
-                         <div style="margin-top: 1%;">
+                        <!---Tabla incremento admin-->
+                        <h3 style="margin-top: 2%;">Incremento total</h3>
+                        <div style="margin-top: 1%;">
                             <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                            [dataSource]="incrementoTotalAdminEmpresaDataSource">
-                            <ng-container matColumnDef="Categoria">
-                                <th mat-header-cell *matHeaderCellDef> Categoria </th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.categoria}}
-                                </td>
-                            </ng-container>
+                                [dataSource]="incrementoTotalAdminEmpresaDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="Incremento total">
-                                <th mat-header-cell *matHeaderCellDef> Incremento total</th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.incrementoTotal}}
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="Diferencia total">
-                                <th mat-header-cell *matHeaderCellDef> Diferencia total</th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.diferenciaTotal}}
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="columnasIncrementoEmpresa"></tr>
-                            <tr mat-row *matRowDef="let row; columns: columnasIncrementoEmpresa;"></tr>
-                        </table>
+                                <ng-container matColumnDef="Incremento total">
+                                    <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.incrementoTotal}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Diferencia total">
+                                    <th mat-header-cell *matHeaderCellDef> Diferencia total</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.diferenciaTotal}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasIncrementoEmpresa"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasIncrementoEmpresa;"></tr>
+                            </table>
                         </div>
                         <div style="margin-top: 3%;">
                             <h4>Trabajadores</h4>
@@ -1526,34 +1381,34 @@
                                 <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
                                 <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
                             </table>
-                             <!---Tabla incremento admin-->
-                         <h3 style="margin-top: 2%;">Incremento total</h3>
-                         <div style="margin-top: 1%;">
-                            <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                            [dataSource]="incrementoTotalTrabEmpresaDataSource">
-                            <ng-container matColumnDef="Categoria">
-                                <th mat-header-cell *matHeaderCellDef> Categoria </th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.categoria}}
-                                </td>
-                            </ng-container>
+                            <!---Tabla incremento admin-->
+                            <h3 style="margin-top: 2%;">Incremento total</h3>
+                            <div style="margin-top: 1%;">
+                                <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                                    [dataSource]="incrementoTotalTrabEmpresaDataSource">
+                                    <ng-container matColumnDef="Categoria">
+                                        <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.categoria}}
+                                        </td>
+                                    </ng-container>
 
-                            <ng-container matColumnDef="Incremento total">
-                                <th mat-header-cell *matHeaderCellDef> Incremento total</th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.incrementoTotal}}
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="Diferencia total">
-                                <th mat-header-cell *matHeaderCellDef> Diferencia total</th>
-                                <td mat-cell *matCellDef="let element">
-                                    {{element.diferenciaTotal}}
-                                </td>
-                            </ng-container>
-                            <tr mat-header-row *matHeaderRowDef="columnasIncrementoEmpresa"></tr>
-                            <tr mat-row *matRowDef="let row; columns: columnasIncrementoEmpresa;"></tr>
-                        </table>
-                        </div>
+                                    <ng-container matColumnDef="Incremento total">
+                                        <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.incrementoTotal}}
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="Diferencia total">
+                                        <th mat-header-cell *matHeaderCellDef> Diferencia total</th>
+                                        <td mat-cell *matCellDef="let element">
+                                            {{element.diferenciaTotal}}
+                                        </td>
+                                    </ng-container>
+                                    <tr mat-header-row *matHeaderRowDef="columnasIncrementoEmpresa"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasIncrementoEmpresa;"></tr>
+                                </table>
+                            </div>
                         </div>
 
 
