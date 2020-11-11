@@ -326,8 +326,14 @@
                            {{element.incrementoTotal}}
                        </td>
                    </ng-container>
-                   <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
-                   <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                   <ng-container matColumnDef="Diferencia total">
+                    <th mat-header-cell *matHeaderCellDef> Diferencia total</th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.diferenciaTotal}}
+                    </td>
+                </ng-container>
+                   <tr mat-header-row *matHeaderRowDef="columnasIncrementoEmpresa"></tr>
+                   <tr mat-row *matRowDef="let row; columns: columnasIncrementoEmpresa;"></tr>
                </table>
                </div>
                 <div style="margin-top: 3%;">
@@ -374,8 +380,14 @@
                                {{element.incrementoTotal}}
                            </td>
                        </ng-container>
-                       <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
-                       <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                       <ng-container matColumnDef="Diferencia total">
+                        <th mat-header-cell *matHeaderCellDef> Diferencia total</th>
+                        <td mat-cell *matCellDef="let element">
+                            {{element.diferenciaTotal}}
+                        </td>
+                    </ng-container>
+                       <tr mat-header-row *matHeaderRowDef="columnasIncrementoEmpresa"></tr>
+                       <tr mat-row *matRowDef="let row; columns: columnasIncrementoEmpresa;"></tr>
                    </table>
                    </div>
                 </div>

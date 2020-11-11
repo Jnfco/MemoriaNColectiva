@@ -293,6 +293,7 @@ export class PropuestasComponent implements OnInit {
   public incrementoTotalTrabEmpresaDataSource: MatTableDataSource<any>;
 
   public columnasIncremento:string[]= ["Categoria","Incremento total"]
+  public columnasIncrementoEmpresa:string[]=["Categoria","Incremento total","Diferencia total"]
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService, private snackbar: MatSnackBar) { }
 
@@ -1484,7 +1485,7 @@ export class PropuestasComponent implements OnInit {
         //Se llama a la funcion para calcular el incremento total
 
         this.calcularIncrementoTotal(this.listaDeCategoriasAdmin,this.listaDeCategoriasTrab,this.comparativaAdminSindicato,this.comparativaTrabajadoresSindicato,this.incrementoTotalAdminSindicato,this.incrementoTotalTrabSindicato);
-
+       
 
       }
       else {
@@ -2601,7 +2602,6 @@ export class PropuestasComponent implements OnInit {
         console.log("comparativa trabajadores: ", this.comparativaTrabajadoresEmpresa)
       
         this.calcularIncrementoTotal(this.listaDeCategoriasAdminEmpresa,this.listaDeCategoriasTrabEmpresa,this.comparativaAdminEmpresa,this.comparativaTrabajadoresEmpresa,this.incrementoTotalAdminEmpresa,this.incrementoTotalTrabEmpresa);
-
      
 
         this.comparativaExists = true;
@@ -2609,6 +2609,7 @@ export class PropuestasComponent implements OnInit {
       else {
         this.comparativaExists = false;
       }
+      this.calcularDiferenciaIncrementos(this.incrementoTotalAdminSindicato,this.incrementoTotalTrabSindicato,this.incrementoTotalAdminEmpresa,this.incrementoTotalTrabEmpresa);
 
       this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
       this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
@@ -2672,13 +2673,58 @@ export class PropuestasComponent implements OnInit {
         
         var incrementoPorCatTrab = {
           categoria: categoriasTrab[i],
-          incrementoTotal: incrementoTotal
+          incrementoTotal: incrementoTotal,
+          diferenciaTotal:0
         }
         incrementosTotalesPorCatTrab.push(incrementoPorCatTrab);
 
         
       }
 
+  }
+
+  calcularDiferenciaIncrementos(incrementoAdminSindicato:any[],incrementoTrabSindicato:any[],incrementoAdminEmpresa:any[],incrementoTrabEmpresa:any[]){
+
+    //Primero se calcula la diferencia para el admin sindicato
+
+    for (let i = 0; i < incrementoAdminSindicato.length; i++) {
+      
+      for (let j = 0; j < incrementoAdminEmpresa.length; j++) {
+        
+        if(incrementoAdminSindicato[i].categoria == incrementoAdminEmpresa[j].categoria){
+
+            incrementoAdminEmpresa[j].diferenciaTotal = incrementoAdminSindicato[i].incrementoTotal - incrementoAdminEmpresa[j].incrementoTotal
+            console.log("incremento admin: ",incrementoAdminEmpresa[j].diferenciaTotal)
+            if(incrementoAdminEmpresa[j].diferenciaTotal < 0){
+              incrementoAdminEmpresa[j].diferenciaTotal= incrementoAdminEmpresa[j].diferenciaTotal * -1;
+
+            }
+
+        }
+        
+      }
+      
+    }
+
+    //Ahora se calcula la diferencia para los trabajadores
+
+    for (let i = 0; i < incrementoTrabSindicato.length; i++) {
+      
+      for (let j = 0; j < incrementoTrabEmpresa.length; j++) {
+        
+        if(incrementoTrabSindicato[i].categoria == incrementoTrabEmpresa[j].categoria){
+
+            incrementoTrabEmpresa[j].diferenciaTotal = incrementoTrabSindicato[i].incrementoTotal - incrementoTrabEmpresa[j].incrementoTotal
+            if(incrementoTrabEmpresa[j].diferenciaTotal < 0){
+              incrementoTrabEmpresa[j]= incrementoTrabEmpresa[j] * -1;
+
+            }
+
+        }
+        
+      }
+      
+    }
   }
 
 }

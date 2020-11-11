@@ -95,6 +95,7 @@ export class PropuestasFundacionComponent implements OnInit {
    public incrementoTotalTrabEmpresa: any[]=[];
    public incrementoTotalTrabEmpresaDataSource: MatTableDataSource<any>;
    public columnasIncremento:string[]= ["Categoria","Incremento total"]
+   public columnasIncrementoEmpresa:string[]=["Categoria","Incremento total","Diferencia total"]
 
   constructor(public db: AngularFirestore) { }
 
@@ -673,6 +674,7 @@ export class PropuestasFundacionComponent implements OnInit {
       else{
         this.comparativaExists = false;
       }
+      this.calcularDiferenciaIncrementos(this.incrementoTotalAdminSindicato,this.incrementoTotalTrabSindicato,this.incrementoTotalAdminEmpresa,this.incrementoTotalTrabEmpresa);
 
       this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
       this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
@@ -745,4 +747,49 @@ export class PropuestasFundacionComponent implements OnInit {
       }
 
   }
+
+  calcularDiferenciaIncrementos(incrementoAdminSindicato:any[],incrementoTrabSindicato:any[],incrementoAdminEmpresa:any[],incrementoTrabEmpresa:any[]){
+
+    //Primero se calcula la diferencia para el admin sindicato
+
+    for (let i = 0; i < incrementoAdminSindicato.length; i++) {
+      
+      for (let j = 0; j < incrementoAdminEmpresa.length; j++) {
+        
+        if(incrementoAdminSindicato[i].categoria == incrementoAdminEmpresa[j].categoria){
+
+            incrementoAdminEmpresa[j].diferenciaTotal = incrementoAdminSindicato[i].incrementoTotal - incrementoAdminEmpresa[j].incrementoTotal
+            console.log("incremento admin: ",incrementoAdminEmpresa[j].diferenciaTotal)
+            if(incrementoAdminEmpresa[j].diferenciaTotal < 0){
+              incrementoAdminEmpresa[j].diferenciaTotal= incrementoAdminEmpresa[j].diferenciaTotal * -1;
+
+            }
+
+        }
+        
+      }
+      
+    }
+
+    //Ahora se calcula la diferencia para los trabajadores
+
+    for (let i = 0; i < incrementoTrabSindicato.length; i++) {
+      
+      for (let j = 0; j < incrementoTrabEmpresa.length; j++) {
+        
+        if(incrementoTrabSindicato[i].categoria == incrementoTrabEmpresa[j].categoria){
+
+            incrementoTrabEmpresa[j].diferenciaTotal = incrementoTrabSindicato[i].incrementoTotal - incrementoTrabEmpresa[j].incrementoTotal
+            if(incrementoTrabEmpresa[j].diferenciaTotal < 0){
+              incrementoTrabEmpresa[j]= incrementoTrabEmpresa[j] * -1;
+
+            }
+
+        }
+        
+      }
+      
+    }
+  }
+
 }
