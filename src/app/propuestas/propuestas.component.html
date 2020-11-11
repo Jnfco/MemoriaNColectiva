@@ -4,7 +4,8 @@
             <ng-template matStepperIcon="edit">
                 <mat-icon>done</mat-icon>
             </ng-template>
-            <mat-step label="Definición de años vigencia" [completed]="vigenciaFormControl.valid && vigenciaFormControl.value >0">
+            <mat-step label="Definición de años vigencia"
+                [completed]="vigenciaFormControl.valid && vigenciaFormControl.value >0">
 
                 <mat-card-header style="margin-top: 2%;">
                     <mat-card-title>Años de vigencia contrato</mat-card-title>
@@ -166,8 +167,8 @@
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn" [disabled] ="this.paso2Completo == false"
-                            matStepperNext>Siguiente</button>
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                            [disabled]="this.paso2Completo == false" matStepperNext>Siguiente</button>
                     </div>
                 </div>
             </mat-step>
@@ -437,7 +438,7 @@
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            matStepperNext>Siguiente</button>
+                            [disabled]="this.paso3Completo == false" matStepperNext>Siguiente</button>
                     </div>
 
                 </div>
@@ -588,7 +589,8 @@
             <ng-template matStepperIcon="edit">
                 <mat-icon>done</mat-icon>
             </ng-template>
-            <mat-step label="Definición de años vigencia" [completed]="vigenciaEmpresaFormControl.valid && vigenciaEmpresaFormControl.value >0">
+            <mat-step label="Definición de años vigencia"
+                [completed]="vigenciaEmpresaFormControl.valid && vigenciaEmpresaFormControl.value >0">
 
                 <mat-card-header style="margin-top: 2%;">
                     <mat-card-title>Años de vigencia contrato</mat-card-title>
@@ -756,8 +758,8 @@
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn" [disabled]="this.paso2CompletoEmpresa == false"
-                            matStepperNext>Siguiente</button>
+                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                            [disabled]="this.paso2CompletoEmpresa == false" matStepperNext>Siguiente</button>
                     </div>
                 </div>
             </mat-step>
@@ -1029,7 +1031,7 @@
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            matStepperNext>Siguiente</button>
+                            [disabled]="this.paso3CompletoEmpresa == false" matStepperNext>Siguiente</button>
                     </div>
 
                 </div>
@@ -1164,257 +1166,290 @@
 
 
     </mat-tab>
-    <mat-tab label="Resumen y comparativa propuestas">
-        <div style="margin-top: 2%;">
-            <h2>Resumen propuesta del sindicato</h2>
-            <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
-                <div style="margin-top: 5%;">
-                    <h4>Administrativos</h4>
-                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
-                        [dataSource]="resumenPropuestaAdminSindicatoDataSource">
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
+    <mat-tab label="Resumen y comparativa propuestas" style="background-color: grey;">
+        <h1 *ngIf ="this.resumenSindicatoExists == false && this.comparativaExists == false && this.resumenEmpresaExists == false">Este sindicato no tiene una propuesta creada</h1>
+        <!--Se crea un div contenedor para el resumen y el padding de los lados-->
+        <div  *ngIf="this.resumenSindicatoExists == true || this.comparativaExists == true || this.resumenEmpresaExists == true" fxLayout fxLayoutGap="10%" style="display: flex;flex-direction: row;">
 
-                        <ng-container matColumnDef="cantMiembros">
-                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.cantMiembros}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Sueldo">
-                            <th mat-header-cell *matHeaderCellDef> Sueldo</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.sueldo | thousandSeparator}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaSindicato"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaSindicato;"></tr>
-                    </table>
-
-                </div>
-                <div>
-                    <h4>Trabajadores</h4>
-                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
-                        [dataSource]="resumenPropuestaTrabajadoresSindicatoDataSource">
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="cantMiembros">
-                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.cantMiembros}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Sueldo">
-                            <th mat-header-cell *matHeaderCellDef> Sueldo</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.sueldo | thousandSeparator}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaSindicato"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaSindicato;"></tr>
-                    </table>
-
-                </div>
-
-
-
+            <!--Dentro de este div va el padding de la izquierda-->
+            <div style="background-color:lightgray;width: 25%;height: auto;">
 
             </div>
-            <!--REsumen de la empresa-->
-            <h2>Resumen propuesta de la empresa</h2>
-            <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
-                <div style="margin-top: 5%;">
-                    <h4>Administrativos</h4>
-                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
-                        [dataSource]="resumenPropuestaAdminEmpresaDataSource">
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
+            <!--Dentro de este div van las tablas-->
+            <div>
+                <div style="margin-top: 2%;">
+                    <h2 >Resumen propuesta del sindicato</h2>
+                    <h3 *ngIf="this.resumenSindicatoExists == false"> No hay datos de propuesta del sindicato</h3>
+                    <div *ngIf="this.resumenSindicatoExists == true" fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
+                        <div style="margin-top: 5%;">
+                            <h4>Administrativos</h4>
+                            <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                                [dataSource]="resumenPropuestaAdminSindicatoDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
 
-                        <ng-container matColumnDef="cantMiembros">
-                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.cantMiembros}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Sueldo">
-                            <th mat-header-cell *matHeaderCellDef> Sueldo</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.sueldo | thousandSeparator}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaEmpresa"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaEmpresa;"></tr>
-                    </table>
+                                <ng-container matColumnDef="cantMiembros">
+                                    <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.cantMiembros}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Año">
+                                    <th mat-header-cell *matHeaderCellDef> Año</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.anio}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Sueldo">
+                                    <th mat-header-cell *matHeaderCellDef> Sueldo</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.sueldo | thousandSeparator}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasPropuestaSindicato"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasPropuestaSindicato;"></tr>
+                            </table>
+
+                        </div>
+                        <div>
+                            <h4>Trabajadores</h4>
+                            <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                                [dataSource]="resumenPropuestaTrabajadoresSindicatoDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="cantMiembros">
+                                    <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.cantMiembros}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Año">
+                                    <th mat-header-cell *matHeaderCellDef> Año</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.anio}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Sueldo">
+                                    <th mat-header-cell *matHeaderCellDef> Sueldo</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.sueldo | thousandSeparator}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasPropuestaSindicato"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasPropuestaSindicato;"></tr>
+                            </table>
+
+                        </div>
+
+
+
+
+                    </div>
+                    <!--REsumen de la empresa-->
+                    <h2 style="margin-top: 3%;">Resumen propuesta de la empresa</h2>
+                    <h3 *ngIf="this.resumenEmpresaExists == false">No hay datos de propuesta de la empresa</h3>
+                    <div *ngIf="this.resumenEmpresaExists == true" fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;">
+                        <div style="margin-top: 5%;">
+                            <h3>Administrativos</h3>
+                            <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                                [dataSource]="resumenPropuestaAdminEmpresaDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="cantMiembros">
+                                    <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.cantMiembros}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Año">
+                                    <th mat-header-cell *matHeaderCellDef> Año</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.anio}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Sueldo">
+                                    <th mat-header-cell *matHeaderCellDef> Sueldo</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.sueldo | thousandSeparator}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasPropuestaEmpresa"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasPropuestaEmpresa;"></tr>
+                            </table>
+
+                        </div>
+                        <div>
+                            <h3>Trabajadores</h3>
+                            <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
+                                [dataSource]="resumenPropuestaTrabajadoresEmpresaDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoría </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="cantMiembros">
+                                    <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.cantMiembros}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Año">
+                                    <th mat-header-cell *matHeaderCellDef> Año</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.anio}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Sueldo">
+                                    <th mat-header-cell *matHeaderCellDef> Sueldo</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.sueldo | thousandSeparator}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasPropuestaEmpresa"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasPropuestaEmpresa;"></tr>
+                            </table>
+
+                        </div>
+
+
+
+
+                    </div>
 
                 </div>
-                <div>
-                    <h4>Trabajadores</h4>
-                    <table class="tablas-resumen" mat-table #tablaPropuestaSindicato
-                        [dataSource]="resumenPropuestaTrabajadoresEmpresaDataSource">
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoría </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="cantMiembros">
-                            <th mat-header-cell *matHeaderCellDef> Nº miembros</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.cantMiembros}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Sueldo">
-                            <th mat-header-cell *matHeaderCellDef> Sueldo</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.sueldo | thousandSeparator}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasPropuestaEmpresa"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasPropuestaEmpresa;"></tr>
-                    </table>
-
-                </div>
+                <h2 style="margin-top: 5%;">Datos comparativa</h2>
+                <h3 *ngIf="this.comparativaExists == false">Faltan datos de sindicato o empresa para generar la comparativa</h3>
+                <!--Tablas comparativas del sindicato -->
+                <!---Resumen y comparativa de la empresa-->
+                <div *ngIf="this.comparativaExists == true" fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;margin-bottom: 10%;">
 
 
 
 
-            </div>
 
-        </div>
-        <h2 style="margin-top: 5%;">Datos comparativa</h2>
-        <!--Tablas comparativas del sindicato -->
-        <!---Resumen y comparativa de la empresa-->
-        <div fxLayout fxLayoutGap="20%" style="display: flex;flex-direction: row;margin-bottom: 10%;">
+                    <div>
 
+                        <h3>Sindicato</h3>
+                        <h4>Administrativo</h4>
+                        <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                            [dataSource]="comparativaAdminSindicatoDataSource">
+                            <ng-container matColumnDef="Año">
+                                <th mat-header-cell *matHeaderCellDef> Año </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.anio}}
+                                </td>
+                            </ng-container>
 
-            
-              
+                            <ng-container matColumnDef="Categoria">
+                                <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.categoria}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="Incremento">
+                                <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.incremento}}
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
+                        </table>
+                         <!---Tabla incremento admin-->
+                         <h3 style="margin-top: 2%;">Incremento total</h3>
+                         <div style="margin-top: 1%;">
+                            <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                            [dataSource]="incrementoTotalAdminSindicatoDataSource">
+                            <ng-container matColumnDef="Categoria">
+                                <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.categoria}}
+                                </td>
+                            </ng-container>
 
-            <div >
-                
-                <h3>Sindicato</h3>
-                <h4>Administrativo</h4>
-                <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                    [dataSource]="comparativaAdminSindicatoDataSource">
-                    <ng-container matColumnDef="Año">
-                        <th mat-header-cell *matHeaderCellDef> Año </th>
-                        <td mat-cell *matCellDef="let element">
-                            {{element.anio}}
-                        </td>
-                    </ng-container>
+                            <ng-container matColumnDef="Incremento total">
+                                <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.incrementoTotal}}
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                        </table>
+                        </div>
+                        <div style="margin-top: 3%;display: flex;flex-direction: column;">
+                            <h4>Trabajadores</h4>
+                            <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
+                                [dataSource]="comparativaTrabajadoresSindicatoDataSource">
+                                <ng-container matColumnDef="Año">
+                                    <th mat-header-cell *matHeaderCellDef> Año </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.anio}}
+                                    </td>
+                                </ng-container>
 
-                    <ng-container matColumnDef="Categoria">
-                        <th mat-header-cell *matHeaderCellDef> Categoria</th>
-                        <td mat-cell *matCellDef="let element">
-                            {{element.categoria}}
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="Incremento">
-                        <th mat-header-cell *matHeaderCellDef> Incremento </th>
-                        <td mat-cell *matCellDef="let element">
-                            {{element.incremento}}
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
-                    <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
-                </table>
-                <div style="margin-top: 3%;">
-                    <h4>Trabajadores</h4>
-                    <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
-                        [dataSource]="comparativaTrabajadoresSindicatoDataSource">
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoria</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Incremento">
-                            <th mat-header-cell *matHeaderCellDef> Incremento </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.incremento}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
-                    </table>
-                </div>
-            </div>
-                <div>
-                    <h3>Empresa</h3>
-                    <h4>Administrativo</h4>
-                    <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
-                        [dataSource]="comparativaAdminEmpresaDataSource">
-                        <ng-container matColumnDef="Año">
-                            <th mat-header-cell *matHeaderCellDef> Año </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.anio}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="Categoria">
-                            <th mat-header-cell *matHeaderCellDef> Categoria</th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.categoria}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="Incremento">
-                            <th mat-header-cell *matHeaderCellDef> Incremento </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.incremento}}
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
-                    </table>
-                    <div style="margin-top: 3%;">
-                        <h4>Trabajadores</h4>
-                        <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
-                            [dataSource]="comparativaTrabajadoresEmpresaDataSource">
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Incremento">
+                                    <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.incremento}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasComparativaSindicato"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasComparativaSindicato;"></tr>
+                            </table>
+                            <h3 style="margin-top: 2%;">Incremento total</h3>
+                            <div style="margin-top: 1%;">
+                               <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                               [dataSource]="incrementoTotalTrabSindicatoDataSource">
+                               <ng-container matColumnDef="Categoria">
+                                   <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                   <td mat-cell *matCellDef="let element">
+                                       {{element.categoria}}
+                                   </td>
+                               </ng-container>
+   
+                               <ng-container matColumnDef="Incremento total">
+                                   <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                   <td mat-cell *matCellDef="let element">
+                                       {{element.incrementoTotal}}
+                                   </td>
+                               </ng-container>
+                               <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
+                               <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                           </table>
+                           </div>
+                            
+                        </div>
+                        
+                       
+                    </div>
+                    <div>
+                        <h3>Empresa</h3>
+                        <h4>Administrativo</h4>
+                        <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                            [dataSource]="comparativaAdminEmpresaDataSource">
                             <ng-container matColumnDef="Año">
                                 <th mat-header-cell *matHeaderCellDef> Año </th>
                                 <td mat-cell *matCellDef="let element">
@@ -1437,13 +1472,88 @@
                             <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
                             <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
                         </table>
+                         <!---Tabla incremento admin-->
+                         <h3 style="margin-top: 2%;">Incremento total</h3>
+                         <div style="margin-top: 1%;">
+                            <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                            [dataSource]="incrementoTotalAdminEmpresaDataSource">
+                            <ng-container matColumnDef="Categoria">
+                                <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.categoria}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="Incremento total">
+                                <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.incrementoTotal}}
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                        </table>
+                        </div>
+                        <div style="margin-top: 3%;">
+                            <h4>Trabajadores</h4>
+                            <table class="trabajadores-tabla" mat-table #tablaPropuestaSindicatoT
+                                [dataSource]="comparativaTrabajadoresEmpresaDataSource">
+                                <ng-container matColumnDef="Año">
+                                    <th mat-header-cell *matHeaderCellDef> Año </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.anio}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="Categoria">
+                                    <th mat-header-cell *matHeaderCellDef> Categoria</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.categoria}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="Incremento">
+                                    <th mat-header-cell *matHeaderCellDef> Incremento </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.incremento}}
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasComparativaEmpresa"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasComparativaEmpresa;"></tr>
+                            </table>
+                             <!---Tabla incremento admin-->
+                         <h3 style="margin-top: 2%;">Incremento total</h3>
+                         <div style="margin-top: 1%;">
+                            <table class="tablas-propuestas" mat-table #tablaPropuestaSindicato
+                            [dataSource]="incrementoTotalTrabEmpresaDataSource">
+                            <ng-container matColumnDef="Categoria">
+                                <th mat-header-cell *matHeaderCellDef> Categoria </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.categoria}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="Incremento total">
+                                <th mat-header-cell *matHeaderCellDef> Incremento total</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.incrementoTotal}}
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnasIncremento"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasIncremento;"></tr>
+                        </table>
+                        </div>
+                        </div>
+
+
+
                     </div>
 
 
-
                 </div>
-            
-           
+            </div>
+            <div style="background-color: lightgray;width: 25%;height: auto;">
+
+            </div>
         </div>
     </mat-tab>
 </mat-tab-group>

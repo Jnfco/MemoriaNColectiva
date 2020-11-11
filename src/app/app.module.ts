@@ -107,6 +107,7 @@ import { ModalDetalleEventoFundacionComponent } from './modal-detalle-evento-fun
 import { PropuestasComponent } from './propuestas/propuestas.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import { ThousandSeparatorPipe } from './custom-pipes/thousand-separator.pipe';
+import { PropuestasFundacionComponent } from './propuestas-fundacion/propuestas-fundacion.component';
 
 
 
@@ -168,7 +169,8 @@ FullCalendarModule.registerPlugins([
     ModalDetalleEventoSindicatoComponent,
     ModalDetalleEventoFundacionComponent,
     PropuestasComponent,
-    ThousandSeparatorPipe
+    ThousandSeparatorPipe,
+    PropuestasFundacionComponent
 
 
   ],

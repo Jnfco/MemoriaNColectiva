@@ -28,6 +28,7 @@ import { ContratoFundacionComponent } from './contrato-fundacion/contrato-fundac
 import { EventosComponent } from './eventos/eventos.component';
 import { EventosFundacionComponent } from './eventos-fundacion/eventos-fundacion.component';
 import { PropuestasComponent } from './propuestas/propuestas.component';
+import { PropuestasFundacionComponent } from './propuestas-fundacion/propuestas-fundacion.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -101,7 +102,8 @@ const routes: Routes = [
     { path: 'contrato-fundacion', component: ContratoFundacionComponent },
     { path: 'eventos', component: EventosComponent },
     {path: 'eventos-fundacion',component:EventosFundacionComponent},
-    {path: 'propuestas',component:PropuestasComponent}
+    {path: 'propuestas',component:PropuestasComponent},
+    {path: 'propuestas-fundacion', component:PropuestasFundacionComponent}
 
     ]
   },

@@ -168,3 +168,5 @@
 [info] i  functions: Finished "sendMail" in ~2s {"metadata":{"emulator":{"name":"functions"},"function":{"name":"sendMail"},"message":"Finished \"sendMail\" in ~2s"}}
 [debug] [2020-11-09T13:43:09.965Z] [worker-sendMail-9f6d5788-d995-43a6-97c3-47ad23058e6d]: IDLE {"metadata":{"emulator":{"name":"functions"},"message":"[worker-sendMail-9f6d5788-d995-43a6-97c3-47ad23058e6d]: IDLE"}}
 [debug] [2020-11-09T13:43:09.965Z] [work-queue] {"queueLength":0,"workRunningCount":0}
+[debug] [2020-11-10T03:51:36.799Z] [worker-sendMail-fbd4e093-823d-4569-8c6f-13d2faea5395]: exited {"metadata":{"emulator":{"name":"functions"},"message":"[worker-sendMail-fbd4e093-823d-4569-8c6f-13d2faea5395]: exited"}}
+[debug] [2020-11-10T03:51:36.803Z] [worker-sendMail-fbd4e093-823d-4569-8c6f-13d2faea5395]: FINISHED {"metadata":{"emulator":{"name":"functions"},"message":"[worker-sendMail-fbd4e093-823d-4569-8c6f-13d2faea5395]: FINISHED"}}

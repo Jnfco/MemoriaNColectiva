@@ -14,7 +14,7 @@
 
 <!--Tabla dinamica prueba-->
 
-<!--<mat-table #table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8">
+<!--<mat-table #table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z1">
 
   <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{this.disCol}}">
       <mat-header-cell *matHeaderCellDef>{{this.disCol}}</mat-header-cell>
@@ -30,11 +30,11 @@
 <!--Tabla Activos Corrientes-->
 <h2 *ngIf="noDataMessage == true">No se ha cargado el estado financiero</h2>
 <mat-progress-bar class="mat-progress-bar-buffer" mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
-<mat-card style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;"
+<mat-card style="margin: 20px" class="mat-elevation-z1" style="width: 100%;display: flex;flex-direction: column;"
   *ngIf="this.noData == false && this.isDraft == false">
   <mat-card-content>
     <h1 class="table-title" style="text-align: center;"> Activos Corrientes</h1>
-    <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%">
+    <table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z1" style="width: 100%">
       <ng-container matColumnDef="Año">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -162,7 +162,7 @@
 
     <!-- Tabla Activos no corrientes-->
     <h1 class="table-title" style="text-align: center;"> Activos No Corrientes</h1>
-    <table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -277,7 +277,7 @@
 
     <!--Tabla activos pasivos corrientes-->
     <h1 class="table-title" style="text-align: center;"> Activos Pasivos Corrientes</h1>
-    <table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -417,7 +417,7 @@
 
     <!--Tabla pasivos no corrientes-->
     <h1 class="table-title" style="text-align: center;"> Activos Pasivos No Corrientes</h1>
-    <table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -500,7 +500,7 @@
 
     <!--Tabla patrimonio-->
     <h1 class="table-title" style="text-align: center;"> Patrimonio</h1>
-    <table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -615,7 +615,7 @@
 
     <!--Tabla estado resultado-->
     <h1 class="table-title" style="text-align: center;"> Estado Resultado</h1>
-    <table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -774,7 +774,7 @@
 
     <!--Tabla ganancia antes del impuesto-->
     <h1 class="table-title" style="text-align: center;"> Ganancia antes del impuesto</h1>
-    <table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -847,7 +847,7 @@
 
     <!--Tabla ganancia atribuible a-->
     <h1 class="table-title" style="text-align: center;"> Ganancia atribuible a</h1>
-    <table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -920,7 +920,7 @@
 
     <!--Tabla Total resultados integrales-->
     <h1 class="table-title" style="text-align: center;"> Estado resultados integrales</h1>
-    <table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z8" style="width: 100%;">
+    <table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z1" style="width: 100%;">
       <ng-container matColumnDef="Año">
         <th mat-header-cell *matHeaderCellDef>Año</th>
         <td mat-cell *matCellDef="let element">
@@ -999,10 +999,10 @@
 <!--Tablas borrador-->
 
 
-<mat-card   style="margin: 20px" class="mat-elevation-z8" style="width: 100%;display: flex;flex-direction: column;" *ngIf="this.isDraft == true">
+<mat-card   style="margin: 20px" class="mat-elevation-z1" style="width: 100%;display: flex;flex-direction: column;" *ngIf="this.isDraft == true">
   <mat-card-content >
 <h1 class ="table-title" style="text-align: center;">  Activos Corrientes</h1>
-<table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z8" style="width: 100%"  >
+<table mat-table [dataSource]="this.dataSourceActivosC" class="mat-elevation-z1" style="width: 100%"  >
 <ng-container  matColumnDef ="Año">
   <th class="w-a"mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element" >
@@ -1071,7 +1071,7 @@
 
 <!-- Tabla Activos no corrientes-->
   <h1 class ="table-title" style="text-align: center;">  Activos No Corrientes</h1>
-<table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z8" style="width: 100%;" >
+<table mat-table [dataSource]="this.dataSourceActivosNC" class="mat-elevation-z1" style="width: 100%;" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1133,7 +1133,7 @@
 
 <!--Tabla activos pasivos corrientes-->
   <h1 class ="table-title" style="text-align: center;">  Activos Pasivos Corrientes</h1>
-<table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z8" style="width: 100%;" >
+<table mat-table [dataSource]="this.dataSourcePasivosC" class="mat-elevation-z1" style="width: 100%;" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1209,7 +1209,7 @@
 
 <!--Tabla pasivos no corrientes-->
   <h1 class ="table-title" style="text-align: center;">  Activos Pasivos No Corrientes</h1>
-<table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z8" style="width: 100%;" >
+<table mat-table [dataSource]="this.dataSourcePasivosNC" class="mat-elevation-z1" style="width: 100%;" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1259,7 +1259,7 @@
 
 <!--Tabla patrimonio-->
   <h1 class ="table-title" style="text-align: center;">  Patrimonio</h1>
-<table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z8" style="width: 100%;" >
+<table mat-table [dataSource]="this.dataSourcePatrimonio" class="mat-elevation-z1" style="width: 100%;" >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1325,7 +1325,7 @@
 
 <!--Tabla estado resultado-->
   <h1 class ="table-title" style="text-align: center;">  Estado Resultado</h1>
-<table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z8" style="width: 100%;"  >
+<table mat-table [dataSource]="this.dataSourceEstadoR" class="mat-elevation-z1" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1415,7 +1415,7 @@
 
 <!--Tabla ganancia antes del impuesto-->
   <h1 class ="table-title" style="text-align: center;">  Ganancia antes del impuesto</h1>
-<table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z8" style="width: 100%;"  >
+<table mat-table [dataSource]="this.dataSourceGananciaA" class="mat-elevation-z1" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1460,7 +1460,7 @@
 
 <!--Tabla ganancia atribuible a-->
   <h1 class ="table-title" style="text-align: center;">  Ganancia atribuible a</h1>
-<table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z8" style="width: 100%;"  >
+<table mat-table [dataSource]="this.dataSourceGananciaAtribuible" class="mat-elevation-z1" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">
@@ -1505,7 +1505,7 @@
 
 <!--Tabla Total resultados integrales-->
   <h1 class ="table-title" style="text-align: center;">  Estado resultados integrales</h1>
-<table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z8" style="width: 100%;"  >
+<table mat-table [dataSource]="this.dataSourceEstadoResInt" class="mat-elevation-z1" style="width: 100%;"  >
 <ng-container matColumnDef ="Año">
   <th mat-header-cell *matHeaderCellDef>Año</th>
   <td  mat-cell *matCellDef="let element">

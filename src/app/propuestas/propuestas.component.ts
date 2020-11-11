@@ -275,11 +275,30 @@ export class PropuestasComponent implements OnInit {
   public listaDeCategoriasTrabEmpresa: string[] = [];
   public listaDeAñosEmpresa: string[] = [];
 
+  //booleanos de carga 
+  public resumenSindicatoExists: boolean;
+  public resumenEmpresaExists: boolean;
+  public comparativaExists: boolean;
+  public isLoading: boolean;
+
+  //Definicion de listas para mostrar el incremento total de sindicato y empresa
+
+  public incrementoTotalAdminSindicato: any[] =[];
+  public incrementoTotalAdminSindicatoDataSource: MatTableDataSource<any>;
+  public incrementoTotalTrabSindicato: any[] =[];
+  public incrementoTotalTrabSindicatoDataSource: MatTableDataSource<any>;
+  public incrementoTotalAdminEmpresa: any[]= [];
+  public incrementoTotalAdminEmpresaDataSource: MatTableDataSource<any>;
+  public incrementoTotalTrabEmpresa: any[]=[];
+  public incrementoTotalTrabEmpresaDataSource: MatTableDataSource<any>;
+
+  public columnasIncremento:string[]= ["Categoria","Incremento total"]
 
   constructor(private dialog: MatDialog, private _formBuilder: FormBuilder, public db: AngularFirestore, private propSvc: PropuestaService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
+    this.isLoading = true;
     this.getIdSindicato();
     setTimeout(() => {
       this.generarResumen();
@@ -291,6 +310,7 @@ export class PropuestasComponent implements OnInit {
 
       this.generarComparativaSindicato();
       this.generarComparativaEmpresa();
+      this.isLoading = false;
     }, 2000)
 
 
@@ -304,7 +324,7 @@ export class PropuestasComponent implements OnInit {
 
   onAceptarDatos() {
 
-    
+
     if (!this.vigenciaFormControl.valid || this.vigenciaFormControl.value == 0) {
 
       this.snackbar.open("No se han ingresado años válidos para la vigencia del contrato", '', {
@@ -666,6 +686,11 @@ export class PropuestasComponent implements OnInit {
 
       }
 
+      this.snackbar.open("Paso guardado , ahora puede hacer clic en siguiente para continuar", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+
     }
     //Si no se completa el paso 2 correctamente, entonces se muestra el mensaje de que faltan datos
     else {
@@ -800,8 +825,141 @@ export class PropuestasComponent implements OnInit {
   generarPropuestaSindicato() {
     this.propuestaGenerada = true;
     this.paso3Completo = true;
-    this.crearTablaPropuestaAdminSindicato();
-    this.crearTablaPropuestaTrabajadoresSindicato();
+
+
+    //A continuación se realizan las validaciones para las tablas de reajuste
+    //primero se comprueba si es que el tramo del administrativo es single o multi
+    //En caso de serlo se realizan las validaciones de los campos del reajuste
+    if (this.singleTramoAdminSindicatoSelected == true) {
+      if (this.reajustesAdminSindicatoSingle.length == 0) {
+
+        this.paso3Completo = false;
+      }
+      for (let i = 0; i < this.reajustesAdminSindicatoSingle.length; i++) {
+
+        if (this.reajustesAdminSindicatoSingle[i].reajuste == null) {
+
+          this.paso3Completo = false;
+
+        }
+
+      }
+    }
+    //Si no es single entonces se realizan las validaciones para el tramo multi
+    //Se validan los reajustes para la tabla de admin 
+    else {
+      if (this.reajustesAdminSindicato.length == 0) {
+        this.paso3Completo = false;
+      }
+      for (let i = 0; i < this.reajustesAdminSindicato.length; i++) {
+        if (this.reajustesAdminSindicato[i].reajuste == null) {
+
+          this.paso3Completo = false;
+        }
+
+      }
+
+    }
+
+    //Luego se procede a validar la tabla de la propuesta del administrativo
+
+    //Se valida el largo de la tabla para el calculo
+    if (this.categoriasAdmin.length == 0) {
+
+      this.paso3Completo = false;
+
+    }
+
+    // Luego se valida que existan elementos y que sean mayores a 0 para el caso de los valores numéricos
+    for (let i = 0; i < this.categoriasAdmin.length; i++) {
+
+      if (this.categoriasAdmin[i].nombre == null || this.categoriasAdmin[i].cantidadMiembros == null || this.categoriasAdmin[i].sueldoBase == null ||
+        this.categoriasAdmin[i].nombre == "" || this.categoriasAdmin[i].cantidadMiembros == 0 || this.categoriasAdmin[i].sueldoBase == 0) {
+
+        this.paso3Completo = false;
+      }
+
+    }
+
+
+    //Ahora se escriben las validaciones para las tablas correspondientes a los trabajadores
+
+
+    //A continuación se realizan las validaciones para las tablas de reajuste
+    //primero se comprueba si es que el tramo del administrativo es single o multi
+    //En caso de serlo se realizan las validaciones de los campos del reajuste
+    if (this.singleTramoTrabajadoresSindicatoSelected == true) {
+      if (this.reajustesTrabajadoresSindicatoSingle.length == 0) {
+
+        this.paso3Completo = false;
+      }
+      for (let i = 0; i < this.reajustesTrabajadoresSindicatoSingle.length; i++) {
+
+        if (this.reajustesTrabajadoresSindicatoSingle[i].reajuste == null) {
+
+          this.paso3Completo = false;
+
+        }
+
+      }
+    }
+    //Si no es single entonces se realizan las validaciones para el tramo multi
+    //Se validan los reajustes para la tabla de admin 
+    else {
+      if (this.reajustesTrabajadoresSindicato.length == 0) {
+        this.paso3Completo = false;
+      }
+      for (let i = 0; i < this.reajustesTrabajadoresSindicato.length; i++) {
+        if (this.reajustesTrabajadoresSindicato[i].reajuste == null) {
+
+          this.paso3Completo = false;
+        }
+
+      }
+
+    }
+
+    //Luego se procede a validar la tabla de la propuesta del administrativo
+
+    //Se valida el largo de la tabla para el calculo
+    if (this.categoriasTrabajadores.length == 0) {
+
+      this.paso3Completo = false;
+
+    }
+
+    // Luego se valida que existan elementos y que sean mayores a 0 para el caso de los valores numéricos
+    for (let i = 0; i < this.categoriasTrabajadores.length; i++) {
+
+      if (this.categoriasTrabajadores[i].nombre == null || this.categoriasTrabajadores[i].cantidadMiembros == null || this.categoriasTrabajadores[i].sueldoBase == null ||
+        this.categoriasTrabajadores[i].nombre == "" || this.categoriasTrabajadores[i].cantidadMiembros == 0 || this.categoriasTrabajadores[i].sueldoBase == 0) {
+
+        this.paso3Completo = false;
+      }
+
+    }
+
+    //Finalmente luego de las validaciones, se comprueba si es que las tablas son válidas, en caso de serlo se generan las tablas que muestran la propuesta generada
+
+    if (this.paso3Completo == true) {
+
+      this.snackbar.open("Paso guardado , ahora puede hacer clic en siguiente para continuar", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+
+      this.crearTablaPropuestaAdminSindicato();
+      this.crearTablaPropuestaTrabajadoresSindicato();
+    }
+    //De lo contrario se muestra el mensaje de aviso que faltan datos o que estos están incorrectos
+    else {
+      this.snackbar.open("No se puede avanzar al siguiente paso, porfavor revise los datos faltantes", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+    }
+
+
 
   }
 
@@ -1085,7 +1243,10 @@ export class PropuestasComponent implements OnInit {
 
     //llamar al servicio para crear la propuesta en la basae de datos
     this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdmin, this.datosPropuestaTrab, this.idSindicato, this.listaAños, this.listaAuxCatAdminSindicato, this.listaAuxCatTrabSindicato, true);
-
+    this.snackbar.open("Propuesta del sindicato guardada ahora puede proceder con la propuesta de la empresa o ver la pestaña resumen", '', {
+      duration: 3000,
+      verticalPosition: 'bottom'
+    });
   }
 
   getIdSindicato() {
@@ -1130,7 +1291,6 @@ export class PropuestasComponent implements OnInit {
 
         });
 
-        this.resumenPropuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminSindicato);
 
         snapshotChanges.data().datosTrabPropuesta.forEach(element => {
 
@@ -1143,11 +1303,16 @@ export class PropuestasComponent implements OnInit {
           this.resumenPropuestaTrabajadoresSindicato.push(datoResumenT);
 
         });
-        this.resumenPropuestaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresSindicato);
 
-
+        this.resumenSindicatoExists = true;
 
       }
+      else {
+        this.resumenSindicatoExists = false;
+      }
+      this.resumenPropuestaAdminSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminSindicato);
+      this.resumenPropuestaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresSindicato);
+
 
 
     });
@@ -1159,6 +1324,9 @@ export class PropuestasComponent implements OnInit {
 
     this.comparativaAdminSindicato = [];
     this.comparativaTrabajadoresSindicato = [];
+    this.incrementoTotalAdminSindicato = [];
+    this.incrementoTotalTrabSindicato=[];
+
     var idSindicatoA = this.idSindicato + "A";
 
     //buscar la lista de las categorias y el año
@@ -1228,8 +1396,6 @@ export class PropuestasComponent implements OnInit {
 
 
               this.comparativaAdminSindicato.push(comparativaAdmin);
-
-
             }
             else {
               var comparativaAdmin = {
@@ -1247,12 +1413,7 @@ export class PropuestasComponent implements OnInit {
 
         //Luego se agregan los datos a la tabla de comparativa del sindicato
 
-        this.comparativaAdminSindicatoDataSource = new MatTableDataSource<any>(this.comparativaAdminSindicato);
-
-
         //Ahora se repite el proceso para la comparativa de los trabajadores
-
-
 
         var catTrab;
         var catsTrab: any[] = [];
@@ -1275,22 +1436,16 @@ export class PropuestasComponent implements OnInit {
 
               sueldos.push(sueldoAño);
 
-
-
             }
 
           }
-
           catTrab = {
             categoria: this.listaDeCategoriasTrab[i],
             sueldos: sueldos
 
           }
           catsTrab.push(catTrab)
-
         }
-
-
         //Luego de crear las categorias con los sueldos se procede a realizar el cálculo de los incrementos
         //Esto se hace recorriendo las categorias y realizando la resta del valor actual menos el anterior
         //Para el primer valor siempre se considera que será de un incremento 0, condición especial
@@ -1324,20 +1479,29 @@ export class PropuestasComponent implements OnInit {
 
         }
 
-        //Luego se agregan los datos a la tabla de comparativa del sindicato
+        this.comparativaExists = true;
+        //Calcular el incremento total del administrativo y generar la tabla
+        //Se llama a la funcion para calcular el incremento total
 
-        this.comparativaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresSindicato);
+        this.calcularIncrementoTotal(this.listaDeCategoriasAdmin,this.listaDeCategoriasTrab,this.comparativaAdminSindicato,this.comparativaTrabajadoresSindicato,this.incrementoTotalAdminSindicato,this.incrementoTotalTrabSindicato);
+
+
       }
-
-
-
+      else {
+        this.comparativaExists = false;
+      }
+      this.comparativaAdminSindicatoDataSource = new MatTableDataSource<any>(this.comparativaAdminSindicato);
+      this.comparativaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresSindicato);
+      
+      this.incrementoTotalAdminSindicatoDataSource = new MatTableDataSource<any>(this.incrementoTotalAdminSindicato);
+      this.incrementoTotalTrabSindicatoDataSource = new MatTableDataSource<any>(this.incrementoTotalTrabSindicato);
     });
 
   }
 
-
   onChange(event: MatTabChangeEvent) {
 
+    this.isLoading = true;
     const tab = event.tab.textLabel;
     console.log(tab);
     if (tab === "Resumen y comparativa propuestas") {
@@ -1355,6 +1519,7 @@ export class PropuestasComponent implements OnInit {
       }, 1000)
       setTimeout(() => {
         this.generarComparativaEmpresa();
+        this.isLoading = false;
 
       }, 1000)
 
@@ -1592,6 +1757,10 @@ export class PropuestasComponent implements OnInit {
         this.reajusteTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.reajustesTrabajadoresEmpresa);
 
       }
+      this.snackbar.open("Paso guardado , ahora puede hacer clic en siguiente para continuar", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
 
     }
     //Si no se completa el paso 2 correctamente, entonces se muestra el mensaje de que faltan datos
@@ -1858,8 +2027,139 @@ export class PropuestasComponent implements OnInit {
   generarPropuestaEmpresa() {
     this.propuestaGeneradaEmpresa = true;
     this.paso3CompletoEmpresa = true;
-    this.crearTablaPropuestaAdminEmpresa();
-    this.crearTablaPropuestaTrabajadoresEmpresa();
+
+
+    //A continuación se realizan las validaciones para las tablas de reajuste
+    //primero se comprueba si es que el tramo del administrativo es single o multi
+    //En caso de serlo se realizan las validaciones de los campos del reajuste
+    if (this.singleTramoAdminEmpresaSelected == true) {
+      if (this.reajustesAdminEmpresaSingle.length == 0) {
+
+        this.paso3CompletoEmpresa = false;
+      }
+      for (let i = 0; i < this.reajustesAdminEmpresaSingle.length; i++) {
+
+        if (this.reajustesAdminEmpresaSingle[i].reajuste == null) {
+
+          this.paso3CompletoEmpresa = false;
+
+        }
+
+      }
+    }
+    //Si no es single entonces se realizan las validaciones para el tramo multi
+    //Se validan los reajustes para la tabla de admin 
+    else {
+      if (this.reajustesAdminEmpresa.length == 0) {
+        this.paso3CompletoEmpresa = false;
+      }
+      for (let i = 0; i < this.reajustesAdminEmpresa.length; i++) {
+        if (this.reajustesAdminEmpresa[i].reajuste == null) {
+
+          this.paso3CompletoEmpresa = false;
+        }
+
+      }
+
+    }
+
+    //Luego se procede a validar la tabla de la propuesta del administrativo
+
+    //Se valida el largo de la tabla para el calculo
+    if (this.categoriasAdminEmpresa.length == 0) {
+
+      this.paso3CompletoEmpresa = false;
+
+    }
+
+    // Luego se valida que existan elementos y que sean mayores a 0 para el caso de los valores numéricos
+    for (let i = 0; i < this.categoriasAdminEmpresa.length; i++) {
+
+      if (this.categoriasAdminEmpresa[i].nombre == null || this.categoriasAdminEmpresa[i].cantidadMiembros == null || this.categoriasAdminEmpresa[i].sueldoBase == null ||
+        this.categoriasAdminEmpresa[i].nombre == "" || this.categoriasAdminEmpresa[i].cantidadMiembros == 0 || this.categoriasAdminEmpresa[i].sueldoBase == 0) {
+
+        this.paso3CompletoEmpresa = false;
+      }
+
+    }
+
+
+    //Ahora se escriben las validaciones para las tablas correspondientes a los trabajadores
+
+
+    //A continuación se realizan las validaciones para las tablas de reajuste
+    //primero se comprueba si es que el tramo del administrativo es single o multi
+    //En caso de serlo se realizan las validaciones de los campos del reajuste
+    if (this.singleTramoTrabajadoresEmpresaSelected == true) {
+      if (this.reajustesTrabajadoresEmpresaSingle.length == 0) {
+
+        this.paso3CompletoEmpresa = false;
+      }
+      for (let i = 0; i < this.reajustesTrabajadoresEmpresaSingle.length; i++) {
+
+        if (this.reajustesTrabajadoresEmpresaSingle[i].reajuste == null) {
+
+          this.paso3CompletoEmpresa = false;
+
+        }
+
+      }
+    }
+    //Si no es single entonces se realizan las validaciones para el tramo multi
+    //Se validan los reajustes para la tabla de admin 
+    else {
+      if (this.reajustesTrabajadoresEmpresa.length == 0) {
+        this.paso3CompletoEmpresa = false;
+      }
+      for (let i = 0; i < this.reajustesTrabajadoresEmpresa.length; i++) {
+        if (this.reajustesTrabajadoresEmpresa[i].reajuste == null) {
+
+          this.paso3CompletoEmpresa = false;
+        }
+
+      }
+
+    }
+
+    //Luego se procede a validar la tabla de la propuesta del administrativo
+
+    //Se valida el largo de la tabla para el calculo
+    if (this.categoriasTrabajadoresEmpresa.length == 0) {
+
+      this.paso3CompletoEmpresa = false;
+
+    }
+
+    // Luego se valida que existan elementos y que sean mayores a 0 para el caso de los valores numéricos
+    for (let i = 0; i < this.categoriasTrabajadoresEmpresa.length; i++) {
+
+      if (this.categoriasTrabajadoresEmpresa[i].nombre == null || this.categoriasTrabajadoresEmpresa[i].cantidadMiembros == null || this.categoriasTrabajadoresEmpresa[i].sueldoBase == null ||
+        this.categoriasTrabajadoresEmpresa[i].nombre == "" || this.categoriasTrabajadoresEmpresa[i].cantidadMiembros == 0 || this.categoriasTrabajadoresEmpresa[i].sueldoBase == 0) {
+
+        this.paso3CompletoEmpresa = false;
+      }
+
+    }
+
+    //Finalmente luego de las validaciones, se comprueba si es que las tablas son válidas, en caso de serlo se generan las tablas que muestran la propuesta generada
+
+    if (this.paso3CompletoEmpresa == true) {
+
+      this.snackbar.open("Paso guardado , ahora puede hacer clic en siguiente para continuar", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+
+      this.crearTablaPropuestaAdminEmpresa();
+      this.crearTablaPropuestaTrabajadoresEmpresa();
+    }
+    //De lo contrario se muestra el mensaje de aviso que faltan datos o que estos están incorrectos
+    else {
+      this.snackbar.open("No se puede avanzar al siguiente paso, porfavor revise los datos faltantes", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+    }
 
   }
 
@@ -2067,7 +2367,10 @@ export class PropuestasComponent implements OnInit {
 
     //llamar al servicio para crear la propuesta en la basae de datos
     this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdminEmpresa, this.datosPropuestaTrabEmpresa, this.idSindicato, this.listaAñosEmpresa, this.listaAuxCatAdminEmpresa, this.listaAuxCatTrabEmpresa, false);
-
+    this.snackbar.open("Propuesta de la empresa guardada, ahora puede proceder con la propuesta del sindicato o ver la pestaña resumen", '', {
+      duration: 3000,
+      verticalPosition: 'bottom'
+    });
   }
 
   /**
@@ -2099,7 +2402,6 @@ export class PropuestasComponent implements OnInit {
 
         });
 
-        this.resumenPropuestaAdminEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminEmpresa);
 
         snapshotChanges.data().datosTrabPropuesta.forEach(element => {
 
@@ -2112,9 +2414,14 @@ export class PropuestasComponent implements OnInit {
           this.resumenPropuestaTrabajadoresEmpresa.push(datoResumenT);
 
         });
-        this.resumenPropuestaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresEmpresa);
+        this.resumenEmpresaExists = true;
+      }
+      else {
+        this.resumenEmpresaExists = false;
       }
 
+      this.resumenPropuestaAdminEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaAdminEmpresa);
+      this.resumenPropuestaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.resumenPropuestaTrabajadoresEmpresa);
 
     });
 
@@ -2126,6 +2433,8 @@ export class PropuestasComponent implements OnInit {
 
     this.comparativaAdminEmpresa = [];
     this.comparativaTrabajadoresEmpresa = [];
+    this.incrementoTotalTrabEmpresa = [];
+    this.incrementoTotalAdminEmpresa=[];
     var idSindicatoB = this.idSindicato + "B";
 
     //buscar la lista de las categorias y el año
@@ -2211,7 +2520,6 @@ export class PropuestasComponent implements OnInit {
 
         //Luego se agregan los datos a la tabla de comparativa del sindicato
 
-        this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
 
         //console.log("Datos comparativa admin: ", this.comparativaAdminSindicato)
 
@@ -2291,12 +2599,21 @@ export class PropuestasComponent implements OnInit {
 
         //Luego se agregan los datos a la tabla de comparativa del sindicato
         console.log("comparativa trabajadores: ", this.comparativaTrabajadoresEmpresa)
-        this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
+      
+        this.calcularIncrementoTotal(this.listaDeCategoriasAdminEmpresa,this.listaDeCategoriasTrabEmpresa,this.comparativaAdminEmpresa,this.comparativaTrabajadoresEmpresa,this.incrementoTotalAdminEmpresa,this.incrementoTotalTrabEmpresa);
 
+     
+
+        this.comparativaExists = true;
+      }
+      else {
+        this.comparativaExists = false;
       }
 
-
-
+      this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
+      this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
+      this.incrementoTotalAdminEmpresaDataSource = new MatTableDataSource<any>(this.incrementoTotalAdminEmpresa);
+      this.incrementoTotalTrabEmpresaDataSource = new MatTableDataSource<any>(this.incrementoTotalTrabEmpresa);
 
     });
 
@@ -2309,5 +2626,59 @@ export class PropuestasComponent implements OnInit {
   }
 
 
+  calcularIncrementoTotal(categoriasAdmin:string[],categoriasTrab:string[],comparativaAdmin:any[],comparativaTrab:any[],incrementosTotalesPorCatAdmin:any[],incrementosTotalesPorCatTrab:any[]){
+
+    //Primero recorrer la comparativa de admin
+    var incrementoTotal =0;
+    console.log("categorias  admin incremento: ",categoriasAdmin);
+    console.log("categorias trab incremento: ",categoriasTrab);
+    console.log("comparativa admin incremento: ",comparativaAdmin);
+    console.log("comparativa trab incremento: ",comparativaTrab);
+    console.log("incrementosadmin: ",incrementosTotalesPorCatAdmin);
+    console.log("incrementos trab: ",incrementosTotalesPorCatTrab);
+
+      for (let i = 0; i < categoriasAdmin.length; i++) {
+        for (let j = 0; j < comparativaAdmin.length; j++) {
+          
+          if(categoriasAdmin[i] == comparativaAdmin[j].categoria){
+
+            incrementoTotal = incrementoTotal + comparativaAdmin[j].incremento
+
+          }
+          
+        }
+        
+        var incrementoPorCatAdmin = {
+          categoria: categoriasAdmin[i],
+          incrementoTotal: incrementoTotal
+        }
+        incrementosTotalesPorCatAdmin.push(incrementoPorCatAdmin);
+
+        
+      }
+
+      //Luego calcular el incremento para la categoria de trabajadores
+      var incrementoTotal =0;
+      for (let i = 0; i < categoriasTrab.length; i++) {
+        for (let j = 0; j < comparativaTrab.length; j++) {
+          
+          if(categoriasTrab[i] == comparativaTrab[j].categoria){
+
+            incrementoTotal = incrementoTotal + comparativaTrab[j].incremento
+
+          }
+          
+        }
+        
+        var incrementoPorCatTrab = {
+          categoria: categoriasTrab[i],
+          incrementoTotal: incrementoTotal
+        }
+        incrementosTotalesPorCatTrab.push(incrementoPorCatTrab);
+
+        
+      }
+
+  }
 
 }
