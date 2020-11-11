@@ -94,6 +94,7 @@ export class PropuestasFundacionComponent implements OnInit {
    public incrementoTotalAdminEmpresaDataSource: MatTableDataSource<any>;
    public incrementoTotalTrabEmpresa: any[]=[];
    public incrementoTotalTrabEmpresaDataSource: MatTableDataSource<any>;
+   public columnasIncremento:string[]= ["Categoria","Incremento total"]
 
   constructor(public db: AngularFirestore) { }
 
