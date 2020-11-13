@@ -1,6 +1,6 @@
 <div *ngIf="this.tieneFundacion == false && this.isLoading == false" style="text-align: center;" > 
     <h1>No tiene asociada una fundacion</h1>
-    <button mat-flat-button color="primary" routerLink="contrato" (click) ="onCrearFundacion()" >Crear Fundacion</button>
+    <button mat-flat-button class="boton" routerLink="contrato" (click) ="onCrearFundacion()" >Crear Fundacion</button>
 </div>
 <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
 <div *ngIf="this.tieneFundacion == true && this.isLoading == false">
@@ -9,6 +9,7 @@
     <h2>Miembros</h2>
     
 </div>
+
 <table mat-table #mytable [dataSource]="this.dataSource" class="mat-elevation-z8" style="width: 100%">
     <ng-container matColumnDef="Nombre">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre</th>

@@ -15,68 +15,70 @@
 
     <div class="menu-elements">
       <h2 class="menu-text" matSubheader>Menu Principal</h2>
+      <div *ngIf="this.sindicatoAsociado == true">
+        <div *ngIf="this.sindicato == true">
 
-      <div *ngIf="this.sindicato == true">
+          <mat-divider></mat-divider>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="estadoFinanciero">
+            <mat-icon style="width: 10%;">attach_money</mat-icon>Estado Financiero
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="innominada">
+            <mat-icon style="width: 10%;">assessment</mat-icon>Información innominada
+          </a>
+          <mat-divider></mat-divider>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="reunion">
+            <mat-icon style="width: 10%;">group_work</mat-icon>Reuniones
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="eventos">
+            <mat-icon style="width: 10%;">date_range</mat-icon>Eventos
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="historial">
+            <mat-icon style="width: 10%;">history</mat-icon>Historial
+          </a>
+          <mat-divider></mat-divider>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="propuestas">
+            <mat-icon style="width: 10%;">compare</mat-icon>Propuestas
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato">
+            <mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo
+          </a>
 
-        <mat-divider></mat-divider>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="estadoFinanciero">
-          <mat-icon style="width: 10%;">attach_money</mat-icon>Estado Financiero
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="innominada">
-          <mat-icon style="width: 10%;">assessment</mat-icon>Información innominada
-        </a>
-        <mat-divider></mat-divider>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="reunion">
-          <mat-icon style="width: 10%;">group_work</mat-icon>Reuniones
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="eventos">
-          <mat-icon style="width: 10%;">date_range</mat-icon>Eventos
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="historial">
-          <mat-icon style="width: 10%;">history</mat-icon>Historial
-        </a>
-        <mat-divider></mat-divider>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="propuestas">
-          <mat-icon style="width: 10%;">compare</mat-icon>Propuestas
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato">
-          <mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo
-        </a>
-        
-        <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
+        </div>
+        <div *ngIf="this.sindicato == false">
+
+          <a *ngIf="this.isFundAdmin == true" class="dashboard-text" mat-list-item routerLinkActive="list-item-active"
+            routerLink="sindicatos-fundacion">
+            <mat-icon style="width: 10%;">assignment_ind</mat-icon>Sindicatos
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active"
+            routerLink="estado-financiero-fundacion">
+            <mat-icon style="width: 10%;">attach_money</mat-icon>Estado Financiero
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="inominada-fundacion">
+            <mat-icon style="width: 10%;">assessment</mat-icon>Información innominada
+          </a>
+          <mat-divider></mat-divider>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="reunion-fundacion">
+            <mat-icon style="width: 10%;">group_work</mat-icon>Reuniones
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="eventos-fundacion">
+            <mat-icon style="width: 10%;">date_range</mat-icon>Eventos
+          </a>
+
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="historial-fundacion">
+            <mat-icon style="width: 10%;">history</mat-icon>Historial
+          </a>
+          <mat-divider></mat-divider>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="propuestas-fundacion">
+            <mat-icon style="width: 10%;">compare</mat-icon> Propuestas
+          </a>
+          <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato-fundacion">
+            <mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo
+          </a>
+
+        </div>
       </div>
-      <div *ngIf="this.sindicato == false">
-
-        <a *ngIf="this.isFundAdmin == true" class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="sindicatos-fundacion">
-          <mat-icon style="width: 10%;">assignment_ind</mat-icon>Sindicatos
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="estado-financiero-fundacion">
-          <mat-icon style="width: 10%;">attach_money</mat-icon>Estado Financiero
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="inominada-fundacion">
-          <mat-icon style="width: 10%;">assessment</mat-icon>Información innominada
-        </a>
-        <mat-divider></mat-divider>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="reunion-fundacion">
-          <mat-icon style="width: 10%;">group_work</mat-icon>Reuniones
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="eventos-fundacion">
-          <mat-icon style="width: 10%;">date_range</mat-icon>Eventos
-        </a>
-
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="historial-fundacion">
-          <mat-icon style="width: 10%;">history</mat-icon>Historial
-        </a>
-        <mat-divider></mat-divider>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="propuestas-fundacion">
-          <mat-icon style="width: 10%;">compare</mat-icon> Propuestas
-        </a>
-        <a class="dashboard-text" mat-list-item routerLinkActive="list-item-active" routerLink="contrato-fundacion">
-          <mat-icon style="width: 10%;">description</mat-icon>Contrato Colectivo
-        </a>
-
-      </div>
-  
 
     </div>
   </mat-nav-list>

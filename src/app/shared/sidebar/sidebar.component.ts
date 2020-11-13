@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { snapshotChanges } from '@angular/fire/database';
+import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,6 +18,7 @@ export class SidebarComponent  {
   public userEmail:any;
   userId:any;
   sindicato :boolean;
+  sindicatoAsociado:boolean;
   isFundAdmin:boolean;
   constructor(private authSvc:AuthService,private router:Router,public db: AngularFirestore) { }
 
@@ -35,10 +38,11 @@ export class SidebarComponent  {
 
               console.log("Es sindicato!!");
               this.sindicato = true;
+              this.buscarSindicatoAsociado();
 
             }
             else{
-
+              this.sindicatoAsociado= true;
               
               this.sindicato = false;
               if(doc.data().isAdmin == true){
@@ -56,6 +60,37 @@ export class SidebarComponent  {
     });
 
     
+  }
+
+  buscarSindicatoAsociado(){
+
+    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
+
+      if(snapshotChanges.exists){
+        var emailUser;
+
+          emailUser = snapshotChanges.data().email;
+
+          this.db.collection("Sindicato").get().subscribe((querySnapshot)=>{
+            querySnapshot.forEach((doc)=>{
+
+              doc.data().usuarios.forEach(element => {
+
+                if(element.email == emailUser){
+                  console.log("usuario pertenece al sindicato y es admin");
+                  this.sindicatoAsociado = true;
+
+                }
+                
+              });
+              
+            });
+          })
+
+        
+
+      }
+    })
   }
 
 }

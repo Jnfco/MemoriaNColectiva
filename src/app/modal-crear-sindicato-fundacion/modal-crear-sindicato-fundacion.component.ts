@@ -8,6 +8,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as firebase from 'firebase';
 import { FundacionService } from '../services/fundacion.service';
+import { query } from '@angular/animations';
 
 @Component({
   selector: 'app-modal-crear-sindicato-fundacion',
@@ -37,11 +38,23 @@ export class ModalCrearSindicatoFundacionComponent implements OnInit {
   isAsignarAbogado: boolean;
   isAdmin: boolean;
   isInSindicato: boolean;
+
+  //Nuevos booleanos
+  existEmail: boolean;
+  emailInSindicato: boolean;
+  esSindicato: boolean;
+
+  estaEnSindicato: boolean;
+  listaCorreosAdmins: string[] = [];
+  listaCorreosValidos: any[] = [];
+  listaSindicatos: string[] = [];
+  public selectedAdmin: string;
+  public adminSelected: boolean = false;
   constructor(private authSvc: AuthService, private fundSvc: FundacionService, public dialogRef: MatDialogRef<ModalCrearSindicatoFundacionComponent>, public db: AngularFirestore, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
-
+    this.cargarEmailsValidos();
 
 
   }
@@ -53,89 +66,104 @@ export class ModalCrearSindicatoFundacionComponent implements OnInit {
 
   onAddSindicato() {
 
-    this.isInSindicato = false;
+
+    this.db.collection("users").get().subscribe((querySnapshot)=>{
+      querySnapshot.forEach((doc)=>{
+        if(this.selectedAdmin == doc.data().email){
+
+          var user = doc.data();
+          var admin = {
+            nombre: user.name,
+            correo: user.email,
+            id: user.uid,
+            organization: user.organization,
+          }
+
+          this.fundSvc.createSindicatoFundacion(this.nameFormControl.value, admin, this.userId);
+          this.dialogRef.close({
+          });
+        }
+      })
+    })
+
+
+   
+
+
+  }
+  cargarEmailsValidos() {
+    //Buscar emails para agregarlo a la lista
+    this.db.collection("users").get().subscribe((querySnapshot) => {
+
+
+      querySnapshot.forEach((doc) => {
+
+        if (doc.data().isAdmin == true && doc.data().organization == "Sindicato") {
+
+          this.listaCorreosAdmins.push(doc.data().email);
+        }
+      });
+    });
+
+    //Agregar los sindicatos a una lista aparte
+
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
 
-        for (let i = 0; i < doc.data().usuarios.length; i++) {
-
-          if (this.emailFormControl.value == doc.data().usuarios[i].correo) {
-            this.isInSindicato = true;
-          }
-
-        }
-        this.snackbar.open("El correo ingresado ya pertenece a otro sindicato",'',{
-          duration: 3000,
-          verticalPosition:'bottom'
+        doc.data().usuarios.forEach(element => {
+          this.listaSindicatos.push(element.correo);
         });
 
+        doc.data().abogados.forEach(element => {
+          this.listaSindicatos.push(element.correo);
+        });
+
+
+
       });
+
     });
 
     setTimeout(() => {
-      this.db.collection("users").get().subscribe((querySnapshot) => {
+      console.log("lista de sindicatos en el sistema: ", this.listaSindicatos)
 
-        querySnapshot.forEach((doc) => {
+      for (let i = 0; i < this.listaCorreosAdmins.length; i++) {
+        this.estaEnSindicato = false;
+        console.log("a revisar el correo: ", this.listaCorreosAdmins[i])
+        console.log("cantidad de usuarios: ", this.listaSindicatos.length)
+        for (let j = 0; j < this.listaSindicatos.length; j++) {
+          console.log("entramos a comparar con el correo: ", this.listaSindicatos[j])
 
-          if (doc.data().email == this.emailFormControl.value) {
-            console.log("El correo existe!")
-            this.emailExists = true;
-            if (doc.data().isAdmin == true) {
-              console.log("El correo es de tipo admin");
-              this.isAdmin = true;
-              if (this.isInSindicato == false) {
-                console.log("El correo no pertenece a ningun otro sindicato")
-                var user = doc.data();
-                console.log("uid del admin: ", user.uid)
-                var admin = {
-                  nombre: user.name,
-                  correo: user.email,
-                  id: user.uid,
-                  organization: user.organization,
-                }
-
-                console.log("Admin a agregar a la fundacion")
-                this.snackbar.open("Sindicato creado exitosamente!",'',{
-                  duration: 3000,
-                  verticalPosition:'bottom'
-                });
-                this.fundSvc.createSindicatoFundacion(this.nameFormControl.value, admin, this.userId);
-
-                this.dialogRef.close({
-                });
-              }
-
-            }
-           
-            else {
-              this.snackbar.open("Correo ingresado no es de tipo administrador",'',{
-                duration: 3000,
-                verticalPosition:'bottom'
-              });
-              this.isAdmin = false;
-
-            }
+          if (this.listaCorreosAdmins[i] == this.listaSindicatos[j]) {
+            console.log("Los correos: " + this.listaCorreosAdmins[i] + "Y " + this.listaSindicatos[j] + " son iguales")
+            this.estaEnSindicato = true;
 
           }
-          else {
-           /* this.snackbar.open("El correo ingresado no existe",'',{
-              duration: 3000,
-              verticalPosition:'bottom'
-            });*/
-            this.emailExists = false;
-          }
 
-        })
-      })
+        }
+        if (this.estaEnSindicato == false) {
+          var admin = {
+            correo: this.listaCorreosAdmins[i]
+          }
+          this.listaCorreosValidos.push(admin)
+        }
+
+      }
+      console.log("correos validos: ", this.listaCorreosValidos)
     }, 1000)
+  }
+  selectAdmin() {
+
+    var adminSeleccionado = this.selectedAdmin;
+    console.log("valor seleccionado: ", adminSeleccionado);
 
 
-
-
-
-
-
+    //this.getDocumentInfo();
+    this.adminSelected = true;
 
   }
+
+
+
 }

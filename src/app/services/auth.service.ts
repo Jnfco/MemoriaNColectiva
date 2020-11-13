@@ -85,7 +85,13 @@ export class AuthService implements CanActivate {
                   console.log("tipo de org: ", doc.data().organization)
                   if (doc.data().organization == "Sindicato") {
 
-                    this.router.navigate(['/home']);
+                    if(doc.data().isAdmin == true){
+                      this.router.navigate(['/home/sindicato'])
+
+                    }
+                    else{
+                      this.router.navigate(['/home']);
+                    }
 
                   }
                   else {

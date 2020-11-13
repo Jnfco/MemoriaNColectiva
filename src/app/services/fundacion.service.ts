@@ -86,7 +86,10 @@ export class FundacionService {
       idFundacion: idFundacion,
       abogados: listaAbogados
     }
-
+    this.snackbar.open("Sindicato creado exitosamente", '', {
+      duration: 3000,
+      verticalPosition: 'bottom'
+    });
 
     const sindicatoRef: AngularFirestoreDocument<any> = this.db.doc(
       `Sindicato/${admin.id}`
