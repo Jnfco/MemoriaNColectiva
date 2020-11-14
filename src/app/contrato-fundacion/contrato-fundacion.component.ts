@@ -4,6 +4,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { ContratoService } from '../services/contrato.service';
 import * as firebase from 'firebase';
 import { Contrato } from '../shared/Interfaces/Contrato';
+import * as moment from 'moment';
+import { HistorialDocSindicato } from '../shared/Interfaces/Historial';
 
 @Component({
   selector: 'app-contrato-fundacion',
@@ -67,6 +69,13 @@ export class ContratoFundacionComponent implements OnInit {
     }
 
     this.contratoSvc.saveContractEdit(contrato);
+    this.getUpdatedText();
+    setTimeout(()=>{
+      console.log(" se va a ir al metodo guardar historial con el contenido: ",this.content)
+      this.saveHistory();
+
+    },1000)
+    
 
   }
 
@@ -203,5 +212,33 @@ export class ContratoFundacionComponent implements OnInit {
     },1500)
 
   }
+
+  saveHistory(){
+    console.log("contenido antes de guardar en historial: ",this.content)
+    
+      this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
+    
+        var fechaHoy = new Date(Date.now());
+        var fechaHoyFormatted = moment(fechaHoy).format("YYYY-MM-DD hh:mm");
+        var uuid = require("uuid");
+        var id = uuid.v4();
+        var historialEdicion :HistorialDocSindicato = {
+    
+          idMiembro: this.userId,
+          idSindicato: this.idSindicato,
+          nombre:snapshotChanges.data().name,
+          correo:snapshotChanges.data().email,
+          documento: this.content,
+          fecha: fechaHoyFormatted,
+          idCambio:id
+        }
+        
+        this.contratoSvc.saveDocToHistory(historialEdicion,id);
+    
+      })
+    
+     
+    
+    }
 
 }

@@ -24,6 +24,7 @@ export class VerDocHistorialComponent implements OnInit {
         
          
           this.htmlText = snapshotChanges.data().documento;
+          console.log("texto: ",this.htmlText)
 
         
 

@@ -38,7 +38,7 @@ export class SidebarComponent  {
 
               console.log("Es sindicato!!");
               this.sindicato = true;
-              this.buscarSindicatoAsociado();
+              this.buscarSindicatoAsociado(doc.data().email);
 
             }
             else{
@@ -62,21 +62,17 @@ export class SidebarComponent  {
     
   }
 
-  buscarSindicatoAsociado(){
+  buscarSindicatoAsociado(correo:string){
 
-    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
-
-      if(snapshotChanges.exists){
-        var emailUser;
-
-          emailUser = snapshotChanges.data().email;
+    
+     console.log("buscando correo en sindicato");
 
           this.db.collection("Sindicato").get().subscribe((querySnapshot)=>{
             querySnapshot.forEach((doc)=>{
-
+              console.log("comparando en sindicato", doc.data())
               doc.data().usuarios.forEach(element => {
-
-                if(element.email == emailUser){
+                console.log("comparando con el usuario: ",element)
+                if(element.correo == correo){
                   console.log("usuario pertenece al sindicato y es admin");
                   this.sindicatoAsociado = true;
 
@@ -89,8 +85,8 @@ export class SidebarComponent  {
 
         
 
-      }
-    })
+      
+    
   }
 
 }

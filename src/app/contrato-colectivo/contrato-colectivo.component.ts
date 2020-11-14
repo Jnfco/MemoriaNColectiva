@@ -88,13 +88,15 @@ export class ContratoColectivoComponent implements OnInit {
     }
 
     this.contratoSvc.saveContractEdit(contrato);
-    this.saveHistory();
+    this.getUpdatedText();
+    setTimeout(()=>{
+      console.log(" se va a ir al metodo guardar historial con el contenido: ",this.content)
+      this.saveHistory();
+
+    },1000)
   }
 
-  onFinalizar(){
-
-  
-  }
+ 
 
   getUpdatedText(){
 
@@ -121,7 +123,7 @@ export class ContratoColectivoComponent implements OnInit {
     })
   }
 saveHistory(){
-
+console.log("contenido antes de guardar en historial: ",this.content)
 
   this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges)=>{
 
