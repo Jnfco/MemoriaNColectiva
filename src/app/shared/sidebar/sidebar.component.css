@@ -44,3 +44,13 @@ mat-card{
 }
 
 
+.logo{
+  width: 30%;
+  height: 30%;
+  margin-left: 32%;
+}
+
+.logo-text{
+  margin-left: 30%;
+  color: white;
+}

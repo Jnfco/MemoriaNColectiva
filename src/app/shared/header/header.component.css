@@ -8,16 +8,7 @@ ul li{
 .mat-toolbar{
  overflow:hidden;
 }
-.logo{
-  width: 12%;
-  height: 12%;
-}
 
-.logo-text{
-  margin-left: 2%;
-  margin-top: 5%;
-  color: white;
-}
 
 .user-menu{
 
