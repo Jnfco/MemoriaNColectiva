@@ -162,13 +162,14 @@
                             </div>
                         </div>
                     </div>
-                    <button mat-button (click)="onGuardarPaso2()" style="margin-top: 1%; margin-left: 1%;"
-                        class="btn">Guardar paso 2</button>
+
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            [disabled]="this.paso2Completo == false" matStepperNext>Siguiente</button>
+                        <button *ngIf="this.paso2Completo == false" mat-button (click)="onGuardarPaso2()"
+                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar paso 2</button>
+                        <button *ngIf="this.paso2Completo == true" mat-button style="margin-top: 1%; margin-left: 1%;"
+                            class="btn" matStepperNext>Siguiente</button>
                     </div>
                 </div>
             </mat-step>
@@ -430,15 +431,18 @@
                     </div>
 
                     <div style="margin-bottom: 5%;">
-                        <button mat-button (click)="generarPropuestaSindicato()"
-                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar paso 3</button>
+
                     </div>
 
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            [disabled]="this.paso3Completo == false" matStepperNext>Siguiente</button>
+
+                        <button *ngIf="this.paso3Completo == false" mat-button (click)="generarPropuestaSindicato()"
+                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar paso 3</button>
+
+                        <button *ngIf="this.paso3Completo == true" mat-button style="margin-top: 1%; margin-left: 1%;"
+                            class="btn" matStepperNext>Siguiente</button>
                     </div>
 
                 </div>
@@ -591,7 +595,8 @@
             </ng-template>
 
             <mat-step label="Definición de tramos" [completed]="paso2CompletoEmpresa== true ">
-                <h2 *ngIf="this.propuestaSindicatoGenerada == false ">Para poder crear una propuesta de la empresa se debe crear primero la propuesta del sindicato</h2>
+                <h2 *ngIf="this.propuestaSindicatoGenerada == false ">Para poder crear una propuesta de la empresa se
+                    debe crear primero la propuesta del sindicato</h2>
                 <div *ngIf="this.propuestaSindicatoGenerada == true">
                     <!---Tabla tramos administrativo desde sindicato-->
                     <h2 style="margin-top: 2%;">Tramos de sueldo</h2>
@@ -705,20 +710,22 @@
                             </div>
                         </div>
                     </div>
-                    <button mat-button (click)="onGuardarPaso2Empresa()" style="margin-top: 1%; margin-left: 1%;"
-                        class="btn">Guardar paso 2</button>
+
                     <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                         <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                             matStepperPrevious>Anterior</button>
-                        <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                            [disabled]="this.paso2CompletoEmpresa == false" matStepperNext>Siguiente</button>
+                        <button *ngIf="this.paso2CompletoEmpresa == false" mat-button (click)="onGuardarPaso2Empresa()"
+                            style="margin-top: 1%; margin-left: 1%;" class="btn">Guardar paso 1</button>
+                        <button *ngIf="paso2CompletoEmpresa == true" mat-button style="margin-top: 1%; margin-left: 1%;"
+                            class="btn" matStepperNext>Siguiente</button>
                     </div>
                 </div>
 
 
 
             </mat-step>
-            <mat-step label="Definicion de reajustes y generación de propuesta" [completed]="this.paso3CompletoEmpresa == true">
+            <mat-step label="Definicion de reajustes y generación de propuesta"
+                [completed]="this.paso3CompletoEmpresa == true">
                 <div *ngIf="this.tramosAdminEmpresaGuardados == true" style="margin-top: 5%;">
 
                     <h2>Definición de reajustes</h2>
@@ -874,14 +881,15 @@
                 </div>
 
                 <div style="margin-bottom: 5%;">
-                    <button mat-button (click)="generarPropuestaEmpresa()" style="margin-top: 1%; margin-left: 1%;"
-                        class="btn">Guardar paso 3</button>
+
                 </div>
                 <div style="display: flex;flex-direction: row; justify-content: space-between; margin-top: 3%;">
                     <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
                         matStepperPrevious>Anterior</button>
-                    <button mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
-                        [disabled]="this.paso3CompletoEmpresa == false" matStepperNext>Siguiente</button>
+                    <button *ngIf="this.paso3CompletoEmpresa == false" mat-button (click)="generarPropuestaEmpresa()" style="margin-top: 1%; margin-left: 1%;"
+                        class="btn">Guardar paso 2</button>
+                    <button *ngIf="this.paso3CompletoEmpresa == true" mat-button style="margin-top: 1%; margin-left: 1%;" class="btn"
+                         matStepperNext>Siguiente</button>
                 </div>
 
             </mat-step>

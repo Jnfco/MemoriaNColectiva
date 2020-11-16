@@ -352,7 +352,10 @@ export class ModalReunionComponent {
         console.log('Reunion: ', this.reunion)
         this.meetingSvc.addMeeting(this.reunion);
         this.meetingSvc.sentMeetingEmail(this.idSindicatoUser,this.reunion);
-        this.dialogRef.close({});
+        setTimeout(()=>{
+          this.dialogRef.close({});
+
+        },1000)
       }
 
 

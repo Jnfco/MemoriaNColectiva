@@ -2166,7 +2166,7 @@ export class PropuestasComponent implements OnInit {
 
     //llamar al servicio para crear la propuesta en la basae de datos
     this.propSvc.guardarPropuesta(this.idSindicato, this.datosPropuestaAdminEmpresa, this.datosPropuestaTrabEmpresa, this.idSindicato, this.listaAños, this.listaAuxCatAdminEmpresa, this.listaAuxCatTrabEmpresa, false);
-    this.snackbar.open("Propuesta de la empresa guardada, ahora puede proceder con la propuesta del sindicato o ver la pestaña resumen", '', {
+    this.snackbar.open("Propuesta de la empresa guardada,  ahora puede proceder a ver la pestaña resumen", '', {
       duration: 3000,
       verticalPosition: 'bottom'
     });
