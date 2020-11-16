@@ -28,7 +28,7 @@ export class HistorialComponent implements OnInit {
   historialDocList: any[] = [];
 
 
-  constructor(public dialog: MatDialog,public dialog2: MatDialog,public db: AngularFirestore) {
+  constructor(public dialog: MatDialog, public dialog2: MatDialog, public db: AngularFirestore) {
 
     this.tieneReuniones = false;
     this.userId = firebase.auth().currentUser.uid;
@@ -36,35 +36,35 @@ export class HistorialComponent implements OnInit {
 
     this.reuniones = [];
     this.getMeeting();
-    setTimeout(()=>{
-        this.getHistorialDoc()
-    },1000)
+    setTimeout(() => {
+      this.getHistorialDoc()
+    }, 1500)
   }
   userId: any;
-  idSindicatoUser:any;
-  userEmail:any;
+  idSindicatoUser: any;
+  userEmail: any;
   ngOnInit(): void {
-    
-    console.log("reuniones agregar: ",this.reuniones)
-    
-    console.log("data: ", this.dataSource)
+
+    console.log("reuniones agregar: ", this.reuniones)
+
+    //console.log("data: ", this.dataSource)
   }
 
-  getHistorialDoc(){
+  getHistorialDoc() {
 
-    
-    this.db.collection("Historial").get().subscribe((querySnapshot)=>{
-      querySnapshot.forEach((doc)=>{
 
-        if(doc.data().idSindicato == this.idSindicatoUser){
+    this.db.collection("Historial").get().subscribe((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+
+        if (doc.data().idSindicato == this.idSindicatoUser) {
 
           var historial = {
-            nombre:doc.data().nombre,
-            correo:doc.data().correo,
-            fecha:doc.data().fecha,
-            idCambio:doc.data().idCambio
+            nombre: doc.data().nombre,
+            correo: doc.data().correo,
+            fecha: doc.data().fecha,
+            idCambio: doc.data().idCambio
           }
-          console.log("historial: ",historial)
+          console.log("historial: ", historial)
           this.historialDocList.push(historial);
 
         }
@@ -72,34 +72,49 @@ export class HistorialComponent implements OnInit {
     })
 
   }
-  
-  getMeeting(){
 
-    
+  getMeeting() {
 
-    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges)=>{
-              
+
+
+    this.db.collection('users').doc(this.userId).get().subscribe((snapshotChanges) => {
+
       var usuario = snapshotChanges.data();
       console.log('aqui')
-      this.idSindicatoUser = usuario.idSindicato;
-      console.log('id sindicato encontrada: ',this.idSindicatoUser)
-      console.log('es admin o no ?',usuario.isAdmin)
-      if(usuario.isAdmin == true){
-        this.idSindicatoUser =this.userId;
 
-      }
-      
-    
+
+      console.log('es admin o no ?', usuario.isAdmin)
+
+
+      this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
+
+        querySnapshot.forEach((doc) => {
+
+          doc.data().usuarios.forEach(element => {
+
+            if (element.correo == this.userEmail) {
+
+              this.idSindicatoUser = doc.data().idAdmin
+              console.log('id sindicato encontrada: ', this.idSindicatoUser)
+
+
+            }
+
+          });
+
+        })
+      })
+
     })
 
-      this.db.collection("Reunion").get().subscribe((querySnapshot)=>{
+    setTimeout(() => {
+      this.db.collection("Reunion").get().subscribe((querySnapshot) => {
 
-        querySnapshot.forEach((doc)=> {
+        querySnapshot.forEach((doc) => {
+          console.log("gola")
 
-
-          if(doc.data().idSindicato == this.idSindicatoUser && doc.data().started == true)
-          {
-            var reunion:Reunion = {
+          if (doc.data().idSindicato == this.idSindicatoUser && doc.data().started == true) {
+            var reunion: Reunion = {
               idReunion: doc.data().idReunion,
               idCreador: doc.data().idCreador,
               titulo: doc.data().titulo,
@@ -108,18 +123,18 @@ export class HistorialComponent implements OnInit {
               horaInicio: doc.data().horaInicio,
               horaTermino: doc.data().horaTermino,
               email: doc.data().email,
-              idSindicato:doc.data().idSindicato,
-              started:doc.data().started,
-              idAbogado:doc.data().idAbogado,
-              idFundacion:doc.data().idFundacion
+              idSindicato: doc.data().idSindicato,
+              started: doc.data().started,
+              idAbogado: doc.data().idAbogado,
+              idFundacion: doc.data().idFundacion
             }
             this.reuniones.push(reunion);
 
-            
-              console.log('Reuniones ',this.reuniones)
-              this.dataSource = new MatTableDataSource<Reunion>(this.reuniones);
-              this.tieneReuniones = true;
-           
+
+            console.log('Reuniones ', this.reuniones)
+            this.dataSource = new MatTableDataSource<Reunion>(this.reuniones);
+            this.tieneReuniones = true;
+
           }
         })
 
@@ -128,12 +143,14 @@ export class HistorialComponent implements OnInit {
 
       })
 
-     
+    }, 1000)
+
+
 
   }
   verDetalle(elm) {
 
-    
+
     var nombreAbogado: string;
     var correoAbogado: string;
     this.db.collection("users").doc(elm.idAbogado).get().subscribe((snapshotChanges) => {
@@ -145,7 +162,7 @@ export class HistorialComponent implements OnInit {
 
     })
 
-    
+
     setTimeout(() => {
       var reunionSelect = {
         titulo: elm.titulo,
@@ -153,11 +170,11 @@ export class HistorialComponent implements OnInit {
         fecha: elm.fecha + "  " + elm.horaInicio + " - " + elm.horaTermino,
         idReunion: elm.idReunion,
         idSindicato: elm.idSindicato,
-        nombreAbogado:nombreAbogado,
-        correoAbogado:correoAbogado
+        nombreAbogado: nombreAbogado,
+        correoAbogado: correoAbogado
 
       }
-      
+
       console.log("reunion: ", reunionSelect)
 
 
@@ -176,9 +193,9 @@ export class HistorialComponent implements OnInit {
 
   }
 
-  verContrato(elm){
+  verContrato(elm) {
 
-    console.log ("elm", elm)
+    console.log("elm", elm)
     const dialogRef = this.dialog2.open(VerDocHistorialComponent, {
       width: '800px',
       data: elm.idCambio
@@ -186,7 +203,7 @@ export class HistorialComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed', result);
-   
+
     });
 
   }

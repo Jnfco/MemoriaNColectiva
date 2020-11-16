@@ -339,6 +339,10 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
 
     this.documentAttached = true;
     console.log("documento adjuntado: ", this.documentAttached)
+    this.snackbar.open("Se ha adjuntado la última versión del contrato a esta reunión, podrá verla en el historial de reuniones después que se inicie",'',{
+      duration: 3000,
+      verticalPosition:'bottom'
+    });
 
   }
 
