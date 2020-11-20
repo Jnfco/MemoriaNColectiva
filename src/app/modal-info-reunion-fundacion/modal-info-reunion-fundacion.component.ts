@@ -40,6 +40,7 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
   fechaVacia = true;
   modificar = false;
   fechaCorrecta = true;
+  enabled:boolean;
 
   listaEventos: any[];
   idReunion: string;
@@ -98,11 +99,13 @@ export class ModalInfoReunionFundacionComponent implements OnInit {
 
         console.log("existe")
         this.nombreSindicato = snapshotChanges.data().nombreSindicato;
+        this.enabled = snapshotChanges.data().sindicatoEnabled;
         console.log("nombreSindicato: ", this.nombreSindicato)
 
       }
     })
   }
+
 
   getInfoAdminSindicato() {
 

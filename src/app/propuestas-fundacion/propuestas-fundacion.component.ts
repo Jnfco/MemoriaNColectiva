@@ -82,22 +82,22 @@ export class PropuestasFundacionComponent implements OnInit {
   public resumenExists: boolean;
   public comparativaExists: boolean;
   public sindicatoSelected: boolean;
-  public isLoading:boolean ;
+  public isLoading: boolean;
 
-   //Definicion de listas para mostrar el incremento total de sindicato y empresa
+  //Definicion de listas para mostrar el incremento total de sindicato y empresa
 
-   public incrementoTotalAdminSindicato: any[] =[];
-   public incrementoTotalAdminSindicatoDataSource: MatTableDataSource<any>;
-   public incrementoTotalTrabSindicato: any[] =[];
-   public incrementoTotalTrabSindicatoDataSource: MatTableDataSource<any>;
-   public incrementoTotalAdminEmpresa: any[]= [];
-   public incrementoTotalAdminEmpresaDataSource: MatTableDataSource<any>;
-   public incrementoTotalTrabEmpresa: any[]=[];
-   public incrementoTotalTrabEmpresaDataSource: MatTableDataSource<any>;
-   public columnasIncremento:string[]= ["Categoria","Incremento total"]
-   public columnasIncrementoEmpresa:string[]=["Categoria","Incremento total","Diferencia total"]
+  public incrementoTotalAdminSindicato: any[] = [];
+  public incrementoTotalAdminSindicatoDataSource: MatTableDataSource<any>;
+  public incrementoTotalTrabSindicato: any[] = [];
+  public incrementoTotalTrabSindicatoDataSource: MatTableDataSource<any>;
+  public incrementoTotalAdminEmpresa: any[] = [];
+  public incrementoTotalAdminEmpresaDataSource: MatTableDataSource<any>;
+  public incrementoTotalTrabEmpresa: any[] = [];
+  public incrementoTotalTrabEmpresaDataSource: MatTableDataSource<any>;
+  public columnasIncremento: string[] = ["Categoria", "Incremento total"]
+  public columnasIncrementoEmpresa: string[] = ["Categoria", "Incremento total", "Diferencia total"]
 
-   
+
 
   constructor(public db: AngularFirestore) { }
 
@@ -115,36 +115,38 @@ export class PropuestasFundacionComponent implements OnInit {
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
+        if (doc.data().sindicatoEnabled == true) {
+          doc.data().abogados.forEach(element => {
 
-        doc.data().abogados.forEach(element => {
+            if (element.correo == this.userEmail) {
 
-          if (element.correo == this.userEmail) {
+              setTimeout(() => {
+                this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
 
-            setTimeout(() => {
-              this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
+                  var sindicato: any = {
+                    nombre: doc.data().nombreSindicato,
+                    cantidadMiembros: doc.data().usuarios.length,
+                    usuarios: doc.data().usuarios,
+                    nombreAdmin: snapshotChanges.data().name,
+                    correoAdmin: snapshotChanges.data().email,
+                    idFundacion: doc.data().idFundacion,
+                    idAdmin: doc.data().idAdmin
+                  }
 
-                var sindicato: any = {
-                  nombre: doc.data().nombreSindicato,
-                  cantidadMiembros: doc.data().usuarios.length,
-                  usuarios: doc.data().usuarios,
-                  nombreAdmin: snapshotChanges.data().name,
-                  correoAdmin: snapshotChanges.data().email,
-                  idFundacion: doc.data().idFundacion,
-                  idAdmin: doc.data().idAdmin
-                }
+                  //Luego de encontrar los sindicatos, se llenan en la lista 
+                  this.sindicatoList.push(sindicato);
 
-                //Luego de encontrar los sindicatos, se llenan en la lista 
-                this.sindicatoList.push(sindicato);
+                  console.log("ids de sindicatos asociados: ", this.sindicatoList)
 
-                console.log("ids de sindicatos asociados: ", this.sindicatoList)
+                })
 
-              })
+              }, 1000);
 
-            }, 1000);
+            }
 
-          }
+          });
+        }
 
-        });
 
       });
 
@@ -165,10 +167,10 @@ export class PropuestasFundacionComponent implements OnInit {
     this.generarResumenEmpresa();
     this.generarComparativaEmpresa();
 
-    setTimeout(()=>{
+    setTimeout(() => {
       this.isLoading = false;
 
-    },500)
+    }, 500)
 
   }
 
@@ -233,7 +235,7 @@ export class PropuestasFundacionComponent implements OnInit {
     this.comparativaAdminSindicato = [];
     this.comparativaTrabajadoresSindicato = [];
     this.incrementoTotalAdminSindicato = [];
-    this.incrementoTotalTrabSindicato=[];
+    this.incrementoTotalTrabSindicato = [];
     var idSindicatoA = this.idSindicato + "A";
 
     //buscar la lista de las categorias y el año
@@ -399,7 +401,7 @@ export class PropuestasFundacionComponent implements OnInit {
         }
 
         //Luego se agregan los datos a la tabla de comparativa del sindicato
-        this.calcularIncrementoTotal(this.listaDeCategoriasAdmin,this.listaDeCategoriasTrab,this.comparativaAdminSindicato,this.comparativaTrabajadoresSindicato,this.incrementoTotalAdminSindicato,this.incrementoTotalTrabSindicato);
+        this.calcularIncrementoTotal(this.listaDeCategoriasAdmin, this.listaDeCategoriasTrab, this.comparativaAdminSindicato, this.comparativaTrabajadoresSindicato, this.incrementoTotalAdminSindicato, this.incrementoTotalTrabSindicato);
 
         this.comparativaExists = true;
       }
@@ -410,11 +412,11 @@ export class PropuestasFundacionComponent implements OnInit {
 
       this.comparativaAdminSindicatoDataSource = new MatTableDataSource<any>(this.comparativaAdminSindicato);
       this.comparativaTrabajadoresSindicatoDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresSindicato);
-      
+
       this.incrementoTotalAdminSindicatoDataSource = new MatTableDataSource<any>(this.incrementoTotalAdminSindicato);
       this.incrementoTotalTrabSindicatoDataSource = new MatTableDataSource<any>(this.incrementoTotalTrabSindicato);
     });
-    
+
 
 
 
@@ -482,7 +484,7 @@ export class PropuestasFundacionComponent implements OnInit {
     this.comparativaAdminEmpresa = [];
     this.comparativaTrabajadoresEmpresa = [];
     this.incrementoTotalTrabEmpresa = [];
-    this.incrementoTotalAdminEmpresa=[];
+    this.incrementoTotalAdminEmpresa = [];
     var idSindicatoB = this.idSindicato + "B";
 
     //buscar la lista de las categorias y el año
@@ -647,15 +649,15 @@ export class PropuestasFundacionComponent implements OnInit {
 
         //Luego se agregan los datos a la tabla de comparativa del sindicato
         console.log("comparativa trabajadores: ", this.comparativaTrabajadoresEmpresa)
-        this.calcularIncrementoTotal(this.listaDeCategoriasAdminEmpresa,this.listaDeCategoriasTrabEmpresa,this.comparativaAdminEmpresa,this.comparativaTrabajadoresEmpresa,this.incrementoTotalAdminEmpresa,this.incrementoTotalTrabEmpresa);
+        this.calcularIncrementoTotal(this.listaDeCategoriasAdminEmpresa, this.listaDeCategoriasTrabEmpresa, this.comparativaAdminEmpresa, this.comparativaTrabajadoresEmpresa, this.incrementoTotalAdminEmpresa, this.incrementoTotalTrabEmpresa);
 
         this.comparativaExists = true;
 
       }
-      else{
+      else {
         this.comparativaExists = false;
       }
-      this.calcularDiferenciaIncrementos(this.incrementoTotalAdminSindicato,this.incrementoTotalTrabSindicato,this.incrementoTotalAdminEmpresa,this.incrementoTotalTrabEmpresa);
+      this.calcularDiferenciaIncrementos(this.incrementoTotalAdminSindicato, this.incrementoTotalTrabSindicato, this.incrementoTotalAdminEmpresa, this.incrementoTotalTrabEmpresa);
 
       this.comparativaAdminEmpresaDataSource = new MatTableDataSource<any>(this.comparativaAdminEmpresa);
       this.comparativaTrabajadoresEmpresaDataSource = new MatTableDataSource<any>(this.comparativaTrabajadoresEmpresa);
@@ -674,102 +676,102 @@ export class PropuestasFundacionComponent implements OnInit {
 
   }
 
-  calcularIncrementoTotal(categoriasAdmin:string[],categoriasTrab:string[],comparativaAdmin:any[],comparativaTrab:any[],incrementosTotalesPorCatAdmin:any[],incrementosTotalesPorCatTrab:any[]){
+  calcularIncrementoTotal(categoriasAdmin: string[], categoriasTrab: string[], comparativaAdmin: any[], comparativaTrab: any[], incrementosTotalesPorCatAdmin: any[], incrementosTotalesPorCatTrab: any[]) {
 
     //Primero recorrer la comparativa de admin
-    var incrementoTotal =0;
-    console.log("categorias  admin incremento: ",categoriasAdmin);
-    console.log("categorias trab incremento: ",categoriasTrab);
-    console.log("comparativa admin incremento: ",comparativaAdmin);
-    console.log("comparativa trab incremento: ",comparativaTrab);
-    console.log("incrementosadmin: ",incrementosTotalesPorCatAdmin);
-    console.log("incrementos trab: ",incrementosTotalesPorCatTrab);
+    var incrementoTotal = 0;
+    console.log("categorias  admin incremento: ", categoriasAdmin);
+    console.log("categorias trab incremento: ", categoriasTrab);
+    console.log("comparativa admin incremento: ", comparativaAdmin);
+    console.log("comparativa trab incremento: ", comparativaTrab);
+    console.log("incrementosadmin: ", incrementosTotalesPorCatAdmin);
+    console.log("incrementos trab: ", incrementosTotalesPorCatTrab);
 
-      for (let i = 0; i < categoriasAdmin.length; i++) {
-        for (let j = 0; j < comparativaAdmin.length; j++) {
-          
-          if(categoriasAdmin[i] == comparativaAdmin[j].categoria){
+    for (let i = 0; i < categoriasAdmin.length; i++) {
+      for (let j = 0; j < comparativaAdmin.length; j++) {
 
-            incrementoTotal = incrementoTotal + comparativaAdmin[j].incremento
+        if (categoriasAdmin[i] == comparativaAdmin[j].categoria) {
 
-          }
-          
+          incrementoTotal = incrementoTotal + comparativaAdmin[j].incremento
+
         }
-        
-        var incrementoPorCatAdmin = {
-          categoria: categoriasAdmin[i],
-          incrementoTotal: incrementoTotal
-        }
-        incrementosTotalesPorCatAdmin.push(incrementoPorCatAdmin);
 
-        
       }
 
-      //Luego calcular el incremento para la categoria de trabajadores
-      var incrementoTotal =0;
-      for (let i = 0; i < categoriasTrab.length; i++) {
-        for (let j = 0; j < comparativaTrab.length; j++) {
-          
-          if(categoriasTrab[i] == comparativaTrab[j].categoria){
-
-            incrementoTotal = incrementoTotal + comparativaTrab[j].incremento
-
-          }
-          
-        }
-        
-        var incrementoPorCatTrab = {
-          categoria: categoriasTrab[i],
-          incrementoTotal: incrementoTotal
-        }
-        incrementosTotalesPorCatTrab.push(incrementoPorCatTrab);
-
-        
+      var incrementoPorCatAdmin = {
+        categoria: categoriasAdmin[i],
+        incrementoTotal: incrementoTotal
       }
+      incrementosTotalesPorCatAdmin.push(incrementoPorCatAdmin);
+
+
+    }
+
+    //Luego calcular el incremento para la categoria de trabajadores
+    var incrementoTotal = 0;
+    for (let i = 0; i < categoriasTrab.length; i++) {
+      for (let j = 0; j < comparativaTrab.length; j++) {
+
+        if (categoriasTrab[i] == comparativaTrab[j].categoria) {
+
+          incrementoTotal = incrementoTotal + comparativaTrab[j].incremento
+
+        }
+
+      }
+
+      var incrementoPorCatTrab = {
+        categoria: categoriasTrab[i],
+        incrementoTotal: incrementoTotal
+      }
+      incrementosTotalesPorCatTrab.push(incrementoPorCatTrab);
+
+
+    }
 
   }
 
-  calcularDiferenciaIncrementos(incrementoAdminSindicato:any[],incrementoTrabSindicato:any[],incrementoAdminEmpresa:any[],incrementoTrabEmpresa:any[]){
+  calcularDiferenciaIncrementos(incrementoAdminSindicato: any[], incrementoTrabSindicato: any[], incrementoAdminEmpresa: any[], incrementoTrabEmpresa: any[]) {
 
     //Primero se calcula la diferencia para el admin sindicato
 
     for (let i = 0; i < incrementoAdminSindicato.length; i++) {
-      
+
       for (let j = 0; j < incrementoAdminEmpresa.length; j++) {
-        
-        if(incrementoAdminSindicato[i].categoria == incrementoAdminEmpresa[j].categoria){
 
-            incrementoAdminEmpresa[j].diferenciaTotal = incrementoAdminSindicato[i].incrementoTotal - incrementoAdminEmpresa[j].incrementoTotal
-            console.log("incremento admin: ",incrementoAdminEmpresa[j].diferenciaTotal)
-            if(incrementoAdminEmpresa[j].diferenciaTotal < 0){
-              incrementoAdminEmpresa[j].diferenciaTotal= incrementoAdminEmpresa[j].diferenciaTotal * -1;
+        if (incrementoAdminSindicato[i].categoria == incrementoAdminEmpresa[j].categoria) {
 
-            }
+          incrementoAdminEmpresa[j].diferenciaTotal = incrementoAdminSindicato[i].incrementoTotal - incrementoAdminEmpresa[j].incrementoTotal
+          console.log("incremento admin: ", incrementoAdminEmpresa[j].diferenciaTotal)
+          if (incrementoAdminEmpresa[j].diferenciaTotal < 0) {
+            incrementoAdminEmpresa[j].diferenciaTotal = incrementoAdminEmpresa[j].diferenciaTotal * -1;
+
+          }
 
         }
-        
+
       }
-      
+
     }
 
     //Ahora se calcula la diferencia para los trabajadores
 
     for (let i = 0; i < incrementoTrabSindicato.length; i++) {
-      
+
       for (let j = 0; j < incrementoTrabEmpresa.length; j++) {
-        
-        if(incrementoTrabSindicato[i].categoria == incrementoTrabEmpresa[j].categoria){
 
-            incrementoTrabEmpresa[j].diferenciaTotal = incrementoTrabSindicato[i].incrementoTotal - incrementoTrabEmpresa[j].incrementoTotal
-            if(incrementoTrabEmpresa[j].diferenciaTotal < 0){
-              incrementoTrabEmpresa[j]= incrementoTrabEmpresa[j] * -1;
+        if (incrementoTrabSindicato[i].categoria == incrementoTrabEmpresa[j].categoria) {
 
-            }
+          incrementoTrabEmpresa[j].diferenciaTotal = incrementoTrabSindicato[i].incrementoTotal - incrementoTrabEmpresa[j].incrementoTotal
+          if (incrementoTrabEmpresa[j].diferenciaTotal < 0) {
+            incrementoTrabEmpresa[j] = incrementoTrabEmpresa[j] * -1;
+
+          }
 
         }
-        
+
       }
-      
+
     }
   }
 

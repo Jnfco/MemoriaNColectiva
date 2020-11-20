@@ -9,11 +9,26 @@
     </mat-select>
   </mat-form-field>
 
-  <h1 *ngIf="this.innominadaExists == false" style="text-align: center;" >No se ha seleccionado ningún sindicato</h1>
+  <h1 *ngIf="this.sindicatoSeleccionado == false" style="text-align: center;" >No se ha seleccionado ningún sindicato</h1>
 
   <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
+  <div id="div_file" style="display: flex;flex-direction: row;justify-content: space-between;" *ngIf="this.sindicatoSeleccionado == true">
 
+
+    <label for="file-upload" class="custom-file-upload">
+      Cargar Datos
+    </label>
+    <input type="file" id="file-upload" onclick="this.value=null" accept=".xlsx" (change)="uploadedFile($event)">
+    <label class="custom-file-upload" (click)="saveDocumentInfo()">
+      Guardar Datos
+    </label>
+    <label class="custom-file-upload" (click)="deleteInfo()">
+      Eliminar Datos
+    </label>
+  
+  </div>
   <mat-card class="card asd cardPardding" *ngIf=!noData>
+    
     <mat-card-header style="display: flex;flex-direction: row;">
       <h2>Sueldos por cargo</h2> <button mat-button (click)="onHideBoxChart()" style="margin-left: 10%;"
         *ngIf="!this.hideBoxChart">Ocultar Gráfico</button>
@@ -42,40 +57,40 @@
     </mat-card-content>
   
   
-  <mat-card class="card asd cardPardding" *ngIf=!noData>
-    <mat-card-header>
-      <h2>Promedios de sueldos por cargo</h2><button mat-button (click)="onHideBarChart()" style="margin-left: 10%;"
-        *ngIf="!this.hideBarChart">Mostrar gráfico</button>
-      <button mat-button (click)="onHideBarChart()" style="margin-left: 10%;" *ngIf="this.hideBarChart">Ocultar
-        gráfico</button>
-    </mat-card-header>
-    <mat-card-content>
-      <div>
+    <mat-card class="card asd cardPardding" *ngIf=!noData>
+      <mat-card-header>
+        <h2>Promedios de sueldos por cargo</h2><button mat-button (click)="onHideBarChart()" style="margin-left: 10%;"
+          *ngIf="!this.hideBarChart">Mostrar gráfico</button>
+        <button mat-button (click)="onHideBarChart()" style="margin-left: 10%;" *ngIf="this.hideBarChart">Ocultar
+          gráfico</button>
+      </mat-card-header>
+      <mat-card-content>
         <div>
           <div>
-            <canvas baseChart [datasets]="barChartPromData" [labels]="this.nombreCargos" [options]="lineChartOptions"
-              [colors]="lineChartColors" [legend]="lineChartLegend" chartType="bar" *ngIf="this.hideBarChart">
-            </canvas>
+            <div>
+              <canvas baseChart [datasets]="barChartPromData" [labels]="this.nombreCargos" [options]="lineChartOptions"
+                [colors]="lineChartColors" [legend]="lineChartLegend" chartType="bar" *ngIf="this.hideBarChart">
+              </canvas>
+            </div>
           </div>
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-  
-  
-  <mat-card class="card asd cardPardding" *ngIf=!noData>
-    <mat-card-header>
-      <h2>Mayor sueldo por cargo</h2><button mat-button (click)="onHideBarChart2()" style="margin-left: 10%;"
-        *ngIf="!this.hideBarChart2">Mostrar gráfico</button>
-      <button mat-button (click)="onHideBarChart2()" style="margin-left: 10%;" *ngIf="this.hideBarChart2">Ocultar
-        gráfico</button>
-    </mat-card-header>
-    <mat-card-content>
-      <div>
-        <canvas baseChart [datasets]="barChartData" [labels]="this.nombreCargos" chartType="bar"
-          *ngIf="this.hideBarChart2">
-        </canvas>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      </mat-card-content>
+    </mat-card>
+    
+    
+    <mat-card class="card asd cardPardding" *ngIf=!noData>
+      <mat-card-header>
+        <h2>Mayor sueldo por cargo</h2><button mat-button (click)="onHideBarChart2()" style="margin-left: 10%;"
+          *ngIf="!this.hideBarChart2">Mostrar gráfico</button>
+        <button mat-button (click)="onHideBarChart2()" style="margin-left: 10%;" *ngIf="this.hideBarChart2">Ocultar
+          gráfico</button>
+      </mat-card-header>
+      <mat-card-content>
+        <div>
+          <canvas baseChart [datasets]="barChartData" [labels]="this.nombreCargos" chartType="bar"
+            *ngIf="this.hideBarChart2">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
   

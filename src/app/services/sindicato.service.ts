@@ -18,7 +18,8 @@ export class SindicatoService {
   
     const sindicato ={
       nombreSindicato: nombreSindicato,
-      idAdmin:userId
+      idAdmin:userId,
+      sindicatoEnabled:true
     }
 
     const sindicatoRef:AngularFirestoreDocument<any> = this.db.doc(
@@ -38,7 +39,8 @@ export class SindicatoService {
     const sindicato ={
       nombreSindicato: nombreSindicato,
       idAdmin:userId,
-      usuarios:listaSindicatoAdmin
+      usuarios:listaSindicatoAdmin,
+      sindicatoEnabled:true
     }
 
     const sindicatoRef:AngularFirestoreDocument<any> = this.db.doc(
@@ -46,6 +48,23 @@ export class SindicatoService {
     );
     this.router.navigate(['/home']);
     return sindicatoRef.set(sindicato, { merge: true });
+  }
+
+  cambiarEstadoSindicato (sindicato:any,estado:boolean){
+
+    const sindicatoN ={
+      nombreSindicato: sindicato.nombreSindicato,
+      idAdmin:sindicato.idAdmin,
+      usuarios:sindicato.usuarios,
+      abogados:sindicato.abogados,
+      sindicatoEnabled:estado
+    }
+
+    const sindicatoRef:AngularFirestoreDocument<any> = this.db.doc(
+      `Sindicato/${sindicatoN.idAdmin}`
+    );
+   
+    return sindicatoRef.set(sindicatoN, { merge: true });
   }
 
 

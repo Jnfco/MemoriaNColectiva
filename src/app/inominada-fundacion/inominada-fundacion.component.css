@@ -1,22 +1,26 @@
-.table-title{
-    margin-top: 5%;
-  }
-  
-  mat-form-field{
-    width: 50%;
-  }
-  
-  .table {
-    width: 100vw;
-    max-width: 100%;
-    overflow: auto;
-    margin-bottom: 10px;
-    display: table;
-    border-collapse: collapse;
-    margin: 0px;
-    background-color: rgb(238, 238, 238);
-    cursor: pointer;
-  }
-  .w-a{
-    width: 5%;
-  }
+.card{
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #730800;
+  color: white;
+}
+
+.pestañaActiva{
+  background-color: gainsboro ;
+}
+

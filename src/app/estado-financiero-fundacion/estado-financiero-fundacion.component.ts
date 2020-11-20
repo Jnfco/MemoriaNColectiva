@@ -258,80 +258,83 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
   selectedValue: string;
 
   sindicatoList: any[] = [];
-  sindicatosAsociados: string[]=[];
+  sindicatosAsociados: string[] = [];
 
   userEmail: any;
 
-  estadoExists:boolean;
+  estadoExists: boolean;
 
-  sindicatoSelected:boolean;
+  sindicatoSelected: boolean;
   isDraft = false;
   draftExists = false;
-  estadoConDatos:boolean;
-  borradorGuardado:boolean;
-  public listaHojas: any[] =[];
+  estadoConDatos: boolean;
+  borradorGuardado: boolean;
+  public listaHojas: any[] = [];
   constructor(
     public afAuth: AngularFireAuth,
     public db: AngularFirestore,
     private snackbar: MatSnackBar,
     private dialog: MatDialog,
-    private docSvc:DocumentService
-  ) {}
-  cargarSindicatos(){
+    private docSvc: DocumentService
+  ) { }
+  cargarSindicatos() {
 
     //Primero se buscan todos los sindicatos que están asociados al abogado actual en la sesión
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
+        if (doc.data().sindicatoEnabled == true) {
+          doc.data().abogados.forEach(element => {
 
-        doc.data().abogados.forEach(element => {
+            if (element.correo == this.userEmail) {
 
-          if (element.correo == this.userEmail) {
+              setTimeout(() => {
+                this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
 
-            setTimeout(() => {
-              this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
+                  var sindicato: any = {
+                    nombre: doc.data().nombreSindicato,
+                    cantidadMiembros: doc.data().usuarios.length,
+                    usuarios: doc.data().usuarios,
+                    nombreAdmin: snapshotChanges.data().name,
+                    correoAdmin: snapshotChanges.data().email,
+                    idFundacion: doc.data().idFundacion,
+                    idAdmin: doc.data().idAdmin
+                  }
 
-                var sindicato: any = {
-                  nombre: doc.data().nombreSindicato,
-                  cantidadMiembros: doc.data().usuarios.length,
-                  usuarios: doc.data().usuarios,
-                  nombreAdmin: snapshotChanges.data().name,
-                  correoAdmin: snapshotChanges.data().email,
-                  idFundacion: doc.data().idFundacion,
-                  idAdmin: doc.data().idAdmin
-                }
+                  //Luego de encontrar los sindicatos, se llenan en la lista 
+                  this.sindicatoList.push(sindicato);
 
-                //Luego de encontrar los sindicatos, se llenan en la lista 
-                this.sindicatoList.push(sindicato);
-              
-                console.log("ids de sindicatos asociados: ", this.sindicatoList)
+                  console.log("ids de sindicatos asociados: ", this.sindicatoList)
 
-              })
+                })
 
-            }, 1000);
-
-
+              }, 1000);
 
 
 
 
-          }
 
-        });
+
+            }
+
+          });
+        }
+
+
 
       });
 
-      
 
 
-      
+
+
 
     });
   }
   selectSindicato() {
 
     var sindicatoSeleccionado = this.selectedValue;
-    console.log("valor seleccionado: ",sindicatoSeleccionado);
+    console.log("valor seleccionado: ", sindicatoSeleccionado);
     this.idSindicatoUser = sindicatoSeleccionado;
     this.sindicatoSelected = true;
     this.getDocument(this.userId);
@@ -1057,7 +1060,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
   loadUpdated() {
     this.getDocument(this.userId)
   }
-  
+
   getDocument(userId: any) {
     this.isLoading = true;
     this.isDraft = false;
@@ -1646,12 +1649,12 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     });
   }
 
- 
-      }
-    
-   
+
+}
 
 
-  
+
+
+
 
 

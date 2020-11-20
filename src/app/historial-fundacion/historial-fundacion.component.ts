@@ -22,7 +22,7 @@ export class HistorialFundacionComponent implements OnInit {
   reuniones: Reunion[];
   tieneReuniones = true;
   isLoading: boolean;
-  constructor(public dialog: MatDialog, public db: AngularFirestore,public dialog2: MatDialog) {
+  constructor(public dialog: MatDialog, public db: AngularFirestore, public dialog2: MatDialog) {
 
     this.tieneReuniones = false;
     this.userId = firebase.auth().currentUser.uid;
@@ -40,7 +40,7 @@ export class HistorialFundacionComponent implements OnInit {
   sindicatosAsociados: string[] = [];
   historialExists = true;
   sindicatoSelected = false;
-  isAdmin:boolean;
+  isAdmin: boolean;
   //Para el historial general
   historialDocList: any[] = [];
 
@@ -54,7 +54,7 @@ export class HistorialFundacionComponent implements OnInit {
     //this.historialExists = false;
     this.checkAdmin();
     this.cargarSindicatos();
-   
+
     console.log("historial exists: ", this.historialExists)
   }
 
@@ -71,7 +71,7 @@ export class HistorialFundacionComponent implements OnInit {
 
   }
 
-  getMeetingAdmin(){
+  getMeetingAdmin() {
     this.isLoading = true;
     this.reuniones = [];
 
@@ -181,21 +181,21 @@ export class HistorialFundacionComponent implements OnInit {
 
   }
 
-  getHistorialDoc(){
-this.historialDocList = [];
-    
-    this.db.collection("Historial").get().subscribe((querySnapshot)=>{
-      querySnapshot.forEach((doc)=>{
+  getHistorialDoc() {
+    this.historialDocList = [];
 
-        if(doc.data().idSindicato == this.idSindicatoUser){
+    this.db.collection("Historial").get().subscribe((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+
+        if (doc.data().idSindicato == this.idSindicatoUser) {
 
           var historial = {
-            nombre:doc.data().nombre,
-            correo:doc.data().correo,
-            fecha:doc.data().fecha,
-            idCambio:doc.data().idCambio
+            nombre: doc.data().nombre,
+            correo: doc.data().correo,
+            fecha: doc.data().fecha,
+            idCambio: doc.data().idCambio
           }
-          console.log("historial: ",historial)
+          console.log("historial: ", historial)
           this.historialDocList.push(historial);
 
         }
@@ -209,38 +209,40 @@ this.historialDocList = [];
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
+        if (doc.data().sindicatoEnabled == true) {
+          doc.data().abogados.forEach(element => {
 
-        doc.data().abogados.forEach(element => {
+            if (element.correo == this.userEmail) {
 
-          if (element.correo == this.userEmail) {
+              setTimeout(() => {
+                this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
 
-            setTimeout(() => {
-              this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
+                  var sindicato: any = {
+                    nombre: doc.data().nombreSindicato,
+                    cantidadMiembros: doc.data().usuarios.length,
+                    usuarios: doc.data().usuarios,
+                    nombreAdmin: snapshotChanges.data().name,
+                    correoAdmin: snapshotChanges.data().email,
+                    idFundacion: doc.data().idFundacion,
+                    idAdmin: doc.data().idAdmin
+                  }
 
-                var sindicato: any = {
-                  nombre: doc.data().nombreSindicato,
-                  cantidadMiembros: doc.data().usuarios.length,
-                  usuarios: doc.data().usuarios,
-                  nombreAdmin: snapshotChanges.data().name,
-                  correoAdmin: snapshotChanges.data().email,
-                  idFundacion: doc.data().idFundacion,
-                  idAdmin: doc.data().idAdmin
-                }
-
-                //Luego de encontrar los sindicatos, se llenan en la lista 
-                this.sindicatoList.push(sindicato);
-                console.log("sindicatos encontrados: ", this.sindicatoList)
-                console.log("ids de sindicatos asociados: ", this.sindicatoList)
-
-
-              })
-
-            }, 1000);
+                  //Luego de encontrar los sindicatos, se llenan en la lista 
+                  this.sindicatoList.push(sindicato);
+                  console.log("sindicatos encontrados: ", this.sindicatoList)
+                  console.log("ids de sindicatos asociados: ", this.sindicatoList)
 
 
-          }
+                })
 
-        });
+              }, 1000);
+
+
+            }
+
+          });
+        }
+
 
       });
 
@@ -254,26 +256,26 @@ this.historialDocList = [];
     console.log("valor seleccionado: ", sindicatoSeleccionado);
     this.idSindicatoUser = sindicatoSeleccionado;
 
-    if(this.isAdmin == true){
+    if (this.isAdmin == true) {
 
       this.getMeetingAdmin()
     }
-    else{
+    else {
       this.getMeeting();
 
     }
     //this.getDocument();
 
-    setTimeout(()=>{
+    setTimeout(() => {
 
       this.getHistorialDoc();
-    },1000)
+    }, 1000)
 
   }
 
-  verContrato(elm){
+  verContrato(elm) {
 
-    console.log ("elm", elm)
+    console.log("elm", elm)
     const dialogRef = this.dialog2.open(VerDocHistorialComponent, {
       width: '800px',
       data: elm.idCambio
@@ -281,7 +283,7 @@ this.historialDocList = [];
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed', result);
-   
+
     });
 
   }
@@ -306,8 +308,8 @@ this.historialDocList = [];
         fecha: elm.fecha + "  " + elm.horaInicio + " - " + elm.horaTermino,
         idReunion: elm.idReunion,
         idSindicato: elm.idSindicato,
-        nombreAbogado:nombreAbogado,
-        correoAbogado:correoAbogado
+        nombreAbogado: nombreAbogado,
+        correoAbogado: correoAbogado
 
       }
 

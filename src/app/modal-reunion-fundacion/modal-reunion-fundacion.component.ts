@@ -306,41 +306,43 @@ export class ModalReunionFundacionComponent {
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
+        if (doc.data().sindicatoEnabled == true) {
+          doc.data().abogados.forEach(element => {
 
-        doc.data().abogados.forEach(element => {
+            if (element.correo == this.userEmail) {
 
-          if (element.correo == this.userEmail) {
+              setTimeout(() => {
+                this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
 
-            setTimeout(() => {
-              this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
+                  var sindicato: any = {
+                    nombre: doc.data().nombreSindicato,
+                    cantidadMiembros: doc.data().usuarios.length,
+                    usuarios: doc.data().usuarios,
+                    nombreAdmin: snapshotChanges.data().name,
+                    correoAdmin: snapshotChanges.data().email,
+                    idFundacion: doc.data().idFundacion,
+                    idAdmin: doc.data().idAdmin
+                  }
 
-                var sindicato: any = {
-                  nombre: doc.data().nombreSindicato,
-                  cantidadMiembros: doc.data().usuarios.length,
-                  usuarios: doc.data().usuarios,
-                  nombreAdmin: snapshotChanges.data().name,
-                  correoAdmin: snapshotChanges.data().email,
-                  idFundacion: doc.data().idFundacion,
-                  idAdmin: doc.data().idAdmin
-                }
+                  //Luego de encontrar los sindicatos, se llenan en la lista 
+                  this.sindicatoList.push(sindicato);
 
-                //Luego de encontrar los sindicatos, se llenan en la lista 
-                this.sindicatoList.push(sindicato);
+                  console.log("ids de sindicatos asociados: ", this.sindicatoList)
 
-                console.log("ids de sindicatos asociados: ", this.sindicatoList)
+                })
 
-              })
-
-            }, 1000);
-
-
+              }, 1000);
 
 
 
 
-          }
 
-        });
+
+            }
+
+          });
+        }
+
 
       });
 
@@ -359,12 +361,12 @@ export class ModalReunionFundacionComponent {
 
     //this.getDocumentInfo();
     this.sindicatoSelected = true;
-    if(this.isAdmin == true){
+    if (this.isAdmin == true) {
       this.cargarAbogados();
 
     }
-    else{
-      this.idAbogado =this.userId;
+    else {
+      this.idAbogado = this.userId;
     }
 
   }

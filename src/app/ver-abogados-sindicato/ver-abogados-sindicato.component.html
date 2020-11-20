@@ -1,6 +1,7 @@
 <h1 *ngIf="this.abogadosExists == true" style="text-align: center;">Abogados asociados</h1>
 <mat-progress-bar mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
-<table class="table-responsive" mat-table #mytable  [dataSource]="this.dataSource" >
+<h2 *ngIf="this.abogadosExists == false">No hay abogados asociados a este sindicato</h2>
+<table class="table-responsive" mat-table #mytable  [dataSource]="this.dataSource" *ngIf="this.abogadosExists == true" >
     <ng-container matColumnDef="nombre">
         <th class="w-a" mat-header-cell *matHeaderCellDef>Nombre </th>
         <td mat-cell *matCellDef="let element">

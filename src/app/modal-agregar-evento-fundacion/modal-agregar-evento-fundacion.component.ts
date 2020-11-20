@@ -45,7 +45,7 @@ export class ModalAgregarEventoFundacionComponent implements OnInit {
   //Validadores
   fechaCorrecta: boolean;
 
-  idFundacion:string;
+  idFundacion: string;
 
   constructor(public db: AngularFirestore, @Inject(MAT_DIALOG_DATA) public data: any, private eventSvc: EventService, public dialogRef: MatDialogRef<ModalAgregarEventoFundacionComponent>) { }
 
@@ -54,9 +54,9 @@ export class ModalAgregarEventoFundacionComponent implements OnInit {
     this.userId = firebase.auth().currentUser.uid;
     this.userEmail = firebase.auth().currentUser.email;
     this.cargarSindicatos();
-    setTimeout(()=>{
+    setTimeout(() => {
       this.getIdFundacion(this.userEmail);
-    },1000)
+    }, 1000)
   }
 
   cargarSindicatos() {
@@ -64,37 +64,40 @@ export class ModalAgregarEventoFundacionComponent implements OnInit {
     this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
       querySnapshot.forEach((doc) => {
-        doc.data().abogados.forEach(element => {
+        if (doc.data().sindicatoEnabled == true) {
+          doc.data().abogados.forEach(element => {
 
-          if (element.correo == this.userEmail) {
+            if (element.correo == this.userEmail) {
 
-            setTimeout(() => {
-              
-              this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
+              setTimeout(() => {
 
-                var sindicato: any = {
-                  nombre: doc.data().nombreSindicato,
-                  cantidadMiembros: doc.data().usuarios.length,
-                  usuarios: doc.data().usuarios,
-                  nombreAdmin: snapshotChanges.data().name,
-                  correoAdmin: snapshotChanges.data().email,
-                  idFundacion: doc.data().idFundacion,
-                  idAdmin: doc.data().idAdmin
-                }
+                this.db.collection("users").doc(doc.data().idAdmin).get().subscribe((snapshotChanges) => {
 
-                //Luego de encontrar los sindicatos, se llenan en la lista 
-                this.sindicatoList.push(sindicato);
+                  var sindicato: any = {
+                    nombre: doc.data().nombreSindicato,
+                    cantidadMiembros: doc.data().usuarios.length,
+                    usuarios: doc.data().usuarios,
+                    nombreAdmin: snapshotChanges.data().name,
+                    correoAdmin: snapshotChanges.data().email,
+                    idFundacion: doc.data().idFundacion,
+                    idAdmin: doc.data().idAdmin
+                  }
 
-                console.log("ids de sindicatos asociados: ", this.sindicatoList)
+                  //Luego de encontrar los sindicatos, se llenan en la lista 
+                  this.sindicatoList.push(sindicato);
 
-              })
+                  console.log("ids de sindicatos asociados: ", this.sindicatoList)
 
-            }, 1000);
+                })
+
+              }, 1000);
 
 
-          }
+            }
 
-        });
+          });
+        }
+
 
       });
 
@@ -164,7 +167,7 @@ export class ModalAgregarEventoFundacionComponent implements OnInit {
       descripcion: this.descripcionFormControl.value,
       fecha: formattedDate,
       idSindicato: this.idSindicatoUser,
-      idFundacion:this.idFundacion
+      idFundacion: this.idFundacion
     }
 
     this.eventSvc.agregarEventoFundacion(evento, id);

@@ -12,6 +12,10 @@ import { VerAbogadosSindicatoComponent } from '../ver-abogados-sindicato/ver-abo
 import { snapshotChanges } from '@angular/fire/database';
 import { ModalDetalleSindicatoFundacionComponent } from '../modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { UsuarioSindicato } from '../shared/Interfaces/UsuarioSindicato';
+import { IUser } from '../services/User';
+import { SindicatoService } from '../services/sindicato.service';
+import { query } from '@angular/animations';
 
 @Component({
   selector: 'app-sindicatos-fundacion',
@@ -20,68 +24,67 @@ import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confi
 })
 export class SindicatosFundacionComponent implements OnInit {
 
-  constructor(public db: AngularFirestore,private dialog: MatDialog) { }
+  constructor(public db: AngularFirestore, private dialog: MatDialog, private sindicatoSvc: SindicatoService) { }
   dataSource: any;
   displayedColumns: string[] = [
-    'Nombre', 'Admin','Correo_admin', 'Miembros','Detalles','Abogado','verAbogado','deshabilitar'
+    'Nombre', 'Admin', 'Correo_admin', 'Miembros', 'Detalles', 'Abogado', 'verAbogado', 'deshabilitar'
   ];
-  userId:any;
-  cantidadMiembros:any;
-  sindicatos: any [];
-  sindicatosExists:boolean;
-  isLoading=true;
-  haveFundacion:boolean;
+  userId: any;
+  cantidadMiembros: any;
+  sindicatos: any[];
+  sindicatosExists: boolean;
+  isLoading = true;
+  haveFundacion: boolean;
   ngOnInit(): void {
     this.userId = firebase.auth().currentUser.uid;
-    
+
     this.tieneFundacion();
     this.getSindicatos();
-    
+
   }
 
-  tieneFundacion(){
+  tieneFundacion() {
 
-    this.db.collection("Fundacion").doc(this.userId).get().subscribe((snapshotChanges)=>{
-      if(snapshotChanges.exists)
-      {
+    this.db.collection("Fundacion").doc(this.userId).get().subscribe((snapshotChanges) => {
+      if (snapshotChanges.exists) {
         this.haveFundacion = true;
       }
-      else{
-        this.haveFundacion =false;
+      else {
+        this.haveFundacion = false;
       }
 
-      console.log("tiene fundacion?: ",this.haveFundacion)
+      console.log("tiene fundacion?: ", this.haveFundacion)
     })
 
   }
 
-  addLawyer(element){
-    
+  addLawyer(element) {
+
     var idSindicato = element.idSindicato;
-    console.log("id sindicato: ",idSindicato)
+    console.log("id sindicato: ", idSindicato)
 
     const dialogRef = this.dialog.open(ModalAsociarAbogadoComponent, {
       width: '800px',
-      data:idSindicato
+      data: idSindicato
     });
     dialogRef.afterClosed().subscribe(result => {
-     
+
     });
   }
 
-  verDetalle(elm){
+  verDetalle(elm) {
 
     const dialogRef = this.dialog.open(ModalDetalleSindicatoFundacionComponent, {
       width: '800px',
-      data:elm.idSindicato
+      data: elm.idSindicato
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed', result);
-   
+
     });
   }
 
-  crearSindicato(){
+  crearSindicato() {
     const dialogRef = this.dialog.open(ModalCrearSindicatoFundacionComponent, {
       width: '800px'
     });
@@ -92,71 +95,75 @@ export class SindicatosFundacionComponent implements OnInit {
     });
   }
 
-  getSindicatos(){
-    this.isLoading =true;
+  getSindicatos() {
+    this.isLoading = true;
     this.sindicatos = [];
-    this.db.collection("Sindicato").get().subscribe((querySnapshot)=>{
+    this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
 
-      querySnapshot.forEach((doc)=> {
+      querySnapshot.forEach((doc) => {
 
-        if(doc.data().idFundacion == this.userId){
+        if (doc.data().idFundacion == this.userId) {
 
           var sindicatoData = doc.data();
-          var nombreAdmin:string;
-          var correoAdmin:string;
-          for(let i =0;i< sindicatoData.usuarios.length;i++){
+          var nombreAdmin: string;
+          var correoAdmin: string;
+          for (let i = 0; i < sindicatoData.usuarios.length; i++) {
 
-            if (sindicatoData.usuarios[i].id == sindicatoData.idAdmin){
+            if (sindicatoData.usuarios[i].id == sindicatoData.idAdmin) {
 
               nombreAdmin = sindicatoData.usuarios[i].nombre;
               correoAdmin = sindicatoData.usuarios[i].correo;
             }
 
           }
-          console.log("Nombre del admin: ",nombreAdmin)
+          console.log("Nombre del admin: ", nombreAdmin)
           var sindicato = {
-            nombre:sindicatoData.nombreSindicato,
-            admin:nombreAdmin,
-            usuarios:sindicatoData.usuarios,
-            correoAdmin:correoAdmin,
-            idFundacion:sindicatoData.idFundacion,
-            cantidadMiembros:sindicatoData.usuarios.length,
-            idSindicato:sindicatoData.idAdmin
+            nombre: sindicatoData.nombreSindicato,
+            admin: nombreAdmin,
+            usuarios: sindicatoData.usuarios,
+            correoAdmin: correoAdmin,
+            idFundacion: sindicatoData.idFundacion,
+            cantidadMiembros: sindicatoData.usuarios.length,
+            idSindicato: sindicatoData.idAdmin,
+            sindicatoEnabled:sindicatoData.sindicatoEnabled
           }
 
-         this.sindicatos.push(sindicato);
-        
-         this.dataSource = new MatTableDataSource<any>(this.sindicatos);
+          this.sindicatos.push(sindicato);
 
-         
+          this.dataSource = new MatTableDataSource<any>(this.sindicatos);
+
+
 
         }
-       
-        
+
+
 
       });
     });
 
-    
-    setTimeout(()=>{
-      
-      if(this.sindicatos.length >0){
-        this.sindicatosExists =true;
-       
+
+    setTimeout(() => {
+
+      if (this.sindicatos.length > 0) {
+        this.sindicatosExists = true;
+
       }
-      else{
+      else {
         this.sindicatosExists = false;
-        console.log("existe sindicato?: ",this.sindicatosExists)
+        console.log("existe sindicato?: ", this.sindicatosExists)
       }
-      this.isLoading=false;
-    },1000)
+      this.isLoading = false;
+    }, 1000)
   }
 
+  checkEnabled(element):boolean{
+    return element.sindicatoEnabled;
+  }
 
-  verAbogados(element){
+  verAbogados(element) {
     const dialogRef = this.dialog.open(VerAbogadosSindicatoComponent, {
       width: '800px',
-      data:element.idSindicato
+      data: element.idSindicato
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed', result);
@@ -164,25 +171,63 @@ export class SindicatosFundacionComponent implements OnInit {
       this.getSindicatos();
     });
   }
-  deshabilitarSindicato(elm){
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        message: '¿Está seguro que quiere deshabilitar este sindicato?',
-        buttonText: {
-          ok: 'Aceptar',
-          cancel: 'Cancelar'
+
+  deshabilitarSindicato(elm) {
+console.log("elemento seleccionado; ",elm)
+    if (elm.sindicatoEnabled == true) {
+
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          message: '¿Está seguro que quiere deshabilitar este sindicato?',
+          buttonText: {
+            ok: 'Aceptar',
+            cancel: 'Cancelar'
+          }
         }
-      }
-    });
+      });
+  
+      console.log("elemento: ", elm)
+      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (confirmed) {
+  
+          console.log("elemento a borrar: ", elm)
+  
+          this.db.collection("Sindicato").doc(elm.idSindicato).get().subscribe((snapshotChanges) => {
+            this.sindicatoSvc.cambiarEstadoSindicato(snapshotChanges.data(), false);
+            setTimeout(()=>
+            {
+              this.getSindicatos();
+            },1000)
+            
+          });
+        }
+      });
+    }
+    else{
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          message: '¿Está seguro que quiere habilitar este sindicato?',
+          buttonText: {
+            ok: 'Aceptar',
+            cancel: 'Cancelar'
+          }
+        }
+      });
+  
+      console.log("elemento: ", elm)
+      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.db.collection("Sindicato").doc(elm.idSindicato).get().subscribe((snapshotChanges) => {
+            this.sindicatoSvc.cambiarEstadoSindicato(snapshotChanges.data(), true);
+            setTimeout(()=>{
+              this.getSindicatos();
 
-    console.log("elemento: ", elm)
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        console.log("elemento a borrar: ", elm)
-        
-
-      }
-    });
+            },1000)
+          });
+        }
+      });
+    }
+    
   }
 
 }

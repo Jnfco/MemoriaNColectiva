@@ -84,7 +84,8 @@ export class FundacionService {
       idAdmin: admin.id,
       usuarios: listaSindicatoAdmin,
       idFundacion: idFundacion,
-      abogados: listaAbogados
+      abogados: listaAbogados,
+      sindicatoEnabled:true
     }
     this.snackbar.open("Sindicato creado exitosamente", '', {
       duration: 3000,
@@ -128,7 +129,8 @@ export class FundacionService {
           idFundacion: sindicato.idFundacion,
           nombreSindicato: sindicato.nombreSindicato,
           usuarios: sindicato.usuarios,
-          abogados: abogadoList
+          abogados: abogadoList,
+          sindicatoEnabled:true
 
         }
 
@@ -185,7 +187,8 @@ export class FundacionService {
           idAdmin: sind.idAdmin,
           idFundacion: sind.idFundacion,
           usuarios: sind.usuarios,
-          abogados: listaAbogados
+          abogados: listaAbogados,
+          sindicatoEnabled:true
         }
 
         console.log ("Sindicato nuevo: ",sindicato)
