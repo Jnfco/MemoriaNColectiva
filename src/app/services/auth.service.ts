@@ -216,7 +216,8 @@ export class AuthService implements CanActivate {
       email: user.email,
       name: name,
       organization: organization,
-      isAdmin: isAdmin
+      isAdmin: isAdmin,
+      enabledUser:true
     };
     this.userID = user.uid;
     return userRef.set(userData, {
@@ -239,7 +240,8 @@ export class AuthService implements CanActivate {
         name: name,
         organization: organization,
         isAdmin: isAdmin,
-        idFundacion: idSindicato
+        idFundacion: idSindicato,
+        enabledUser:true
 
       };
     }
@@ -251,7 +253,8 @@ export class AuthService implements CanActivate {
         name: name,
         organization: organization,
         isAdmin: isAdmin,
-        idSindicato: idSindicato
+        idSindicato: idSindicato,
+        enabledUser:true
 
       };
     }
@@ -336,7 +339,8 @@ export class AuthService implements CanActivate {
       idOrg: adminId,
       organization: org,
       isAdmin: false,
-      id: id
+      id: id,
+      enabledUser:true
     }
 
     return userRef.set(user, {
@@ -360,7 +364,8 @@ export class AuthService implements CanActivate {
       idFundacion: adminId,
       organization: "Fundación",
       isAdmin: false,
-      id: id
+      id: id,
+      enabledUser:true
     }
 
     return userRef.set(user, {
@@ -384,7 +389,8 @@ export class AuthService implements CanActivate {
       organization: "Fundación",
       idFundacion: idFundacion,
       isAdmin: true,
-      id: id
+      id: id,
+      enabledUser:true
     }
 
     return userRef.set(user, {
@@ -424,7 +430,8 @@ export class AuthService implements CanActivate {
               nombre: user.nombre,
               correo: user.correo,
               pass: user.pass,
-              idOrg: user.idOrg
+              idOrg: user.idOrg,
+              enabledUser:true
             }
 
             setTimeout(() => {
@@ -508,7 +515,8 @@ export class AuthService implements CanActivate {
         name: nombre,
         organization: organization,
         isAdmin: isAdmin,
-        idOrg: idOrg
+        idOrg: idOrg,
+        enabledUser:true
       }
 
       return userRef.set(memberData, { merge: true });
@@ -520,7 +528,8 @@ export class AuthService implements CanActivate {
         name: nombre,
         organization: organization,
         isAdmin: isAdmin,
-        idOrg: idOrg
+        idOrg: idOrg,
+        enabledUser:true
       }
       return userRef.set(memberData, { merge: true })
     }
@@ -545,7 +554,8 @@ export class AuthService implements CanActivate {
           nombre: memberOrg.nombre,
           correo: memberOrg.correo,
           pass: memberOrg.pass,
-          idOrg: memberOrg.idOrg
+          idOrg: memberOrg.idOrg,
+          enabledUser:true
         }
 
         memberList = memberDoc.usuarios;
@@ -598,7 +608,8 @@ export class AuthService implements CanActivate {
           nombre: member.nombre,
           correo: member.correo,
           pass: member.pass,
-          idOrg: member.idOrg
+          idOrg: member.idOrg,
+          enabledUser:true
         }
       }
 

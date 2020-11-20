@@ -93,7 +93,7 @@ export class ContratoColectivoComponent implements OnInit {
       console.log(" se va a ir al metodo guardar historial con el contenido: ",this.content)
       this.saveHistory();
 
-    },1000)
+    },1500)
   }
 
  

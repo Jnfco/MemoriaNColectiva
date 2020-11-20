@@ -11,6 +11,7 @@ import { ModalAsociarAbogadoComponent } from '../modal-asociar-abogado/modal-aso
 import { VerAbogadosSindicatoComponent } from '../ver-abogados-sindicato/ver-abogados-sindicato.component';
 import { snapshotChanges } from '@angular/fire/database';
 import { ModalDetalleSindicatoFundacionComponent } from '../modal-detalle-sindicato-fundacion/modal-detalle-sindicato-fundacion.component';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-sindicatos-fundacion',
@@ -22,7 +23,7 @@ export class SindicatosFundacionComponent implements OnInit {
   constructor(public db: AngularFirestore,private dialog: MatDialog) { }
   dataSource: any;
   displayedColumns: string[] = [
-    'Nombre', 'Admin','Correo_admin', 'Miembros','Detalles','Abogado','verAbogado'
+    'Nombre', 'Admin','Correo_admin', 'Miembros','Detalles','Abogado','verAbogado','deshabilitar'
   ];
   userId:any;
   cantidadMiembros:any;
@@ -161,6 +162,26 @@ export class SindicatosFundacionComponent implements OnInit {
       console.log('The dialog was closed', result);
       this.sindicatos = [];
       this.getSindicatos();
+    });
+  }
+  deshabilitarSindicato(elm){
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere deshabilitar este sindicato?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        
+
+      }
     });
   }
 

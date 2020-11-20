@@ -108,6 +108,7 @@ import { PropuestasComponent } from './propuestas/propuestas.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import { ThousandSeparatorPipe } from './custom-pipes/thousand-separator.pipe';
 import { PropuestasFundacionComponent } from './propuestas-fundacion/propuestas-fundacion.component';
+import { DisableConfirmationComponent } from './disable-confirmation/disable-confirmation.component';
 
 
 
@@ -170,7 +171,8 @@ FullCalendarModule.registerPlugins([
     ModalDetalleEventoFundacionComponent,
     PropuestasComponent,
     ThousandSeparatorPipe,
-    PropuestasFundacionComponent
+    PropuestasFundacionComponent,
+    DisableConfirmationComponent
 
 
   ],

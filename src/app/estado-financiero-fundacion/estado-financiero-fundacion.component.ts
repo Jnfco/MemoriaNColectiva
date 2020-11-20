@@ -35,6 +35,8 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { snapshotChanges } from '@angular/fire/database';
 import { Sindicato } from '../shared/Interfaces/Sindicato';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-estado-financiero-fundacion',
@@ -46,7 +48,6 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
   data: [][];
   @ViewChild('tabla', { static: false }) tabla: ElementRef;
 
-  //Nombres para las columnas de las tablas en angular material
   displayedColumns: string[] = [
     'Año',
     'Efectivo y equivalentes al efectivo',
@@ -56,6 +57,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     'Cuentas por cobrar a partes relacionadas',
     'Activo por impuestos corrientes',
     'Total activos corrientes',
+    'eliminar'
   ];
   tablaActivosNC: string[] = [
     'Año',
@@ -64,7 +66,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     'propiedades',
     'activos por derecho',
     'total no corrientes',
-    'total',
+    'total', 'eliminar'
   ];
   tablaPasivosC: string[] = [
     'Año',
@@ -75,14 +77,14 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     'otras provisiones',
     'pasivos impuestos corrientes',
     'provisiones',
-    'total pasivos corrientes',
+    'total pasivos corrientes', 'eliminar'
   ];
   tablaPasivosNC: string[] = [
     'Año',
     'pasivos arrendamientos',
     'otras provisiones',
     'provisiones beneficios',
-    'total pasivos no corrientes',
+    'total pasivos no corrientes', 'eliminar'
   ];
   tablaPatrimonio: string[] = [
     'Año',
@@ -91,7 +93,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     'patrimonio contador',
     'participaciones',
     'total patrimonio neto',
-    'total pasivos y patrimonio',
+    'total pasivos y patrimonio', 'eliminar'
   ];
 
   tablaEstadoResultados: string[] = [
@@ -104,26 +106,106 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     'otras ganancias',
     'ingresos financieros',
     'costos financieros',
-    'resultado reajuste',
+    'resultado reajuste', 'eliminar'
   ];
   tablaGananciaAntesImpuestos: string[] = [
     'Año',
     'gastoImp',
     'gananciaDespImp',
-    'totalRes',
+    'totalRes', 'eliminar'
   ];
   tablaGananciaAtribuibleA: string[] = [
     'Año',
     'gananciaControlador',
     'gananciaNoControl',
-    'ganancia',
+    'ganancia', 'eliminar'
   ];
   tablaEstadoResultadosIntegrales: string[] = [
     'Año',
     'ganancia',
     'gananciaActuariales',
-    'totalResIntegrales',
+    'totalResIntegrales', 'eliminar'
   ];
+  //nombres tabla Borrador
+
+  BdisplayedColumns: string[] = [
+    'Año',
+    'Efectivo y equivalentes al efectivo',
+    'Activos financieros',
+    'Otros activos no financieros',
+    'Deudores educacionales y otras cuentas por cobrar, netos',
+    'Cuentas por cobrar a partes relacionadas',
+    'Activo por impuestos corrientes',
+    'Total activos corrientes'
+  ];
+  BtablaActivosNC: string[] = [
+    'Año',
+    'otros activos',
+    'activos intangibles',
+    'propiedades',
+    'activos por derecho',
+    'total no corrientes',
+    'total'
+  ];
+  BtablaPasivosC: string[] = [
+    'Año',
+    'pasivos arrendamientos',
+    'otros pasivos',
+    'cuentas comerciales',
+    'cuentas relacionadas',
+    'otras provisiones',
+    'pasivos impuestos corrientes',
+    'provisiones',
+    'total pasivos corrientes'
+  ];
+  BtablaPasivosNC: string[] = [
+    'Año',
+    'pasivos arrendamientos',
+    'otras provisiones',
+    'provisiones beneficios',
+    'total pasivos no corrientes'
+  ];
+  BtablaPatrimonio: string[] = [
+    'Año',
+    'aportes',
+    'resultados retenidos',
+    'patrimonio contador',
+    'participaciones',
+    'total patrimonio neto',
+    'total pasivos y patrimonio'
+  ];
+
+  BtablaEstadoResultados: string[] = [
+    'Año',
+    'ingresos',
+    'costo ventas',
+    'margen',
+    'otros ingresos',
+    'gastos admin',
+    'otras ganancias',
+    'ingresos financieros',
+    'costos financieros',
+    'resultado reajuste'
+  ];
+  BtablaGananciaAntesImpuestos: string[] = [
+    'Año',
+    'gastoImp',
+    'gananciaDespImp',
+    'totalRes'
+  ];
+  BtablaGananciaAtribuibleA: string[] = [
+    'Año',
+    'gananciaControlador',
+    'gananciaNoControl',
+    'ganancia'
+  ];
+  BtablaEstadoResultadosIntegrales: string[] = [
+    'Año',
+    'ganancia',
+    'gananciaActuariales',
+    'totalResIntegrales'
+  ];
+
 
   // Listas de interfaces para cada tabla
   activosC: ActivosC[];
@@ -182,23 +264,19 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
 
   estadoExists:boolean;
 
+  sindicatoSelected:boolean;
+  isDraft = false;
+  draftExists = false;
+  estadoConDatos:boolean;
+  borradorGuardado:boolean;
+  public listaHojas: any[] =[];
   constructor(
     public afAuth: AngularFireAuth,
-    public db: AngularFirestore
+    public db: AngularFirestore,
+    private snackbar: MatSnackBar,
+    private dialog: MatDialog,
+    private docSvc:DocumentService
   ) {}
-
-  ngOnInit(): void {
-    this.userId = firebase.auth().currentUser.uid;
-    this.userEmail = firebase.auth().currentUser.email;
-    this.noData = true;
-    //this.isLoading = true;
-    this.disCol = "Hola";
-    this.estadoExists = false;
-    this.cargarSindicatos();
-    //this.getDocument(this.userId);
-
-  }
-
   cargarSindicatos(){
 
     //Primero se buscan todos los sindicatos que están asociados al abogado actual en la sesión
@@ -255,18 +333,734 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     var sindicatoSeleccionado = this.selectedValue;
     console.log("valor seleccionado: ",sindicatoSeleccionado);
     this.idSindicatoUser = sindicatoSeleccionado;
-    
-    this.getDocument();
+    this.sindicatoSelected = true;
+    this.getDocument(this.userId);
+
+  }
+  ngOnInit(): void {
+    this.listaHojas = [];
+    this.userId = firebase.auth().currentUser.uid;
+    this.userEmail = firebase.auth().currentUser.email;
+    this.noData = true;
+    //this.isLoading = true;
+    this.disCol = "Hola";
+    this.listaHojas = [];
+    this.userId = firebase.auth().currentUser.uid;
+    this.userEmail = firebase.auth().currentUser.email;
+    this.noData = true;
+    this.isLoading = true;
+    this.disCol = "Hola"
+    this.cargarSindicatos();
+    //this.getDocument(this.userId);
+
+  }
+
+  checkDraft() {
+    this.db.collection("EstadoFinanciero").get().subscribe((querySnapshot) => {
+
+      querySnapshot.forEach((doc) => {
+
+        if (doc.data().idSindicato == this.idSindicatoUser) {
+
+
+          if (doc.data().isDraft == true) {
+
+            this.draftExists = true;
+
+          }
+
+        }
+
+      });
+    });
+
+  }
+  loadDraft() {
+    this.isDraft = true;
+    console.log("AAAAAAAAAAAAAA")
+    this.isLoading = true;
+    this.activosC = [];
+    console.log("ACtivos: ", this.activosC)
+
+    this.activosNC = [];
+    this.pasivosC = [];
+    this.pasivosNC = [];
+    this.patrimonio = [];
+    this.estadoRes = [];
+    this.resultadoEstado = [];
+    this.gananciaAntesImpuesto = [];
+    this.gananciaAtribuible = [];
+    this.estadoResInt = [];
+
+
+
+
+    this.db.collection("EstadoFinanciero").get().subscribe((querySnapshot) => {
+
+      querySnapshot.forEach((estado) => {
+
+        if (estado.data().idSindicato == this.idSindicatoUser) {
+          if (estado.data().isDraft == true) {
+
+
+            this.noDataMessage = false;
+
+            var doc = estado.data();
+            var activosC = doc.activosCorrientes;
+            var activosNC = doc.activosNoCorrientes;
+            var pasivosC = doc.pasivosCorrientes;
+            var pasivosNC = doc.pasivosNoCorrientes;
+            var patrimonio = doc.patrimonio;
+            var estadoRes = doc.estadoResultados;
+            var gananciaAntesImpuesto = doc.gananciaAntesImp;
+            var gananciaActuariales = doc.gananciaAtribuible;
+            var estadoResIntegrales = doc.estadoResIntegrales;
+
+            for (let i = 0; i < activosC.length; i++) {
+
+              let activosCorrientes = {
+                anio: activosC[i].anio,
+                efectivo: activosC[i].efectivo,
+                activosF: activosC[i].activosF,
+                otrosAc: activosC[i].otrosAc,
+                deudores: activosC[i].deudores,
+                cuentas: activosC[i].cuentas,
+                activoImpC: activosC[i].activoImpC,
+                total: activosC[i].total
+              }
+
+              this.activosC.push(activosCorrientes);
+
+            }
+
+            for (let i = 0; i < activosNC.length; i++) {
+
+              let activosNoCorrientes = {
+                anio: activosNC[i].anio,
+                otrosA: activosNC[i].otrosA,
+                activosI: activosNC[i].activosI,
+                prop: activosNC[i].prop,
+                activosD: activosNC[i].activosD,
+                totalNC: activosNC[i].totalNC,
+                totalA: activosNC[i].totalA
+              }
+              this.activosNC.push(activosNoCorrientes);
+            }
+
+
+            for (let i = 0; i < pasivosC.length; i++) {
+
+              let pasivosCorrientes = {
+                anio: pasivosC[i].anio,
+                pasivosAr: pasivosC[i].pasivosAr,
+                otrosP: pasivosC[i].otrosP,
+                cuentasC: pasivosC[i].cuentasC,
+                cuentasR: pasivosC[i].cuentasR,
+                otras: pasivosC[i].otras,
+                pasivosI: pasivosC[i].pasivosI,
+                provisiones: pasivosC[i].provisiones,
+                totalPC: pasivosC[i].totalPC,
+              };
+              this.pasivosC.push(pasivosCorrientes);
+            }
+
+            for (let i = 0; i < pasivosNC.length; i++) {
+
+              let pasivosNoCorrientes = {
+                anio: pasivosNC[i].anio,
+                pasivosAr: pasivosNC[i].pasivosAr,
+                otrosP: pasivosNC[i].otrosP,
+                provisionesB: pasivosNC[i].provisionesB,
+                total: pasivosNC[i].total,
+              };
+              this.pasivosNC.push(pasivosNoCorrientes);
+            }
+
+            for (let i = 0; i < patrimonio.length; i++) {
+
+              let patrimonios = {
+                anio: patrimonio[i].anio,
+                aportes: patrimonio[i].aportes,
+                resultadosR: patrimonio[i].resultadosR,
+                patrimonioContador: patrimonio[i].patrimonioContador,
+                participaciones: patrimonio[i].participaciones,
+                totalPNeto: patrimonio[i].totalPNeto,
+                totalPP: patrimonio[i].totalPP,
+              };
+              this.patrimonio.push(patrimonios);
+            }
+
+            for (let i = 0; i < estadoRes.length; i++) {
+
+              let estadoR = {
+                anio: estadoRes[i].anio,
+                ingresos: estadoRes[i].ingresos,
+                costoVentas: estadoRes[i].costoVentas,
+                margen: estadoRes[i].margen,
+                otrosI: estadoRes[i].otrosI,
+                gastosAdm: estadoRes[i].gastosAdm,
+                otrasGanancias: estadoRes[i].otrasGanancias,
+                ingresosF: estadoRes[i].ingresosF,
+                costosF: estadoRes[i].costosF,
+                resultadoR: estadoRes[i].resultadoR,
+              };
+              this.resultadoEstado.push(estadoR);
+            }
+
+            for (let i = 0; i < gananciaAntesImpuesto.length; i++) {
+
+              let gananciaAntesImp = {
+                anio: gananciaAntesImpuesto[i].anio,
+                gastoImp: gananciaAntesImpuesto[i].gastoImp,
+                gastoDespImp: gananciaAntesImpuesto[i].gastoDespImp,
+                totalRes: gananciaAntesImpuesto[i].totalRes,
+              };
+              this.gananciaAntesImpuesto.push(gananciaAntesImp);
+            }
+
+            for (let i = 0; i < gananciaActuariales.length; i++) {
+
+              let gananciaAt = {
+                anio: gananciaActuariales[i].anio,
+                gananciaControlador: gananciaActuariales[i].gananciaControlador,
+                gananciaNoControladora: gananciaActuariales[i].gananciaNoControladora,
+                ganancia: gananciaActuariales[i].ganancia,
+              };
+              this.gananciaAtribuible.push(gananciaAt);
+            }
+
+
+            for (let i = 0; i < estadoResIntegrales.length; i++) {
+
+              let estRInt = {
+                anio: estadoResIntegrales[i].anio,
+                ganancia: estadoResIntegrales[i].ganancia,
+                gananciaAct: estadoResIntegrales[i].gananciaAct,
+                total: estadoResIntegrales[i].total,
+              };
+              this.estadoResInt.push(estRInt);
+            }
+
+
+
+
+            this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
+
+            this.dataSourceActivosNC = new MatTableDataSource<ActivosNC>(this.activosNC);
+            this.dataSourcePasivosC = new MatTableDataSource<PasivosC>(this.pasivosC);
+            this.dataSourcePasivosNC = new MatTableDataSource<PasivosNC>(this.pasivosNC);
+            this.dataSourcePatrimonio = new MatTableDataSource<Patrimonio>(this.patrimonio);
+            this.dataSourceEstadoR = new MatTableDataSource<EstadoR>(this.resultadoEstado);
+            this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(this.gananciaAntesImpuesto);
+            this.dataSourceGananciaAtribuible = new MatTableDataSource<GananciaAtribuible>(this.gananciaAtribuible);
+            this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
+            this.noData = false;
+            this.isLoading = false;
+
+          }
+        }
+
+      });
+    });
+
+
+  }
+  getIdSindicato() {
+
+    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
+
+      if (snapshotChanges.data().isAdmin == true) {
+        this.idSindicatoUser = this.userId;
+
+      }
+      else {
+        setTimeout(() => {
+          this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
+
+            querySnapshot.forEach((doc) => {
+
+              doc.data().usuarios.forEach(element => {
+
+                if (element.correo == this.userEmail) {
+
+                  this.idSindicatoUser = doc.data().idAdmin
+
+                }
+
+              });
+
+            })
+          })
+        }, 1000)
+
+      }
+    })
 
   }
 
 
-
-
-
-
-  getDocument() {
+  uploadedFile(ev: any) {
+    let workBook = null;
+    let jsonData = null;
+    const reader = new FileReader();
+    const file = ev.target.files[0];
+    this.noData = true;
     this.isLoading = true;
+    reader.onload = (event) => {
+      this.activosC = [];
+      this.activosNC = [];
+      this.pasivosC = [];
+      this.pasivosNC = [];
+      this.patrimonio = [];
+      this.estadoRes = [];
+      this.resultadoEstado = [];
+      this.gananciaAntesImpuesto = [];
+      this.gananciaAtribuible = [];
+      this.estadoResInt = [];
+      const data = reader.result;
+      workBook = XLSX.read(data, { type: 'binary' });
+      this.listaHojas = workBook.SheetNames;
+      jsonData = workBook.SheetNames.reduce((initial, name) => {
+        const sheet = workBook.Sheets[name];
+        initial[name] = XLSX.utils.sheet_to_json(sheet);
+        return initial;
+      }, {});
+      this.jsonSinTransformar = JSON.stringify(jsonData).split('.').join("");
+      console.log("lista hojas: ", workBook.Sheets)
+      //console.log('sin puntos: ', this.jsonSinTransformar)
+      //console.log('Data: ',dataString);
+
+      //console.log("Cantidad filas: ",jsonData.Activos_corrientes.length);
+
+      //Recorre el JSON de la primera hoja y agrega las tablas al datasource
+      //console.log("Data: ",this.jsonSinTransformar)
+
+      console.log("lista de hojas: ", this.listaHojas);
+
+      if (this.listaHojas[0] == "Activos_corrientes") {
+
+
+        //A probar con un ingreso dinamico de la primera hoja
+        console.log("tamaño estado financiero: ", jsonData.Activos_corrientes.length);
+        for (let i = 0; i < jsonData.Activos_corrientes.length; i++) {
+          this.jsonArray = Array.of(jsonData.Activos_corrientes[i]);
+          console.log('data matriz sin saber nombres: ', this.jsonArray);
+
+          let activosCorrientes = {
+            anio: this.jsonArray[0].Año,
+            efectivo: this.jsonArray[0].Efectivo_y_equivalentes_al_efectivo,
+            activosF: this.jsonArray[0].Activos_financieros,
+            otrosAc: this.jsonArray[0].Otros_activos_no_financieros,
+            deudores: this.jsonArray[0]
+              .Deudores_educacionales_y_otras_cuentas_por_cobrar_netos,
+            cuentas: this.jsonArray[0].Cuentas_por_cobrar_a_partes_relacionadas,
+            activoImpC: this.jsonArray[0].Activo_por_impuestos_corrientes,
+            total: this.jsonArray[0].Total_activos_corrientes,
+          };
+          //console.log('Arreglo 1: ',activosCorrientes)
+
+          this.activosC.push(activosCorrientes);
+        }
+
+        //Recorre el JSON de la segunda hoja y agrega las tablas al datasource
+
+        for (let i = 0; i < jsonData.Activos_no_corrientes.length; i++) {
+          this.jsonArray = Array.of(jsonData.Activos_no_corrientes[i]);
+          var acs = {
+            anio: this.jsonArray[0].Año,
+            otrosA: this.jsonArray[0].Otros_activos_financieros_no_corrientes,
+            activosI: this.jsonArray[0].Activos_intangibles_netos,
+            prop: this.jsonArray[0].Propiedades_planta_y_equipos_neto,
+            activosD: this.jsonArray[0].Activos_por_derecho_de_uso,
+            totalNC: this.jsonArray[0].Total_activos_no_corrientes,
+            totalA: this.jsonArray[0].Total_Activos,
+          };
+          this.activosNC.push(acs);
+        }
+
+        //Recorer el JSON de la tercera hoja y agrega al datasource
+        for (let i = 0; i < jsonData.Pasivos_corrientes.length; i++) {
+          this.jsonArray = Array.of(jsonData.Pasivos_corrientes[i]);
+          var pasivosCorrientes = {
+            anio: this.jsonArray[0].Año,
+            pasivosAr: this.jsonArray[0].Pasivos_financieros_por_arrendamientos,
+            otrosP: this.jsonArray[0].Otros_pasivos_no_financieros,
+            cuentasC: this.jsonArray[0]
+              .Cuentas_por_pagar_comerciales_y_otras_cuentas_por_pagar,
+            cuentasR: this.jsonArray[0].Cuentas_por_pagar_a_partes_relacionadas,
+            otras: this.jsonArray[0].Otras_provisiones,
+            pasivosI: this.jsonArray[0].Pasivos_por_impuestos_corrientes,
+            provisiones: this.jsonArray[0]
+              .Provisiones_por_beneficios_a_los_empleados,
+            totalPC: this.jsonArray[0].Total_pasivos_Corrientes,
+          };
+          this.pasivosC.push(pasivosCorrientes);
+        }
+
+        //Recorer el JSON de la cuarta hoja y agrega al datasource
+        for (let i = 0; i < jsonData.Pasivos_no_corrientes.length; i++) {
+          this.jsonArray = Array.of(jsonData.Pasivos_no_corrientes[i]);
+          var pasivosNoCorrientes = {
+            anio: this.jsonArray[0].Año,
+            pasivosAr: this.jsonArray[0].Pasivos_financieros_por_arrendamientos,
+            otrosP: this.jsonArray[0].Otras_povisiones,
+            provisionesB: this.jsonArray[0]
+              .Provisiones_por_beneficios_a_los_empleados,
+            total: this.jsonArray[0].Provisiones_por_beneficios_a_los_empleados,
+          };
+          this.pasivosNC.push(pasivosNoCorrientes);
+        }
+
+        //Recorer el JSON de la quinta hoja y agrega al datasource
+        for (let i = 0; i < jsonData.Patrimonio.length; i++) {
+          this.jsonArray = Array.of(jsonData.Patrimonio[i]);
+          var patrimonio = {
+            anio: this.jsonArray[0].Año,
+            aportes: this.jsonArray[0].Aportes_y_donaciones,
+            resultadosR: this.jsonArray[0].Resultados_retenidos,
+            patrimonioContador: this.jsonArray[0]
+              .Patrimono_atribuible_al_controlador,
+            participaciones: this.jsonArray[0].Participaciones_no_controladoras,
+            totalPNeto: this.jsonArray[0].Total_patrimonio_neto,
+            totalPP: this.jsonArray[0].Total_pasivos_y_patrimonio,
+          };
+          this.patrimonio.push(patrimonio);
+        }
+
+        //Recorer el JSON de la sexta hoja y agrega al datasource
+        for (let i = 0; i < jsonData.Estado_de_resultados.length; i++) {
+          this.jsonArray = Array.of(jsonData.Estado_de_resultados[i]);
+          let estadoR = {
+            anio: this.jsonArray[0].Año,
+            ingresos: this.jsonArray[0].Ingresos_de_actividades_ordinarios,
+            costoVentas: this.jsonArray[0].Costo_de_ventas,
+            margen: this.jsonArray[0].margen_bruto,
+            otrosI: this.jsonArray[0].Otros_ingresos_por_función,
+            gastosAdm: this.jsonArray[0].Gastos_de_administración,
+            otrasGanancias: this.jsonArray[0].Otras_ganancias_perdidas,
+            ingresosF: this.jsonArray[0].Ingresos_financieros,
+            costosF: this.jsonArray[0].Costos_financieros,
+            resultadoR: this.jsonArray[0].Resultado_por_unidad_de_reajuste,
+          };
+
+          this.resultadoEstado.push(estadoR);
+        }
+
+        //Recorer el JSON de la septima hoja y agrega al datasource
+
+        for (let i = 0; i < jsonData.Ganancia_antes_del_impuesto.length; i++) {
+          this.jsonArray = Array.of(jsonData.Ganancia_antes_del_impuesto[i]);
+          var gananciaAntesImp = {
+            anio: this.jsonArray[0].Año,
+            gastoImp: this.jsonArray[0].Gasto_por_impuesto_a_las_ganancias,
+            gastoDespImp: this.jsonArray[0].Ganancia_despues_de_impuesto,
+            totalRes: this.jsonArray[0].Total_resultados,
+          };
+          this.gananciaAntesImpuesto.push(gananciaAntesImp);
+        }
+
+        //Recorer el JSON de la octava hoja y agrega al datasource
+        for (let i = 0; i < jsonData.Ganancia_atribuible_a.length; i++) {
+          this.jsonArray = Array.of(jsonData.Ganancia_atribuible_a[i]);
+          var gananciaAt = {
+            anio: this.jsonArray[0].Año,
+            gananciaControlador: this.jsonArray[0]
+              .Ganancia_atribuible_al_controlador,
+            gananciaNoControladora: this.jsonArray[0]
+              .Ganancia_atribuible_participaciones_no_controladoras,
+            ganancia: this.jsonArray[0].Ganancia,
+          };
+          this.gananciaAtribuible.push(gananciaAt);
+        }
+
+        //Recorer el JSON de la novena hoja y agrega al datasource
+        console.log(jsonData.Estado_resultados_integrales);
+        for (let i = 0; i < jsonData.Estado_resultados_integrales.length; i++) {
+          this.jsonArray = Array.of(jsonData.Estado_resultados_integrales[i]);
+          var estRInt = {
+            anio: this.jsonArray[0].Año,
+            ganancia: this.jsonArray[0].Ganancia,
+            gananciaAct: this.jsonArray[0]
+              .Ganancia_actuariales_por_planes_de_beneficios_actuariales,
+            total: this.jsonArray[0]
+              .Total_resultado_de_ingresos_y_gastos_integrales,
+          };
+          this.estadoResInt.push(estRInt);
+        }
+
+        this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
+        this.dataSourceActivosNC = new MatTableDataSource<ActivosNC>(
+          this.activosNC);
+        this.dataSourcePasivosC = new MatTableDataSource<PasivosC>(this.pasivosC);
+        this.dataSourcePasivosNC = new MatTableDataSource<PasivosNC>(
+          this.pasivosNC);
+        this.dataSourcePatrimonio = new MatTableDataSource<Patrimonio>(
+          this.patrimonio);
+        console.log('Estado resultado antes de agregar a la tabla: ', this.resultadoEstado)
+        this.dataSourceEstadoR = new MatTableDataSource<EstadoR>(this.resultadoEstado);
+        this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(
+          this.gananciaAntesImpuesto);
+        this.dataSourceGananciaAtribuible = new MatTableDataSource<
+          GananciaAtribuible
+        >(this.gananciaAtribuible);
+        this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
+        this.noData = false;
+        this.estadoConDatos = true;
+      }
+      else {
+        this.snackbar.open("Formato de archivo incorrecto", '', {
+          duration: 3000,
+          verticalPosition: 'bottom'
+        });
+        this.noData = true;
+      }
+    };
+
+    this.isLoading = false;
+    this.noDataMessage = false;
+
+    reader.readAsBinaryString(file);
+  }
+
+  public deleteEstado() {
+
+    this.docSvc.deleteEstado(this.userId);
+    this.data = [];
+    this.noDataMessage = true;
+    this.noData = true;
+    this.estadoConDatos = false;
+
+  }
+
+  evaluateRegex(expresion: string): void {
+    var regex = /(^\$?([0-9]{1,3}.([0-9]{3}.)*[0-9]{3}|[0-9]+)(,[0-9][0-9])?$)|(^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$)/;
+
+
+    if (!regex.test(expresion)) {
+      console.log(expresion);
+      console.log('No pasa la prueba no se sube !!', regex.test(expresion));
+      this.test = false;
+    }
+
+
+  }
+
+  saveDocument() {
+    console.log('A guardar !');
+    console.log("estado REs: ", this.resultadoEstado);
+    console.log('Test: ', this.test)
+    this.test = true;
+    this.activosC.forEach(element => {
+      this.evaluateRegex(element.activoImpC);
+      this.evaluateRegex(element.activosF);
+      this.evaluateRegex(element.cuentas);
+      this.evaluateRegex(element.deudores);
+      this.evaluateRegex(element.efectivo);
+      this.evaluateRegex(element.otrosAc);
+      this.evaluateRegex(element.total);
+
+    });
+
+    this.activosNC.forEach(element => {
+      this.evaluateRegex(element.activosD);
+      this.evaluateRegex(element.activosI);
+      this.evaluateRegex(element.otrosA);
+      this.evaluateRegex(element.prop);
+      this.evaluateRegex(element.totalA);
+      this.evaluateRegex(element.totalNC);
+    })
+
+    this.pasivosC.forEach(element => {
+      this.evaluateRegex(element.cuentasC);
+      this.evaluateRegex(element.cuentasR);
+      this.evaluateRegex(element.otras);
+      this.evaluateRegex(element.otrosP);
+      this.evaluateRegex(element.pasivosAr);
+      this.evaluateRegex(element.pasivosI);
+      this.evaluateRegex(element.provisiones);
+      this.evaluateRegex(element.totalPC);
+    })
+
+    this.pasivosNC.forEach(element => {
+      this.evaluateRegex(element.otrosP);
+      this.evaluateRegex(element.pasivosAr);
+      this.evaluateRegex(element.provisionesB);
+      this.evaluateRegex(element.total);
+    })
+
+    this.patrimonio.forEach(element => {
+      this.evaluateRegex(element.aportes);
+      this.evaluateRegex(element.participaciones);
+      this.evaluateRegex(element.patrimonioContador);
+      this.evaluateRegex(element.resultadosR);
+      this.evaluateRegex(element.totalPNeto);
+      this.evaluateRegex(element.totalPP);
+    })
+
+    this.resultadoEstado.forEach(element => {
+      this.evaluateRegex(element.costoVentas);
+      this.evaluateRegex(element.costosF);
+      this.evaluateRegex(element.gastosAdm);
+      this.evaluateRegex(element.ingresos);
+      this.evaluateRegex(element.ingresosF);
+      this.evaluateRegex(element.margen);
+      this.evaluateRegex(element.otrasGanancias);
+      this.evaluateRegex(element.otrosI);
+      this.evaluateRegex(element.resultadoR);
+    })
+
+    this.gananciaAntesImpuesto.forEach(element => {
+      this.evaluateRegex(element.gastoDespImp);
+      this.evaluateRegex(element.gastoImp);
+      this.evaluateRegex(element.totalRes);
+    })
+
+    this.gananciaAtribuible.forEach(element => {
+      this.evaluateRegex(element.ganancia);
+      this.evaluateRegex(element.gananciaControlador);
+      this.evaluateRegex(element.gananciaNoControladora);
+    })
+
+    this.estadoResInt.forEach(element => {
+      this.evaluateRegex(element.ganancia);
+      this.evaluateRegex(element.gananciaAct);
+      this.evaluateRegex(element.total);
+    })
+
+    if (this.test == true) {
+      console.log()
+      this.docSvc.SaveDocument(
+        this.activosC,
+        this.activosNC,
+        this.pasivosC,
+        this.pasivosNC,
+        this.patrimonio,
+        this.resultadoEstado,
+        this.gananciaAntesImpuesto,
+        this.gananciaAtribuible,
+        this.estadoResInt,
+        this.idSindicatoUser
+      );
+    }
+    else {
+      this.snackbar.open("Ocurrió un problema al guardar el archivo, revise que los datos estén ingresados correctamente", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+    }
+  }
+
+  saveDraft() {
+
+    this.draftExists = true;
+    this.test = true;
+    this.activosC.forEach(element => {
+      this.evaluateRegex(element.activoImpC);
+      this.evaluateRegex(element.activosF);
+      this.evaluateRegex(element.cuentas);
+      this.evaluateRegex(element.deudores);
+      this.evaluateRegex(element.efectivo);
+      this.evaluateRegex(element.otrosAc);
+      this.evaluateRegex(element.total);
+
+    });
+
+    this.activosNC.forEach(element => {
+      this.evaluateRegex(element.activosD);
+      this.evaluateRegex(element.activosI);
+      this.evaluateRegex(element.otrosA);
+      this.evaluateRegex(element.prop);
+      this.evaluateRegex(element.totalA);
+      this.evaluateRegex(element.totalNC);
+    })
+
+    this.pasivosC.forEach(element => {
+      this.evaluateRegex(element.cuentasC);
+      this.evaluateRegex(element.cuentasR);
+      this.evaluateRegex(element.otras);
+      this.evaluateRegex(element.otrosP);
+      this.evaluateRegex(element.pasivosAr);
+      this.evaluateRegex(element.pasivosI);
+      this.evaluateRegex(element.provisiones);
+      this.evaluateRegex(element.totalPC);
+    })
+
+    this.pasivosNC.forEach(element => {
+      this.evaluateRegex(element.otrosP);
+      this.evaluateRegex(element.pasivosAr);
+      this.evaluateRegex(element.provisionesB);
+      this.evaluateRegex(element.total);
+    })
+
+    this.patrimonio.forEach(element => {
+      this.evaluateRegex(element.aportes);
+      this.evaluateRegex(element.participaciones);
+      this.evaluateRegex(element.patrimonioContador);
+      this.evaluateRegex(element.resultadosR);
+      this.evaluateRegex(element.totalPNeto);
+      this.evaluateRegex(element.totalPP);
+    })
+
+    this.resultadoEstado.forEach(element => {
+      this.evaluateRegex(element.costoVentas);
+      this.evaluateRegex(element.costosF);
+      this.evaluateRegex(element.gastosAdm);
+      this.evaluateRegex(element.ingresos);
+      this.evaluateRegex(element.ingresosF);
+      this.evaluateRegex(element.margen);
+      this.evaluateRegex(element.otrasGanancias);
+      this.evaluateRegex(element.otrosI);
+      this.evaluateRegex(element.resultadoR);
+    })
+
+    this.gananciaAntesImpuesto.forEach(element => {
+      this.evaluateRegex(element.gastoDespImp);
+      this.evaluateRegex(element.gastoImp);
+      this.evaluateRegex(element.totalRes);
+    })
+
+    this.gananciaAtribuible.forEach(element => {
+      this.evaluateRegex(element.ganancia);
+      this.evaluateRegex(element.gananciaControlador);
+      this.evaluateRegex(element.gananciaNoControladora);
+    })
+
+    this.estadoResInt.forEach(element => {
+      this.evaluateRegex(element.ganancia);
+      this.evaluateRegex(element.gananciaAct);
+      this.evaluateRegex(element.total);
+    })
+
+    if (this.test == true) {
+      console.log()
+      this.docSvc.SaveDraft(
+        this.activosC,
+        this.activosNC,
+        this.pasivosC,
+        this.pasivosNC,
+        this.patrimonio,
+        this.resultadoEstado,
+        this.gananciaAntesImpuesto,
+        this.gananciaAtribuible,
+        this.estadoResInt,
+        this.idSindicatoUser,
+      );
+    }
+    else {
+      this.snackbar.open("Ocurrió un problema al guardar el archivo, revise que los datos estén ingresados correctamente", '', {
+        duration: 3000,
+        verticalPosition: 'bottom'
+      });
+    }
+  }
+
+  loadUpdated() {
+    this.getDocument(this.userId)
+  }
+  
+  getDocument(userId: any) {
+    this.isLoading = true;
+    this.isDraft = false;
     this.activosC = [];
 
     this.activosNC = [];
@@ -278,16 +1072,32 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     this.gananciaAntesImpuesto = [];
     this.gananciaAtribuible = [];
     this.estadoResInt = [];
-    console.log("Id del sindicato: ",this.idSindicatoUser)
+
 
     //Ahora se va a buscar dentro de todos los estados financieros, el que tenga el id del sindicato del mismo usuario conectado actualmente
 
-          
+    //Primero se obtiene el id del sindicato del usuario que está conectado actualmente buscando entre todos
+    this.db.collection('users').doc(userId).get().subscribe((snapshotChanges) => {
+      if (snapshotChanges.exists) {
+
+        console.log("user actual: ", userId)
+        var usuario = snapshotChanges.data();
+
+        if (usuario.uid == userId) {
+
+          console.log('aqui')
+          this.idSindicatoUser = usuario.idOrg;
+          console.log('id sindicato encontrada: ', this.idSindicatoUser)
+          console.log('es admin o no ?', usuario.isAdmin)
+          if (usuario.isAdmin == true) {
+            this.idSindicatoUser = this.userId;
+
+          }
           //Aqui se busca el documento ya por el sindicato en vez del userId
           this.db.collection('EstadoFinanciero').doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
 
             if (snapshotChanges.exists) {
-              //this.noDataMessage = false;
+              this.noDataMessage = false;
 
               var doc = snapshotChanges.data();
               var activosC = doc.activosCorrientes;
@@ -437,15 +1247,15 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
               this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(this.gananciaAntesImpuesto);
               this.dataSourceGananciaAtribuible = new MatTableDataSource<GananciaAtribuible>(this.gananciaAtribuible);
               this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
-              this.estadoExists = true;
-             // this.noData = false;
+              this.noData = false;
               this.isLoading = false;
+              this.estadoConDatos = true;
             }
             else {
-              this.estadoExists = false;
-              //this.noDataMessage = true;
-              //this.noData = true;
+              this.noDataMessage = true;
+              this.noData = true;
               this.isLoading = false;
+              this.estadoConDatos = false;
             }
 
 
@@ -453,6 +1263,392 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
         }
 
       }
+      this.isLoading = false;
+    })
+
+
+
+
+
+
+    //this.estadoFinanciero=this.docSvc.GetDocument(userId);
+
+
+  }
+
+
+  // AC
+  deleteAC(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourceActivosC.data = this.dataSourceActivosC.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.activosC.indexOf(elm);
+        this.activosC.splice(index, 1);
+        //this.fundSvc.eliminarAbogado(elm.correo,this.idSindicato);
+      }
+    });
+  }
+
+  addAC() {
+    console.log("AC")
+    let activosCorrientes = {
+      anio: "",
+      efectivo: "",
+      activosF: "",
+      otrosAc: "",
+      deudores: "",
+      cuentas: "",
+      activoImpC: "",
+      total: "",
+    };
+    this.activosC.push(activosCorrientes);
+    console.log("Activos nuevos: ", this.activosC)
+    this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
+  }
+
+
+  //NC
+  addNC() {
+    console.log("AC")
+    let activosNoCorrientes = {
+      anio: "",
+      otrosA: "",
+      activosI: "",
+      prop: "",
+      activosD: "",
+      totalNC: "",
+      totalA: ""
+    }
+    this.activosNC.push(activosNoCorrientes);
+    this.dataSourceActivosNC = new MatTableDataSource<ActivosNC>(this.activosNC);
+  }
+  deleteNC(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourceActivosNC.data = this.dataSourceActivosNC.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.activosNC.indexOf(elm);
+        this.activosNC.splice(index, 1);
+
+      }
+    });
+  }
+
+  //PC
+  addPC() {
+    console.log("AC")
+    let pasivosCorrientes = {
+      anio: "",
+      pasivosAr: "",
+      otrosP: "",
+      cuentasC: "",
+      cuentasR: "",
+      otras: "",
+      pasivosI: "",
+      provisiones: "",
+      totalPC: "",
+    };
+    this.pasivosC.push(pasivosCorrientes);
+    this.dataSourcePasivosC = new MatTableDataSource<PasivosC>(this.pasivosC);
+  }
+  deletePC(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourcePasivosC.data = this.dataSourcePasivosC.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.pasivosC.indexOf(elm);
+        this.pasivosC.splice(index, 1);
+
+      }
+    });
+  }
+
+  //PNC
+
+  addPNC() {
+    console.log("AC")
+    let pasivosNoCorrientes = {
+      anio: "",
+      pasivosAr: "",
+      otrosP: "",
+      provisionesB: "",
+      total: "",
+    };
+    this.pasivosNC.push(pasivosNoCorrientes);
+    this.dataSourcePasivosNC = new MatTableDataSource<PasivosNC>(this.pasivosNC);
+  }
+  deletePNC(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourcePasivosNC.data = this.dataSourcePasivosNC.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.pasivosNC.indexOf(elm);
+        this.pasivosNC.splice(index, 1);
+
+      }
+    });
+  }
+
+  //P
+
+  addP() {
+    let patrimonios = {
+      anio: "",
+      aportes: "",
+      resultadosR: "",
+      patrimonioContador: "",
+      participaciones: "",
+      totalPNeto: "",
+      totalPP: "",
+    };
+    this.patrimonio.push(patrimonios);
+    this.dataSourcePatrimonio = new MatTableDataSource<Patrimonio>(this.patrimonio);
+  }
+  deleteP(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourcePatrimonio.data = this.dataSourcePatrimonio.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.patrimonio.indexOf(elm);
+        this.patrimonio.splice(index, 1);
+
+      }
+    });
+  }
+
+
+  //ER
+
+  addER() {
+    let estadoR = {
+      anio: "",
+      ingresos: "",
+      costoVentas: "",
+      margen: "",
+      otrosI: "",
+      gastosAdm: "",
+      otrasGanancias: "",
+      ingresosF: "",
+      costosF: "",
+      resultadoR: "",
+    };
+    this.resultadoEstado.push(estadoR);
+    this.dataSourceEstadoR = new MatTableDataSource<EstadoR>(this.resultadoEstado);
+  }
+  deleteER(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourceEstadoR.data = this.dataSourceEstadoR.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.resultadoEstado.indexOf(elm);
+        this.resultadoEstado.splice(index, 1);
+
+      }
+    });
+  }
+
+  //GI
+
+  addGI() {
+    console.log("AC")
+    let gananciaAntesImp = {
+      anio: "",
+      gastoImp: "",
+      gastoDespImp: "",
+      totalRes: "",
+    };
+    this.gananciaAntesImpuesto.push(gananciaAntesImp);
+    this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(this.gananciaAntesImpuesto);
+  }
+  deleteGI(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourceGananciaA.data = this.dataSourceGananciaA.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.gananciaAntesImpuesto.indexOf(elm);
+        this.gananciaAntesImpuesto.splice(index, 1);
+
+      }
+    });
+  }
+
+  //GA
+  addGA() {
+    console.log("AC")
+    let gananciaAt = {
+      anio: "",
+      gananciaControlador: "",
+      gananciaNoControladora: "",
+      ganancia: "",
+    };
+    this.gananciaAtribuible.push(gananciaAt);
+    this.dataSourceGananciaAtribuible = new MatTableDataSource<GananciaAtribuible>(this.gananciaAtribuible);
+  }
+  deleteGA(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourceGananciaAtribuible.data = this.dataSourceGananciaAtribuible.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.gananciaAtribuible.indexOf(elm);
+        this.gananciaAtribuible.splice(index, 1);
+
+      }
+    });
+  }
+
+  //TRI
+  addTRI() {
+    console.log("AC")
+    let estRInt = {
+      anio: "",
+      ganancia: "",
+      gananciaAct: "",
+      total: "",
+    };
+    this.estadoResInt.push(estRInt);
+    this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
+  }
+  deleteTRI(elm) {
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: '¿Está seguro que quiere quitar esta fila?',
+        buttonText: {
+          ok: 'Aceptar',
+          cancel: 'Cancelar'
+        }
+      }
+    });
+
+    console.log("elemento: ", elm)
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        console.log("elemento a borrar: ", elm)
+        this.dataSourceEstadoResInt.data = this.dataSourceEstadoResInt.data
+          .filter(i => i !== elm)
+          .map((i, idx) => (i.position = (idx + 1), i));
+        const index: number = this.estadoResInt.indexOf(elm);
+        this.estadoResInt.splice(index, 1);
+
+      }
+    });
+  }
+
+ 
+      }
+    
    
 
 

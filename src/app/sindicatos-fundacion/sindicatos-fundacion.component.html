@@ -57,6 +57,12 @@
               </svg>  
         </td>
     </ng-container>
+    <ng-container matColumnDef="deshabilitar">
+        <th  mat-header-cell *matHeaderCellDef> </th>
+        <td class="verAbogado" mat-cell *matCellDef="let element" style="margin-top:2%;" (click)="deshabilitarSindicato(element)">
+            <mat-icon>block</mat-icon>
+        </td>
+    </ng-container>
     
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

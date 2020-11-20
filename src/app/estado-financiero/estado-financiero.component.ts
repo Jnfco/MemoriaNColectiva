@@ -983,6 +983,7 @@ export class EstadoFinancieroComponent implements OnInit {
   loadUpdated() {
     this.getDocument(this.userId)
   }
+  
   getDocument(userId: any) {
     this.isDraft = false;
     this.activosC = [];
