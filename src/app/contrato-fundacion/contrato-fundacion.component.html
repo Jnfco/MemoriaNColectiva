@@ -11,7 +11,7 @@
   </div>
   <mat-progress-bar class="mat-progress-bar-buffer" mode="indeterminate" *ngIf="this.isLoading == true"></mat-progress-bar>
   <h1 *ngIf="this.sindicatoSeleccionado == false" style="text-align: center;" >No se ha seleccionado ningún sindicato</h1>
-  <editor *ngIf="this.contratoExists == true" class="centered" [formControl]="textoFormControl" [init]="{
+  <editor *ngIf="this.sindicatoSeleccionado == true" class="centered" [formControl]="textoFormControl" [init]="{
              base_url: '/tinymce',
              suffix: '.min',
              height: 600,
@@ -24,7 +24,7 @@
              toolbar:'preview print|undo redo | bold italic underline strikethrough superscript subscript fontselect fontsizeselect fontcolorselect| formatselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent| table selectall |help'
            }"></editor>
   <div style="text-align: right;">
-    <button class="boton" mat-button  *ngIf="this.contratoExists == true" mat-flat-button color="primary"
+    <button class="boton" mat-button  *ngIf="this.sindicatoSeleccionado == true" mat-flat-button color="primary"
       (click)="onGuardar(textoFormControl.value)">Guardar</button>
     
   

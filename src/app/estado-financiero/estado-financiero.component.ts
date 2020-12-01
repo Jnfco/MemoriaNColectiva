@@ -751,7 +751,7 @@ export class EstadoFinancieroComponent implements OnInit {
 
   public deleteEstado() {
 
-    this.docSvc.deleteEstado(this.userId);
+    this.docSvc.deleteEstado(this.idSindicatoUser);
     this.data = [];
     this.noDataMessage = true;
     this.noData = true;

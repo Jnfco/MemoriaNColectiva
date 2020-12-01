@@ -63,7 +63,7 @@ export class ContratoFundacionComponent implements OnInit {
 
     var contrato: Contrato = {
       content: content,
-      idSindicato: this.idSindicato,
+      idSindicato: this.selectedValue,
       isNew: this.isNew,
       isfinished: this.isFinished
     }
@@ -87,7 +87,7 @@ export class ContratoFundacionComponent implements OnInit {
   getUpdatedText(){
 
     
-    this.db.collection("Contrato").doc(this.idSindicato).get().subscribe((snapshotChanges)=>{
+    this.db.collection("Contrato").doc(this.selectedValue).get().subscribe((snapshotChanges)=>{
       if(snapshotChanges.exists){
 
         this.content = snapshotChanges.data().content;
@@ -103,7 +103,7 @@ export class ContratoFundacionComponent implements OnInit {
   }
 
   isNewContract() {
-    this.db.collection("Contrato").doc(this.idSindicato).get().subscribe((snapshotChanges) => {
+    this.db.collection("Contrato").doc(this.selectedValue).get().subscribe((snapshotChanges) => {
 
       if (snapshotChanges.exists) {
         this.isNew = snapshotChanges.data().isNew;
@@ -116,25 +116,7 @@ export class ContratoFundacionComponent implements OnInit {
     })
   }
 
-  getIdSindicato() {
-    this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
-
-
-      querySnapshot.forEach((doc) => {
-
-        doc.data().usuarios.forEach(element => {
-
-          if (element.correo == this.userEmail) {
-
-            this.idSindicato = doc.data().idAdmin;
-
-          }
-        });
-
-      });
-    });
-
-  }
+ 
 
   cargarSindicatos(){
     
@@ -204,10 +186,11 @@ export class ContratoFundacionComponent implements OnInit {
       console.log("is new?: ",this.isNew);
       if(this.isNew == false){
         this.getUpdatedText()
-
+        this.isLoading = false;
       }
       else{
         this.textoFormControl.setValue(this.content)
+        this.isLoading = false;
       }
     },1500)
 
@@ -225,7 +208,7 @@ export class ContratoFundacionComponent implements OnInit {
         var historialEdicion :HistorialDocSindicato = {
     
           idMiembro: this.userId,
-          idSindicato: this.idSindicato,
+          idSindicato: this.selectedValue,
           nombre:snapshotChanges.data().name,
           correo:snapshotChanges.data().email,
           documento: this.content,

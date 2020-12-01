@@ -130,7 +130,7 @@ export class HistorialFundacionComponent implements OnInit {
     this.isLoading = true;
     this.reuniones = [];
 
-    console.log("id sindicato: ", this.idSindicatoUser)
+    
 
     this.db.collection("Reunion").get().subscribe((querySnapshot) => {
 

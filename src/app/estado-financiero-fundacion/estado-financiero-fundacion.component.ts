@@ -568,38 +568,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
 
 
   }
-  getIdSindicato() {
 
-    this.db.collection("users").doc(this.userId).get().subscribe((snapshotChanges) => {
-
-      if (snapshotChanges.data().isAdmin == true) {
-        this.idSindicatoUser = this.userId;
-
-      }
-      else {
-        setTimeout(() => {
-          this.db.collection("Sindicato").get().subscribe((querySnapshot) => {
-
-            querySnapshot.forEach((doc) => {
-
-              doc.data().usuarios.forEach(element => {
-
-                if (element.correo == this.userEmail) {
-
-                  this.idSindicatoUser = doc.data().idAdmin
-
-                }
-
-              });
-
-            })
-          })
-        }, 1000)
-
-      }
-    })
-
-  }
 
 
   uploadedFile(ev: any) {
@@ -827,7 +796,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
 
   public deleteEstado() {
 
-    this.docSvc.deleteEstado(this.userId);
+    this.docSvc.deleteEstado(this.selectedValue);
     this.data = [];
     this.noDataMessage = true;
     this.noData = true;
@@ -942,7 +911,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
         this.gananciaAntesImpuesto,
         this.gananciaAtribuible,
         this.estadoResInt,
-        this.idSindicatoUser
+        this.selectedValue
       );
     }
     else {
@@ -1035,7 +1004,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     })
 
     if (this.test == true) {
-      console.log()
+      console.log("id del sindicato a agregar: ", this.idSindicatoUser)
       this.docSvc.SaveDraft(
         this.activosC,
         this.activosNC,
@@ -1046,7 +1015,7 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
         this.gananciaAntesImpuesto,
         this.gananciaAtribuible,
         this.estadoResInt,
-        this.idSindicatoUser,
+        this.selectedValue,
       );
     }
     else {
@@ -1077,197 +1046,178 @@ export class EstadoFinancieroFundacionComponent implements OnInit {
     this.estadoResInt = [];
 
 
-    //Ahora se va a buscar dentro de todos los estados financieros, el que tenga el id del sindicato del mismo usuario conectado actualmente
 
-    //Primero se obtiene el id del sindicato del usuario que está conectado actualmente buscando entre todos
-    this.db.collection('users').doc(userId).get().subscribe((snapshotChanges) => {
+    this.idSindicatoUser = this.selectedValue;
+
+    //Aqui se busca el documento ya por el sindicato en vez del userId
+    this.db.collection('EstadoFinanciero').doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
+
       if (snapshotChanges.exists) {
+        this.noDataMessage = false;
 
-        console.log("user actual: ", userId)
-        var usuario = snapshotChanges.data();
+        var doc = snapshotChanges.data();
+        var activosC = doc.activosCorrientes;
+        var activosNC = doc.activosNoCorrientes;
+        var pasivosC = doc.pasivosCorrientes;
+        var pasivosNC = doc.pasivosNoCorrientes;
+        var patrimonio = doc.patrimonio;
+        var estadoRes = doc.estadoResultados;
+        var gananciaAntesImpuesto = doc.gananciaAntesImp;
+        var gananciaActuariales = doc.gananciaAtribuible;
+        var estadoResIntegrales = doc.estadoResIntegrales;
 
-        if (usuario.uid == userId) {
+        for (let i = 0; i < activosC.length; i++) {
 
-          console.log('aqui')
-          this.idSindicatoUser = usuario.idOrg;
-          console.log('id sindicato encontrada: ', this.idSindicatoUser)
-          console.log('es admin o no ?', usuario.isAdmin)
-          if (usuario.isAdmin == true) {
-            this.idSindicatoUser = this.userId;
-
+          let activosCorrientes = {
+            anio: activosC[i].anio,
+            efectivo: activosC[i].efectivo,
+            activosF: activosC[i].activosF,
+            otrosAc: activosC[i].otrosAc,
+            deudores: activosC[i].deudores,
+            cuentas: activosC[i].cuentas,
+            activoImpC: activosC[i].activoImpC,
+            total: activosC[i].total
           }
-          //Aqui se busca el documento ya por el sindicato en vez del userId
-          this.db.collection('EstadoFinanciero').doc(this.idSindicatoUser).get().subscribe((snapshotChanges) => {
+          this.activosC.push(activosCorrientes);
 
-            if (snapshotChanges.exists) {
-              this.noDataMessage = false;
-
-              var doc = snapshotChanges.data();
-              var activosC = doc.activosCorrientes;
-              var activosNC = doc.activosNoCorrientes;
-              var pasivosC = doc.pasivosCorrientes;
-              var pasivosNC = doc.pasivosNoCorrientes;
-              var patrimonio = doc.patrimonio;
-              var estadoRes = doc.estadoResultados;
-              var gananciaAntesImpuesto = doc.gananciaAntesImp;
-              var gananciaActuariales = doc.gananciaAtribuible;
-              var estadoResIntegrales = doc.estadoResIntegrales;
-
-              for (let i = 0; i < activosC.length; i++) {
-
-                let activosCorrientes = {
-                  anio: activosC[i].anio,
-                  efectivo: activosC[i].efectivo,
-                  activosF: activosC[i].activosF,
-                  otrosAc: activosC[i].otrosAc,
-                  deudores: activosC[i].deudores,
-                  cuentas: activosC[i].cuentas,
-                  activoImpC: activosC[i].activoImpC,
-                  total: activosC[i].total
-                }
-                this.activosC.push(activosCorrientes);
-
-              }
-
-              for (let i = 0; i < activosNC.length; i++) {
-
-                let activosNoCorrientes = {
-                  anio: activosNC[i].anio,
-                  otrosA: activosNC[i].otrosA,
-                  activosI: activosNC[i].activosI,
-                  prop: activosNC[i].prop,
-                  activosD: activosNC[i].activosD,
-                  totalNC: activosNC[i].totalNC,
-                  totalA: activosNC[i].totalA
-                }
-                this.activosNC.push(activosNoCorrientes);
-              }
-
-
-              for (let i = 0; i < pasivosC.length; i++) {
-
-                let pasivosCorrientes = {
-                  anio: pasivosC[i].anio,
-                  pasivosAr: pasivosC[i].pasivosAr,
-                  otrosP: pasivosC[i].otrosP,
-                  cuentasC: pasivosC[i].cuentasC,
-                  cuentasR: pasivosC[i].cuentasR,
-                  otras: pasivosC[i].otras,
-                  pasivosI: pasivosC[i].pasivosI,
-                  provisiones: pasivosC[i].provisiones,
-                  totalPC: pasivosC[i].totalPC,
-                };
-                this.pasivosC.push(pasivosCorrientes);
-              }
-
-              for (let i = 0; i < pasivosNC.length; i++) {
-
-                let pasivosNoCorrientes = {
-                  anio: pasivosNC[i].anio,
-                  pasivosAr: pasivosNC[i].pasivosAr,
-                  otrosP: pasivosNC[i].otrosP,
-                  provisionesB: pasivosNC[i].provisionesB,
-                  total: pasivosNC[i].total,
-                };
-                this.pasivosNC.push(pasivosNoCorrientes);
-              }
-
-              for (let i = 0; i < patrimonio.length; i++) {
-
-                let patrimonios = {
-                  anio: patrimonio[i].anio,
-                  aportes: patrimonio[i].aportes,
-                  resultadosR: patrimonio[i].resultadosR,
-                  patrimonioContador: patrimonio[i].patrimonioContador,
-                  participaciones: patrimonio[i].participaciones,
-                  totalPNeto: patrimonio[i].totalPNeto,
-                  totalPP: patrimonio[i].totalPP,
-                };
-                this.patrimonio.push(patrimonios);
-              }
-
-              for (let i = 0; i < estadoRes.length; i++) {
-
-                let estadoR = {
-                  anio: estadoRes[i].anio,
-                  ingresos: estadoRes[i].ingresos,
-                  costoVentas: estadoRes[i].costoVentas,
-                  margen: estadoRes[i].margen,
-                  otrosI: estadoRes[i].otrosI,
-                  gastosAdm: estadoRes[i].gastosAdm,
-                  otrasGanancias: estadoRes[i].otrasGanancias,
-                  ingresosF: estadoRes[i].ingresosF,
-                  costosF: estadoRes[i].costosF,
-                  resultadoR: estadoRes[i].resultadoR,
-                };
-                this.resultadoEstado.push(estadoR);
-              }
-
-              for (let i = 0; i < gananciaAntesImpuesto.length; i++) {
-
-                let gananciaAntesImp = {
-                  anio: gananciaAntesImpuesto[i].anio,
-                  gastoImp: gananciaAntesImpuesto[i].gastoImp,
-                  gastoDespImp: gananciaAntesImpuesto[i].gastoDespImp,
-                  totalRes: gananciaAntesImpuesto[i].totalRes,
-                };
-                this.gananciaAntesImpuesto.push(gananciaAntesImp);
-              }
-
-              for (let i = 0; i < gananciaActuariales.length; i++) {
-
-                let gananciaAt = {
-                  anio: gananciaActuariales[i].anio,
-                  gananciaControlador: gananciaActuariales[i].gananciaControlador,
-                  gananciaNoControladora: gananciaActuariales[i].gananciaNoControladora,
-                  ganancia: gananciaActuariales[i].ganancia,
-                };
-                this.gananciaAtribuible.push(gananciaAt);
-              }
-
-
-              for (let i = 0; i < estadoResIntegrales.length; i++) {
-
-                let estRInt = {
-                  anio: estadoResIntegrales[i].anio,
-                  ganancia: estadoResIntegrales[i].ganancia,
-                  gananciaAct: estadoResIntegrales[i].gananciaAct,
-                  total: estadoResIntegrales[i].total,
-                };
-                this.estadoResInt.push(estRInt);
-              }
-
-
-              console.log(this.resultadoEstado);
-
-              this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
-
-              this.dataSourceActivosNC = new MatTableDataSource<ActivosNC>(this.activosNC);
-              this.dataSourcePasivosC = new MatTableDataSource<PasivosC>(this.pasivosC);
-              this.dataSourcePasivosNC = new MatTableDataSource<PasivosNC>(this.pasivosNC);
-              this.dataSourcePatrimonio = new MatTableDataSource<Patrimonio>(this.patrimonio);
-              this.dataSourceEstadoR = new MatTableDataSource<EstadoR>(this.resultadoEstado);
-              this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(this.gananciaAntesImpuesto);
-              this.dataSourceGananciaAtribuible = new MatTableDataSource<GananciaAtribuible>(this.gananciaAtribuible);
-              this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
-              this.noData = false;
-              this.isLoading = false;
-              this.estadoConDatos = true;
-            }
-            else {
-              this.noDataMessage = true;
-              this.noData = true;
-              this.isLoading = false;
-              this.estadoConDatos = false;
-            }
-
-
-          });
         }
 
+        for (let i = 0; i < activosNC.length; i++) {
+
+          let activosNoCorrientes = {
+            anio: activosNC[i].anio,
+            otrosA: activosNC[i].otrosA,
+            activosI: activosNC[i].activosI,
+            prop: activosNC[i].prop,
+            activosD: activosNC[i].activosD,
+            totalNC: activosNC[i].totalNC,
+            totalA: activosNC[i].totalA
+          }
+          this.activosNC.push(activosNoCorrientes);
+        }
+
+
+        for (let i = 0; i < pasivosC.length; i++) {
+
+          let pasivosCorrientes = {
+            anio: pasivosC[i].anio,
+            pasivosAr: pasivosC[i].pasivosAr,
+            otrosP: pasivosC[i].otrosP,
+            cuentasC: pasivosC[i].cuentasC,
+            cuentasR: pasivosC[i].cuentasR,
+            otras: pasivosC[i].otras,
+            pasivosI: pasivosC[i].pasivosI,
+            provisiones: pasivosC[i].provisiones,
+            totalPC: pasivosC[i].totalPC,
+          };
+          this.pasivosC.push(pasivosCorrientes);
+        }
+
+        for (let i = 0; i < pasivosNC.length; i++) {
+
+          let pasivosNoCorrientes = {
+            anio: pasivosNC[i].anio,
+            pasivosAr: pasivosNC[i].pasivosAr,
+            otrosP: pasivosNC[i].otrosP,
+            provisionesB: pasivosNC[i].provisionesB,
+            total: pasivosNC[i].total,
+          };
+          this.pasivosNC.push(pasivosNoCorrientes);
+        }
+
+        for (let i = 0; i < patrimonio.length; i++) {
+
+          let patrimonios = {
+            anio: patrimonio[i].anio,
+            aportes: patrimonio[i].aportes,
+            resultadosR: patrimonio[i].resultadosR,
+            patrimonioContador: patrimonio[i].patrimonioContador,
+            participaciones: patrimonio[i].participaciones,
+            totalPNeto: patrimonio[i].totalPNeto,
+            totalPP: patrimonio[i].totalPP,
+          };
+          this.patrimonio.push(patrimonios);
+        }
+
+        for (let i = 0; i < estadoRes.length; i++) {
+
+          let estadoR = {
+            anio: estadoRes[i].anio,
+            ingresos: estadoRes[i].ingresos,
+            costoVentas: estadoRes[i].costoVentas,
+            margen: estadoRes[i].margen,
+            otrosI: estadoRes[i].otrosI,
+            gastosAdm: estadoRes[i].gastosAdm,
+            otrasGanancias: estadoRes[i].otrasGanancias,
+            ingresosF: estadoRes[i].ingresosF,
+            costosF: estadoRes[i].costosF,
+            resultadoR: estadoRes[i].resultadoR,
+          };
+          this.resultadoEstado.push(estadoR);
+        }
+
+        for (let i = 0; i < gananciaAntesImpuesto.length; i++) {
+
+          let gananciaAntesImp = {
+            anio: gananciaAntesImpuesto[i].anio,
+            gastoImp: gananciaAntesImpuesto[i].gastoImp,
+            gastoDespImp: gananciaAntesImpuesto[i].gastoDespImp,
+            totalRes: gananciaAntesImpuesto[i].totalRes,
+          };
+          this.gananciaAntesImpuesto.push(gananciaAntesImp);
+        }
+
+        for (let i = 0; i < gananciaActuariales.length; i++) {
+
+          let gananciaAt = {
+            anio: gananciaActuariales[i].anio,
+            gananciaControlador: gananciaActuariales[i].gananciaControlador,
+            gananciaNoControladora: gananciaActuariales[i].gananciaNoControladora,
+            ganancia: gananciaActuariales[i].ganancia,
+          };
+          this.gananciaAtribuible.push(gananciaAt);
+        }
+
+
+        for (let i = 0; i < estadoResIntegrales.length; i++) {
+
+          let estRInt = {
+            anio: estadoResIntegrales[i].anio,
+            ganancia: estadoResIntegrales[i].ganancia,
+            gananciaAct: estadoResIntegrales[i].gananciaAct,
+            total: estadoResIntegrales[i].total,
+          };
+          this.estadoResInt.push(estRInt);
+        }
+
+
+        console.log(this.resultadoEstado);
+
+        this.dataSourceActivosC = new MatTableDataSource<ActivosC>(this.activosC);
+
+        this.dataSourceActivosNC = new MatTableDataSource<ActivosNC>(this.activosNC);
+        this.dataSourcePasivosC = new MatTableDataSource<PasivosC>(this.pasivosC);
+        this.dataSourcePasivosNC = new MatTableDataSource<PasivosNC>(this.pasivosNC);
+        this.dataSourcePatrimonio = new MatTableDataSource<Patrimonio>(this.patrimonio);
+        this.dataSourceEstadoR = new MatTableDataSource<EstadoR>(this.resultadoEstado);
+        this.dataSourceGananciaA = new MatTableDataSource<GananciaAntImp>(this.gananciaAntesImpuesto);
+        this.dataSourceGananciaAtribuible = new MatTableDataSource<GananciaAtribuible>(this.gananciaAtribuible);
+        this.dataSourceEstadoResInt = new MatTableDataSource<EstadoResIntegrales>(this.estadoResInt);
+        this.noData = false;
+        this.isLoading = false;
+        this.estadoConDatos = true;
       }
-      this.isLoading = false;
-    })
+      else {
+        this.noDataMessage = true;
+        this.noData = true;
+        this.isLoading = false;
+        this.estadoConDatos = false;
+      }
+
+
+    });
+
+
 
 
 
